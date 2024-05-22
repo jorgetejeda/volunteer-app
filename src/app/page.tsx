@@ -33,7 +33,14 @@ export default function Home() {
       {/* Main */}
       <Container maxWidth="lg">
         <Grid container spacing={2}>
-          <Grid item md={8} sm={12} display="flex" flexDirection="column" gap={2}>
+          <Grid
+            item
+            md={8}
+            sm={12}
+            display="flex"
+            flexDirection="column"
+            gap={2}
+          >
             <Box>
               <Typography variant="h3">Bienvenido, usuario!</Typography>
             </Box>
@@ -61,85 +68,46 @@ export default function Home() {
                   </Box>
 
                   <Box display="flex" gap={2} flexDirection="column">
-                    <Box
-                      padding={2}
-                      borderRadius={2}
-                      display="flex"
-                      gap={2}
-                      flexDirection="column"
-                      sx={{
-                        background: theme.palette.grey[100],
-                      }}
-                    >
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Icon
-                          className="fas fa-calendar-alt"
-                          fontSize="small"
-                        />
-                        <Typography variant="caption">7/2/2021</Typography>
+                    {[...Array(2)].map((_, index) => (
+                      <Box
+                        key={index}
+                        padding={2}
+                        borderRadius={2}
+                        display="flex"
+                        gap={2}
+                        flexDirection="column"
+                        sx={{ background: theme.palette.grey[100] }}
+                      >
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Icon
+                            className="fas fa-calendar-alt"
+                            fontSize="small"
+                          />
+                          <Typography variant="caption">7/2/2021</Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="h4">
+                            Nombre del evento #{index + 1}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="body1">
+                            Jorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Nunc vulputate libero et velit interdum, ac
+                            aliquet odio mattis.
+                          </Typography>
+                        </Box>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <Icon
+                            className="fas fa-map-marker-alt"
+                            fontSize="small"
+                          />
+                          <Typography variant="caption">
+                            36 Paramount Drive, Raynham MA 2767
+                          </Typography>
+                        </Box>
                       </Box>
-                      <Box>
-                        <Typography variant="h4">
-                          Nombre del evento #1
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="body1">
-                          Jorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Nunc vulputate libero et velit interdum, ac
-                          aliquet odio mattis.
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Icon
-                          className="fas fa-map-marker-alt"
-                          fontSize="small"
-                        />
-                        <Typography variant="caption">
-                          36 Paramount Drive, Raynham MA 2767
-                        </Typography>
-                      </Box>
-                    </Box>
-
-                    <Box
-                      padding={2}
-                      borderRadius={2}
-                      display="flex"
-                      gap={2}
-                      flexDirection="column"
-                      sx={{
-                        background: theme.palette.grey[100],
-                      }}
-                    >
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <Icon
-                          className="fas fa-calendar-alt"
-                          fontSize="small"
-                        />
-                        <Typography variant="caption">7/2/2021</Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="h4">
-                          Nombre del evento #1
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Typography variant="body1">
-                          Jorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Nunc vulputate libero et velit interdum, ac
-                          aliquet odio mattis.
-                        </Typography>
-                      </Box>
-                      <Box>
-                        <Icon
-                          className="fas fa-map-marker-alt"
-                          fontSize="small"
-                        />
-                        <Typography variant="caption">
-                          36 Paramount Drive, Raynham MA 2767
-                        </Typography>
-                      </Box>
-                    </Box>
+                    ))}
                   </Box>
                 </Paper>
               </Grid>
@@ -184,7 +152,11 @@ export default function Home() {
           mt: "auto",
         }}
       >
-        <Box paddingY={2} marginTop={2} sx={{ background: theme.palette.common.white }}>
+        <Box
+          paddingY={2}
+          marginTop={2}
+          sx={{ background: theme.palette.common.white }}
+        >
           <Container maxWidth="lg">
             <Grid
               display="flex"
