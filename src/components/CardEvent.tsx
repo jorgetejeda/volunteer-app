@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Grid, Typography } from "@mui/material";
+import { Button } from "./Button";
 // Icons
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -14,6 +15,10 @@ type CardEventProps = {
   date: string;
   description?: string;
   location: string;
+  button?: {
+    label: string;
+    onClick: () => void;
+  };
 };
 
 export const CardEvent = ({
@@ -22,6 +27,7 @@ export const CardEvent = ({
   date,
   description,
   location,
+  button,
 }: CardEventProps) => {
   return (
     <Box
@@ -43,7 +49,7 @@ export const CardEvent = ({
           </Grid>
         )}
         <Grid item md={image ? 8 : 12} sm={12}>
-          <Box display="flex" alignItems="center" gap={1}>
+          <Box display="flex" alignItems="end" gap={1}>
             <CalendarMonthOutlinedIcon fontSize="small" />
             <Typography variant="caption">{date}</Typography>
           </Box>
@@ -55,10 +61,11 @@ export const CardEvent = ({
               <Typography variant="body1">{description}</Typography>
             </Box>
           )}
-          <Box display="flex" alignItems="center" gap={1}>
+          <Box display="flex" alignItems="end" gap={1}>
             <LocationOnOutlinedIcon fontSize="small" />
             <Typography variant="caption">{location}</Typography>
           </Box>
+          {button && <Button variant="contained">{button.label}</Button>}
         </Grid>
       </Grid>
     </Box>

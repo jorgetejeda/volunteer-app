@@ -55,7 +55,7 @@ theme.typography.h4 = {
   color: theme.palette.text.primary,
   fontSize: "1rem",
   fontWeight: 700,
-  lineHeight: 1.2,
+  lineHeight: 1.5,
 };
 
 theme.typography.body1 = {
