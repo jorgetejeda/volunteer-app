@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 import { Container, Grid, Paper } from "@mui/material";
-import { CardEvent } from "@/components/CardEvent";
+import { CardEvent } from "@/components";
 
-export default function Event() {
+export default function EventPage() {
   const events = Array(10)
     .fill(null)
     .map((_, index) => ({
@@ -22,9 +22,9 @@ export default function Event() {
                 name={event.name}
                 date={event.date}
                 location={event.location}
-                button={{
+                redirect={{
                   label: "Registrarme",
-                  onClick: () => console.log("Registrame"),
+                  to: `/events/${index}`,
                 }}
               />
             </Paper>
