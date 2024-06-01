@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { CardEvent } from "@/components/CardEvent";
+import { ButtonLink } from "@/components/ButtonLink";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 const myName = "jorge";
@@ -59,7 +60,7 @@ export default function Home() {
         <Grid container spacing={2}>
           <Grid
             item
-            md={8}
+            md={9}
             sm={12}
             display="flex"
             flexDirection="column"
@@ -86,16 +87,14 @@ export default function Home() {
                     marginBottom={2}
                   >
                     <Typography variant="h3">Proximos eventos</Typography>
-                    <Link href="/events" style={{ fontSize: "12px" }}>
-                      Ver todos
-                    </Link>
+                    <ButtonLink to="/events" label="Ver todos" />
                   </Box>
 
                   <Box display="flex" gap={2} flexDirection="column">
                     {[...Array(2)].map((_, index) => (
                       <Box
                         key={index}
-                        sx={{ background: theme.palette.grey[100] }}
+                        sx={{ background: theme.palette.grey[50] }}
                       >
                         <CardEvent
                           name={`Nombre del evento ${index + 1}`}
@@ -113,8 +112,10 @@ export default function Home() {
               </Grid>
               <Grid item md={5} sm={12}>
                 <Paper elevation={0} sx={{ padding: 2 }}>
-                  <Typography variant="body1">Horas Acumuladas</Typography>
-                  <Typography variant="h1">120</Typography>
+                  <Box display="flex" flexDirection="column" gap={1}>
+                    <Typography variant="body1" color={theme.palette.grey[200]}>Horas Acumuladas</Typography>
+                    <Typography variant="h1" color={theme.palette.primary.highlight}>120</Typography>
+                  </Box>
                 </Paper>
 
                 <Paper elevation={0} sx={{ padding: 2, marginTop: 2 }}>
@@ -122,12 +123,10 @@ export default function Home() {
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    marginBottom={2}
+                    marginBottom={4}
                   >
                     <Typography variant="h3">Galeria</Typography>
-                    <Link href="/events" style={{ fontSize: "12px" }}>
-                      Ver todas las imagenes
-                    </Link>
+                    <ButtonLink to="/events" label="Ver todas las imagenes" />
                   </Box>
                   <AutoPlaySwipeableViews
                     axis={theme.direction === "rtl" ? "x-reverse" : "x"}
@@ -141,11 +140,12 @@ export default function Home() {
                           <Box
                             component="img"
                             sx={{
-                              height: 255,
+                              height: 232,
                               display: "block",
                               maxWidth: 400,
                               overflow: "hidden",
                               width: "100%",
+                              borderRadius: '8px',
                             }}
                             src={step.imgPath}
                             alt={step.label}
@@ -158,18 +158,18 @@ export default function Home() {
                     steps={maxSteps}
                     position="static"
                     activeStep={activeStep}
+                    sx={{ background: "transparent", marginTop: 1 }}
                     nextButton={
                       <Button
                         size="small"
                         onClick={handleNext}
                         disabled={activeStep === maxSteps - 1}
                       >
-                        Next
-                        {theme.direction === "rtl" ? (
+                        {/* {theme.direction === "rtl" ? (
                           <KeyboardArrowLeft />
                         ) : (
                           <KeyboardArrowRight />
-                        )}
+                        )} */}
                       </Button>
                     }
                     backButton={
@@ -178,12 +178,11 @@ export default function Home() {
                         onClick={handleBack}
                         disabled={activeStep === 0}
                       >
-                        {theme.direction === "rtl" ? (
+                        {/* {theme.direction === "rtl" ? (
                           <KeyboardArrowRight />
                         ) : (
                           <KeyboardArrowLeft />
-                        )}
-                        Back
+                        )} */}
                       </Button>
                     }
                   />
@@ -192,11 +191,35 @@ export default function Home() {
             </Grid>
           </Grid>
           {/* Calendar */}
-          <Grid item md={4} sm={12}>
+          <Grid item md={3} sm={12}>
             <Paper elevation={0} sx={{ padding: 2 }}>
               <Typography variant="h3">Calendario</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateCalendar />
+                <DateCalendar 
+                  sx={{
+                    width: "auto",
+                    maxWidth: "100%",
+                    fontSize: "0.75rem",
+                    "& .MuiPickersCalendarHeader-root": {
+                      paddingLeft: "0",
+                      paddingRight: "0",
+                    },
+                    "& .MuiPickersDay-today":{
+                      color: theme.palette.common.white,
+                      background: theme.palette.primary.main,
+                      border: "none",
+                      outline: "none",
+                    },
+                    "& .MuiPickersDay-dayWithMargin": {
+                      width: "30px",
+                      height: "30px",
+                    },
+                    "& .MuiDayCalendar-weekDayLabel":{
+                      width: "30px",
+                    },
+                  }}
+                />
+
               </LocalizationProvider>
             </Paper>
           </Grid>

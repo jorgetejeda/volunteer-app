@@ -33,9 +33,9 @@ return (
                 <Typography variant="caption">
                   Siguenos en nuestras redes sociales
                 </Typography>
-                <FacebookIcon />
-                <InstagramIcon />
-                <TwitterIcon />
+                <FacebookIcon sx={{ color: theme.palette.grey[200] }} />
+                <InstagramIcon sx={{ color: theme.palette.grey[200] }} />
+                <TwitterIcon sx={{ color: theme.palette.grey[200] }} />
               </Grid>
             </Grid>
           </Container>
@@ -49,8 +49,8 @@ return (
           }}
         >
           <Container maxWidth="lg">
-            <Typography variant="caption">
-              ¬©2024. Todos los derechos reservados
+            <Typography variant="caption" color={theme.palette.inverted.main}>
+              ©2024. Todos los derechos reservados
             </Typography>
           </Container>
         </Box>

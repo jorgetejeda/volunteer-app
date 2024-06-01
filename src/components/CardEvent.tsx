@@ -5,6 +5,7 @@ import { Button } from "./Button";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { Img } from "./Image";
+import theme from "@/theme";
 
 type CardEventProps = {
   image?: {
@@ -34,7 +35,6 @@ export const CardEvent = ({
       padding={2}
       borderRadius={2}
       display="flex"
-      gap={2}
       flexDirection="column"
     >
       <Grid container spacing={2}>
@@ -49,23 +49,29 @@ export const CardEvent = ({
           </Grid>
         )}
         <Grid item md={image ? 8 : 12} sm={12}>
+          <Box display="flex" flexDirection='column' gap={1}>
           <Box display="flex" alignItems="end" gap={1}>
             <CalendarMonthOutlinedIcon fontSize="small" />
             <Typography variant="caption">{date}</Typography>
           </Box>
+
           <Box>
-            <Typography variant="h4">{name}</Typography>
+            <Typography variant="h4" color={theme.palette.text.accent}>{name}</Typography>
           </Box>
+
           {description && (
             <Box>
-              <Typography variant="body1">{description}</Typography>
+              <Typography variant="body1" color={theme.palette.text.secondary}>{description}</Typography>
             </Box>
           )}
+
           <Box display="flex" alignItems="end" gap={1}>
             <LocationOnOutlinedIcon fontSize="small" />
             <Typography variant="caption">{location}</Typography>
           </Box>
+
           {button && <Button variant="contained">{button.label}</Button>}
+          </Box>
         </Grid>
       </Grid>
     </Box>

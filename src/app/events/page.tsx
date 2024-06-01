@@ -17,7 +17,7 @@ export default function Event() {
       <Grid container spacing={3}>
         {events.map((event, index) => (
           <Grid item md={6} sm={12} key={index}>
-            <Paper>
+            <Paper elevation={0}>
               <CardEvent
                 name={event.name}
                 date={event.date}
