@@ -2,6 +2,7 @@
 import React from "react";
 import { Container, Grid, Paper } from "@mui/material";
 import { CardEvent } from "@/components";
+import { ButtonVariant } from "@/components/ButtonLink/types";
 
 export default function EventPage() {
   const events = Array(10)
@@ -19,12 +20,14 @@ export default function EventPage() {
           <Grid item md={6} sm={12} key={index}>
             <Paper elevation={0}>
               <CardEvent
+                image={`https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60`}
                 name={event.name}
                 date={event.date}
                 location={event.location}
                 redirect={{
+                  variant: "contained" as ButtonVariant,
                   label: "Registrarme",
-                  to: `/events/${index}`,
+                  to: `/events/${index + 1}`,
                 }}
               />
             </Paper>

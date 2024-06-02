@@ -1,22 +1,16 @@
-import theme from "@/theme";
 import Link from "next/link";
-
-type ButtonLinkProps = {
-  to: string;
-  label: string;
-  variant?: "contained" | "text";
-};
+import { ButtonLinkProps, ButtonVariant } from "./types";
+import { LinkButtonStyled } from "./styles";
 
 export const ButtonLink = ({
   to,
   label,
-  variant = "text",
+  variant = ButtonVariant.Text,
 }: ButtonLinkProps) => {
+  console.log(to, label, variant);
+  const variantStyles = LinkButtonStyled(variant as ButtonVariant);
   return (
-    <Link
-      href={to}
-      style={{ fontSize: ".75rem", color: theme.palette.text.accent }}
-    >
+    <Link href={to} style={variantStyles}>
       {label}
     </Link>
   );

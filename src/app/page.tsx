@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Link from "next/link";
-import { Grid, Icon, Paper, Box, Typography, Container } from "@mui/material";
+import { Grid, Paper, Box, Typography, Container, Button } from "@mui/material";
 import theme from "@/theme";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -10,15 +9,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
-import Button from "@mui/material/Button";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { CardEvent } from "@/components/CardEvent";
-import { ButtonLink } from "@/components/ButtonLink";
+import { ButtonLink, CardEvent } from "@/components";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
-const myName = "jorge";
-console.log(myName);
 
 const images = [
   {
@@ -113,8 +106,15 @@ export default function Home() {
               <Grid item md={5} sm={12}>
                 <Paper elevation={0} sx={{ padding: 2 }}>
                   <Box display="flex" flexDirection="column" gap={1}>
-                    <Typography variant="body1" color={theme.palette.grey[200]}>Horas Acumuladas</Typography>
-                    <Typography variant="h1" color={theme.palette.primary.highlight}>120</Typography>
+                    <Typography variant="body1" color={theme.palette.grey[200]}>
+                      Horas Acumuladas
+                    </Typography>
+                    <Typography
+                      variant="h1"
+                      color={theme.palette.primary.highlight}
+                    >
+                      120
+                    </Typography>
                   </Box>
                 </Paper>
 
@@ -145,7 +145,7 @@ export default function Home() {
                               maxWidth: 400,
                               overflow: "hidden",
                               width: "100%",
-                              borderRadius: '8px',
+                              borderRadius: "8px",
                             }}
                             src={step.imgPath}
                             alt={step.label}
@@ -195,7 +195,7 @@ export default function Home() {
             <Paper elevation={0} sx={{ padding: 2 }}>
               <Typography variant="h3">Calendario</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateCalendar 
+                <DateCalendar
                   sx={{
                     width: "auto",
                     maxWidth: "100%",
@@ -204,7 +204,7 @@ export default function Home() {
                       paddingLeft: "0",
                       paddingRight: "0",
                     },
-                    "& .MuiPickersDay-today":{
+                    "& .MuiPickersDay-today": {
                       color: theme.palette.common.white,
                       background: theme.palette.primary.main,
                       border: "none",
@@ -214,12 +214,11 @@ export default function Home() {
                       width: "30px",
                       height: "30px",
                     },
-                    "& .MuiDayCalendar-weekDayLabel":{
+                    "& .MuiDayCalendar-weekDayLabel": {
                       width: "30px",
                     },
                   }}
                 />
-
               </LocalizationProvider>
             </Paper>
           </Grid>

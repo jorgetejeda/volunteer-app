@@ -1,11 +1,15 @@
 import React from "react";
+import Image from "next/image";
 import { Box, Grid, Typography } from "@mui/material";
 // Icons
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import { Img } from "./Image";
-import theme from "@/theme";
+import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
+// Components
 import { ButtonLink } from "../ButtonLink";
+// Types
+import { CardEventProps } from "./types";
+// Styles
+import theme from "@/theme";
+import { InformationLabel } from "../InformationLabel";
 
 export const CardEvent = ({
   image,
@@ -20,20 +24,25 @@ export const CardEvent = ({
       <Grid container spacing={2}>
         {image && (
           <Grid item md={4} sm={12}>
-            {/* <Img */}
-            {/*   src={`https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60`} */}
-            {/*   width={200} */}
-            {/*   height={200} */}
-            {/*   alt="test image" */}
-            {/* /> */}
+            <Box
+              height={150}
+              width="100%"
+              position="relative"
+              borderRadius={2}
+              overflow="hidden"
+            >
+              <Image src={image} fill alt="test image" />
+            </Box>
           </Grid>
         )}
         <Grid item md={image ? 8 : 12} sm={12}>
           <Box display="flex" flexDirection="column" gap={1}>
-            <Box display="flex" alignItems="end" gap={1}>
-              <CalendarMonthOutlinedIcon fontSize="small" />
-              <Typography variant="caption">{date}</Typography>
-            </Box>
+            <InformationLabel
+              icon={{
+                component: CalendarMonthOutlined,
+              }}
+              label={date}
+            />
 
             <Box>
               <Typography variant="h4" color={theme.palette.text.accent}>
@@ -51,13 +60,20 @@ export const CardEvent = ({
                 </Typography>
               </Box>
             )}
+            <InformationLabel
+              icon={{ component: LocationOnOutlined }}
+              label={location}
+            />
 
-            <Box display="flex" alignItems="end" gap={1}>
-              <LocationOnOutlinedIcon fontSize="small" />
-              <Typography variant="caption">{location}</Typography>
-            </Box>
-
-            {redirect && <ButtonLink label={redirect.label} to={redirect.to} />}
+            {redirect && (
+              <Box>
+                <ButtonLink
+                  variant={redirect.variant}
+                  label={redirect.label}
+                  to={redirect.to}
+                />
+              </Box>
+            )}
           </Box>
         </Grid>
       </Grid>

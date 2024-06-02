@@ -1,18 +1,18 @@
 "use client";
 import { createTheme } from "@mui/material/styles";
 import localFont from "next/font/local";
-    
+
 const gilroyFont = localFont({
   src: [
     {
-      path: '../public/fonts/Gilroy-Regular.ttf',
-      style: 'normal',
+      path: "../public/fonts/Gilroy-Regular.ttf",
+      style: "normal",
     },
     {
-      path: '../public/fonts/Gilroy-SemiBold.ttf',
-      style: 'semi-bold',
+      path: "../public/fonts/Gilroy-SemiBold.ttf",
+      style: "semi-bold",
     },
-  ]
+  ],
 });
 
 const theme = createTheme({
@@ -23,7 +23,7 @@ const theme = createTheme({
     },
     primary: {
       main: "#24A49E",
-      accent: "1F6527",
+      accent: "#1F6527",
       highlight: "#00B1CB",
     },
     inverted: {
@@ -60,21 +60,21 @@ const theme = createTheme({
 });
 
 theme.typography.h1 = {
-  fontFamily: gilroyFont.style.fontFamily,  
+  fontFamily: gilroyFont.style.fontFamily,
   fontSize: "2.25rem",
-  lineHeight: '2.5rem',
+  lineHeight: "2.5rem",
 };
 
 theme.typography.h3 = {
-  fontFamily: gilroyFont.style.fontFamily,  
+  fontFamily: gilroyFont.style.fontFamily,
   color: theme.palette.text.primary,
   fontSize: "1.25rem",
   fontWeight: 500,
-  lineHeight: '1.5rem',
+  lineHeight: "1.5rem",
 };
 
 theme.typography.h4 = {
-  fontFamily: gilroyFont.style.fontFamily,  
+  fontFamily: gilroyFont.style.fontFamily,
   color: theme.palette.text.primary,
   fontSize: "1rem",
   fontWeight: 700,
@@ -84,14 +84,14 @@ theme.typography.h4 = {
 theme.typography.body1 = {
   fontSize: "1rem",
   fontWeight: 400,
-  lineHeight: '1.5rem',
+  lineHeight: "1.5rem",
   color: theme.palette.text.secondary,
 };
 
 theme.typography.caption = {
   fontSize: "0.75rem",
   fontWeight: 400,
-  lineHeight: '1rem',
+  lineHeight: "1rem",
   color: theme.palette.grey[200],
 };
 

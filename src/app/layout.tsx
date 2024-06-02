@@ -1,13 +1,13 @@
+"use client";
 import * as React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Open_Sans } from 'next/font/google';
+import { Open_Sans } from "next/font/google";
 import theme from "@/theme";
 
 // Components
 import { Box } from "@mui/material";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
+import { Header, Footer } from "../components";
 
 const openSansFont = Open_Sans({
   display: "swap",

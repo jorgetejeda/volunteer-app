@@ -1,4 +1,6 @@
-type CardEventProps = {
+import { ButtonVariant } from "../ButtonLink/types";
+
+export type CardEventProps = {
   image?: {
     src: string;
     alt: string;
@@ -8,6 +10,7 @@ type CardEventProps = {
   description?: string;
   location: string;
   redirect?: {
+    variant: ButtonVariant;
     label: string;
     to: string;
   };
