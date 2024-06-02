@@ -7,4 +7,5 @@ export type InformationLabelProps = {
     size?: "small" | "medium" | "large";
   };
   label: string;
+  color: string;
 };
