@@ -31,7 +31,7 @@ export const CardEvent = ({
               borderRadius={2}
               overflow="hidden"
             >
-              <Image src={image} fill alt="test image" />
+              <Image src={image.src} fill alt={image.alt} />
             </Box>
           </Grid>
         )}
