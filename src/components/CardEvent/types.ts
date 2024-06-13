@@ -9,6 +9,11 @@ export type CardEventProps = {
   date: string;
   description?: string;
   location: string;
+  chip?: {
+    label: string;
+    color?: string;
+    backgroundColor?: string;
+  };
   redirect?: {
     variant: ButtonVariant;
     label: string;

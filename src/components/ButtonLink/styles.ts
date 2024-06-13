@@ -8,7 +8,7 @@ export const LinkButtonStyled = (variant: ButtonVariant) => ({
   }),
   ...(variant == ButtonVariant.Contained && {
     display: "inline-block",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.highlight,
     color: theme.palette.common.white,
     textDecoration: "none",
     textAlign: "center",
@@ -16,6 +16,7 @@ export const LinkButtonStyled = (variant: ButtonVariant) => ({
     borderRadius: "5em",
     boxShadow: "none",
     marginTop: "8px",
+    lineHeight: "1rem",
     "&:hover": {
       backgroundColor: "darkred",
     },

@@ -2,7 +2,12 @@
 import React from "react";
 import Image from "next/image";
 import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
-import { ButtonLink, Button, InformationLabel } from "@/components";
+import {
+  ButtonLink,
+  Button,
+  InformationLabel,
+  CategoryLabel,
+} from "@/components";
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import theme from "@/theme";
 
@@ -29,6 +34,7 @@ export default function Page({ params }: { params: { id: string } }) {
       </Box>
 
       <Box marginTop={3} marginBottom={2}>
+        <CategoryLabel label="Reforestación" />
         <Typography variant="h1" color={theme.palette.text.accent}>
           Nombre del evento {params.id}
         </Typography>
@@ -42,13 +48,23 @@ export default function Page({ params }: { params: { id: string } }) {
                 lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+                nisi ut aliquip ex ea commodo consequat.
+              </Typography>
+              <Typography variant="body1" color={theme.palette.text.secondary}>
+                Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+                cupidatat non proident, sunt in culpa qui officia deserunt
+                mollit anim id est laborum.
               </Typography>
               <Box>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  size="small"
+                  sx={{
+                    textTransform: "none",
+                    background: theme.palette.primary.highlight,
+                  }}
+                >
                   Quiero participar
                 </Button>
               </Box>
@@ -61,7 +77,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: CalendarMonthOutlined,
-                  color: theme.palette.primary.main,
+                  color: theme.palette.primary.highlight,
                 }}
                 label="7/2/2021"
               />
@@ -69,7 +85,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: LocationOnOutlined,
-                  color: theme.palette.primary.main,
+                  color: theme.palette.primary.highlight,
                 }}
                 label="36 Paramount Drive, Raynham MA 276"
               />

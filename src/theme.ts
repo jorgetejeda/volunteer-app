@@ -39,6 +39,7 @@ const theme = createTheme({
     },
     text: {
       accent: "#1F6527",
+      highlight: "#241742",
       primary: "#252223",
       secondary: "#444444",
     },
@@ -82,9 +83,9 @@ theme.typography.h4 = {
 };
 
 theme.typography.body1 = {
-  fontSize: "1rem",
+  fontSize: ".75rem",
   fontWeight: 400,
-  lineHeight: "1.5rem",
+  lineHeight: "1rem",
   color: theme.palette.text.secondary,
 };
 

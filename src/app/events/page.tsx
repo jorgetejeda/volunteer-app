@@ -11,6 +11,11 @@ export default function EventPage() {
       name: `Nombre del evento ${index + 1}`,
       date: "7/2/2021",
       location: "36 Paramount Drive, Raynham MA 276",
+      chip: {
+        label: "Reforestación",
+        color: "#385B4A",
+        backgroundColor: "#D4FC92",
+      },
     }));
 
   return (
@@ -27,6 +32,8 @@ export default function EventPage() {
                 name={event.name}
                 date={event.date}
                 location={event.location}
+                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                chip={event.chip}
                 redirect={{
                   variant: "contained" as ButtonVariant,
                   label: "Registrarme",

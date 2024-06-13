@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Chip, Grid, Typography } from "@mui/material";
 // Icons
 import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
 // Components
@@ -10,6 +10,7 @@ import { CardEventProps } from "./types";
 // Styles
 import theme from "@/theme";
 import { InformationLabel } from "../InformationLabel";
+import CategoryLabel from "../CategoryLabel";
 
 export const CardEvent = ({
   image,
@@ -18,9 +19,36 @@ export const CardEvent = ({
   description,
   location,
   redirect,
+  chip,
 }: CardEventProps) => {
+  const elisisDescription =
+    description?.length > 70 ? `${description.slice(0, 100)}...` : description;
+
+  const EventDate = () => (
+    <InformationLabel
+      icon={{
+        component: CalendarMonthOutlined,
+      }}
+      label={date}
+      color={theme.palette.grey[200]}
+    />
+  );
+
+  const Location = () => (
+    <InformationLabel
+      icon={{ component: LocationOnOutlined }}
+      label={location}
+      color={theme.palette.grey[200]}
+    />
+  );
+
   return (
-    <Box padding={2} borderRadius={2} display="flex" flexDirection="column">
+    <Box
+      borderRadius={2}
+      display="flex"
+      flexDirection="column"
+      {...(image && { paddingY: 3, paddingX: 2 })}
+    >
       <Grid container spacing={2}>
         {image && (
           <Grid item md={4} sm={12}>
@@ -37,36 +65,47 @@ export const CardEvent = ({
         )}
         <Grid item md={image ? 8 : 12} sm={12}>
           <Box display="flex" flexDirection="column" gap={1}>
-            <InformationLabel
-              icon={{
-                component: CalendarMonthOutlined,
-              }}
-              label={date}
-            />
+            {chip && (
+              <Box display="flex" justifyContent="space-between">
+                <EventDate />
+                <CategoryLabel
+                  label={chip.label}
+                  textColor={chip.color}
+                  backgroundColor={chip.backgroundColor}
+                />
+              </Box>
+            )}
 
             <Box>
-              <Typography variant="h4" color={theme.palette.text.accent}>
+              <Typography variant="h4" color={theme.palette.text.highlight}>
                 {name}
               </Typography>
             </Box>
+
+            {!chip && (
+              <Box display="flex" gap={1}>
+                <EventDate />
+                <Location />
+              </Box>
+            )}
 
             {description && (
               <Box>
                 <Typography
                   variant="body1"
                   color={theme.palette.text.secondary}
+                  sx={{
+                    elipsis: "ellipsis",
+                  }}
                 >
-                  {description}
+                  {elisisDescription}
                 </Typography>
               </Box>
             )}
-            <InformationLabel
-              icon={{ component: LocationOnOutlined }}
-              label={location}
-            />
 
+            {chip && <Location />}
             {redirect && (
-              <Box>
+              <Box marginTop={1}>
                 <ButtonLink
                   variant={redirect.variant}
                   label={redirect.label}

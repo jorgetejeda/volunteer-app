@@ -10,6 +10,7 @@ import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
 import { ButtonLink, CardEvent } from "@/components";
+import { ButtonVariant } from "@/components/ButtonLink/types";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -72,7 +73,10 @@ export default function Home() {
             </Box>
             <Grid container spacing={2}>
               <Grid item md={7} sm={12}>
-                <Paper elevation={0} sx={{ padding: 2 }}>
+                <Paper
+                  elevation={0}
+                  sx={{ paddingTop: 3, paddingBottom: 4, paddingX: 2 }}
+                >
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -83,12 +87,9 @@ export default function Home() {
                     <ButtonLink to="/events" label="Ver todos" />
                   </Box>
 
-                  <Box display="flex" gap={2} flexDirection="column">
+                  <Box display="flex" gap={3} flexDirection="column">
                     {[...Array(2)].map((_, index) => (
-                      <Box
-                        key={index}
-                        sx={{ background: theme.palette.grey[50] }}
-                      >
+                      <Box key={index}>
                         <CardEvent
                           name={`Nombre del evento ${index + 1}`}
                           date="7/2/2021"
@@ -97,6 +98,11 @@ export default function Home() {
                             aliquet odio mattis.
                         "
                           location="36 Paramount Drive, Raynham MA 2767"
+                          redirect={{
+                            variant: "contained" as ButtonVariant,
+                            label: "Ver detalles",
+                            to: `/events/${index + 1}`,
+                          }}
                         />
                       </Box>
                     ))}

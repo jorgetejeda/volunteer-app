@@ -7,7 +7,6 @@ export const ButtonLink = ({
   label,
   variant = ButtonVariant.Text,
 }: ButtonLinkProps) => {
-  console.log(to, label, variant);
   const variantStyles = LinkButtonStyled(variant as ButtonVariant);
   return (
     <Link href={to} style={variantStyles}>
