@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Día de la Reforestación",
+    "date": "2023-03-21",
+    "location": "Parque Nacional, Ciudad de México",
+    "chip": {
+      "label": "Reforestación",
+      "color": "#385B4A",
+      "backgroundColor": "#D4FC92"
+    },
+    "description": "Únete a nosotros para un día dedicado a la plantación de árboles en el Parque Nacional. Ayuda a preservar nuestro medio ambiente y a fomentar la biodiversidad.",
+    "imageUrl": "https://picsum.photos/200/300?random=1"
+  },
+  {
+    "name": "Fiesta de la Responsabilidad Social",
+    "date": "2023-04-15",
+    "location": "Jardines de Luxemburgo, París",
+    "chip": {
+      "label": "Responsabilidad Social",
+      "color": "#491111",
+      "backgroundColor": "#FF8B8B"
+    },
+    "description": "Celebra la importancia de la responsabilidad social con una fiesta dedicada a la ayuda comunitaria y el compromiso con el bienestar social.",
+    "imageUrl": "https://picsum.photos/200/300?random=2"
+  },
+  {
+    "name": "Carrera de Caridad",
+    "date": "2023-05-10",
+    "location": "Centro de Convenciones Moscone, San Francisco",
+    "chip": {
+      "label": "Caridad",
+      "color": "#193E53",
+      "backgroundColor": "#B2F5FF"
+    },
+    "description": "Participa en nuestra carrera benéfica para recaudar fondos en apoyo a causas humanitarias y proyectos de caridad en todo el mundo.",
+    "imageUrl": "https://picsum.photos/200/300?random=3"
+  },
+  {
+    "name": "Día de la Educación",
+    "date": "2023-06-01",
+    "location": "Escuelas Primarias, Madrid",
+    "chip": {
+      "label": "Responsabilidad Social",
+      "color": "#491111",
+      "backgroundColor": "#FF8B8B"
+    },
+    "description": "Celebra el Día de la Educación con actividades educativas y charlas inspiradoras para niños y jóvenes.",
+    "imageUrl": "https://picsum.photos/200/300?random=4"
+  },
+  {
+    "name": "Conferencia Médica Internacional",
+    "date": "2023-07-20",
+    "location": "Centro de Convenciones de Nueva York",
+    "chip": {
+      "label": "Caridad",
+      "color": "#193E53",
+      "backgroundColor": "#B2F5FF"
+    },
+    "description": "Asiste a la conferencia médica internacional más grande del año, con sesiones sobre avances médicos, investigaciones y tratamientos innovadores.",
+    "imageUrl": "https://picsum.photos/200/300?random=5"
+  },
+  {
+    "name": "Campaña de Reciclaje Comunitario",
+    "date": "2023-08-15",
+    "location": "Plaza Central, Barcelona",
+    "chip": {
+      "label": "Reforestación",
+      "color": "#385B4A",
+      "backgroundColor": "#D4FC92"
+    },
+    "description": "Únete a nuestra campaña de reciclaje comunitario para reducir la contaminación y promover el reciclaje responsable en nuestra ciudad.",
+    "imageUrl": "https://picsum.photos/200/300?random=6"
+  },
+  {
+    "name": "Concierto Benéfico de Navidad",
+    "date": "2023-12-10",
+    "location": "Teatro Municipal, Londres",
+    "chip": {
+      "label": "Caridad",
+      "color": "#193E53",
+      "backgroundColor": "#B2F5FF"
+    },
+    "description": "Disfruta de una noche de música y solidaridad en nuestro concierto benéfico de Navidad, recaudando fondos para familias necesitadas durante las fiestas.",
+    "imageUrl": "https://picsum.photos/200/300?random=7"
+  },
+  {
+    "name": "Jornada de Voluntariado Juvenil",
+    "date": "2023-09-05",
+    "location": "Parque Central, Buenos Aires",
+    "chip": {
+      "label": "Responsabilidad Social",
+      "color": "#491111",
+      "backgroundColor": "#FF8B8B"
+    },
+    "description": "Únete a otros jóvenes voluntarios en nuestra jornada de limpieza y embellecimiento de parques públicos, promoviendo la responsabilidad social y el cuidado del medio ambiente.",
+    "imageUrl": "https://picsum.photos/200/300?random=8"
+  },
+  {
+    "name": "Maratón por la Salud Mental",
+    "date": "2023-10-30",
+    "location": "Paseo del Prado, Madrid",
+    "chip": {
+      "label": "Caridad",
+      "color": "#193E53",
+      "backgroundColor": "#B2F5FF"
+    },
+    "description": "Participa en nuestra maratón anual por la salud mental, promoviendo la conciencia y recaudando fondos para apoyar los servicios de salud mental en nuestra comunidad.",
+    "imageUrl": "https://picsum.photos/200/300?random=9"
+  }
+]

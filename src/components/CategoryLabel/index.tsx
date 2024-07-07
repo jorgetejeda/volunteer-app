@@ -10,6 +10,7 @@ const StyledCategoryLabel = styled(Chip)<{
   color: textColor || theme.palette.common.white,
   padding: "8px 4px",
   "& .MuiChip-label": {
+    fontSize: "0.625rem",
     color: textColor || theme.palette.common.white,
   },
 }));

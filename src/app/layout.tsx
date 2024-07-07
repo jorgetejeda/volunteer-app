@@ -6,7 +6,7 @@ import { Open_Sans } from "next/font/google";
 import theme from "@/theme";
 
 // Components
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { Header, Footer } from "../components";
 
 const openSansFont = Open_Sans({
@@ -28,7 +28,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             }}
           >
             <Header />
-            {props.children}
+            <Container maxWidth="lg"> {props.children} </Container>
             <Footer />
           </Box>
         </ThemeProvider>

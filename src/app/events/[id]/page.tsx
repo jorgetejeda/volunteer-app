@@ -1,21 +1,25 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
+import {
+  LocationOnOutlined,
+  CalendarMonthOutlined,
+  Menu,
+} from "@mui/icons-material";
 import {
   ButtonLink,
   Button,
   InformationLabel,
   CategoryLabel,
 } from "@/components";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import theme from "@/theme";
 
 export default function Page({ params }: { params: { id: string } }) {
   console.log(params.id);
 
   return (
-    <Container maxWidth="lg">
+    <>
       <Box marginTop={3} marginBottom={2}>
         <ButtonLink to="/events" label="Volver a eventos" />
       </Box>
@@ -35,7 +39,11 @@ export default function Page({ params }: { params: { id: string } }) {
 
       <Box marginTop={3} marginBottom={2}>
         <CategoryLabel label="Reforestación" />
-        <Typography variant="h1" color={theme.palette.text.accent}>
+        <Typography
+          variant="h1"
+          color={theme.palette.text.highlight}
+          marginTop={1}
+        >
           Nombre del evento {params.id}
         </Typography>
       </Box>
@@ -89,10 +97,18 @@ export default function Page({ params }: { params: { id: string } }) {
                 }}
                 label="36 Paramount Drive, Raynham MA 276"
               />
+
+              <InformationLabel
+                label="Instrucciones"
+                icon={{
+                  color: theme.palette.primary.highlight,
+                  component: Menu,
+                }}
+              />
             </Box>
           </Paper>
         </Grid>
       </Grid>
-    </Container>
+    </>
   );
 }

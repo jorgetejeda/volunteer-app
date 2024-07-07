@@ -1,49 +1,97 @@
 "use client";
 import React from "react";
-import { Container, Grid, Paper } from "@mui/material";
-import { CardEvent } from "@/components";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Button,
+} from "@mui/material";
 import { ButtonVariant } from "@/components/ButtonLink/types";
+import { Masonry } from "@mui/lab";
+
+import eventData from "../../data/event.json";
+import theme from "@/theme";
+import { ButtonLink, CategoryLabel, InformationLabel } from "@/components";
+import { CalendarMonthOutlined, LocationOnOutlined } from "@mui/icons-material";
 
 export default function EventPage() {
-  const events = Array(10)
-    .fill(null)
-    .map((_, index) => ({
-      name: `Nombre del evento ${index + 1}`,
-      date: "7/2/2021",
-      location: "36 Paramount Drive, Raynham MA 276",
-      chip: {
-        label: "Reforestación",
-        color: "#385B4A",
-        backgroundColor: "#D4FC92",
-      },
-    }));
-
   return (
-    <Container maxWidth="lg">
-      <Grid container spacing={3}>
-        {events.map((event, index) => (
-          <Grid item md={6} sm={12} key={index}>
-            <Paper elevation={0}>
-              <CardEvent
-                image={{
-                  src: `https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60`,
-                  alt: "Event",
-                }}
-                name={event.name}
-                date={event.date}
-                location={event.location}
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                chip={event.chip}
-                redirect={{
-                  variant: "contained" as ButtonVariant,
-                  label: "Registrarme",
-                  to: `/events/${index + 1}`,
-                }}
+    <>
+      <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
+        {eventData.map((event, index) => (
+          <Paper key={index} elevation={0}>
+            <Card
+              elevation={0}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                position: "relative",
+              }}
+            >
+              <CardMedia
+                component="img"
+                height="150"
+                image={event.imageUrl}
+                alt="Event"
               />
-            </Paper>
-          </Grid>
+              <Box sx={{ position: "absolute", right: 0, padding: 1 }}>
+                <CategoryLabel
+                  label={event.chip.label}
+                  textColor={event.chip.textColor}
+                  backgroundColor={event.chip.backgroundColor}
+                />
+              </Box>
+
+              <CardContent
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                  gap: 1,
+                }}
+              >
+                <InformationLabel
+                  icon={{
+                    component: CalendarMonthOutlined,
+                  }}
+                  label={event.date}
+                  color={theme.palette.grey[200]}
+                />
+
+                <Typography variant="h4" color={theme.palette.text.highlight}>
+                  {event.name}
+                </Typography>
+
+                <Typography
+                  variant="body1"
+                  color={theme.palette.text.secondary}
+                  sx={{ mt: 1 }}
+                >
+                  {event.description}
+                </Typography>
+
+                <InformationLabel
+                  icon={{
+                    component: LocationOnOutlined,
+                  }}
+                  label={event.location}
+                  color={theme.palette.grey[200]}
+                />
+              </CardContent>
+              <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
+                <ButtonLink
+                  variant="contained"
+                  label="Ver detalles"
+                  to={`/events/${index + 1}`}
+                />
+              </CardActions>
+            </Card>
+          </Paper>
         ))}
-      </Grid>
-    </Container>
+      </Masonry>
+    </>
   );
 }
