@@ -5,3 +5,6 @@ export { Footer } from "./Footer";
 export { Header } from "./Header";
 export { InformationLabel } from "./InformationLabel";
 export { CategoryLabel } from "./CategoryLabel";
+export { EditorView } from "./EditorView";
+export { DropZone } from "./DropZone";
+export { DropdownCategories } from "./DropdownCategories";

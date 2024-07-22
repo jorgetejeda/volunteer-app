@@ -1,159 +1,84 @@
 "use client";
-import React from "react";
-import {
-  Box,
-  Paper,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  IconButton,
-  Typography,
-  Grid,
-} from "@mui/material";
-import { Button } from "@/components";
-import { ArrowBack, Save } from "@mui/icons-material";
-import theme from "@/theme";
+import React, { useState } from "react";
+import { Box, Paper, TextField, Typography, Grid, Stack } from "@mui/material";
+import { Button, DropZone, DropdownCategories, EditorView } from "@/components";
 
 const EventForm = () => {
+  const [dateType, setDateType] = useState("text");
+  const [timeType, setTimeType] = useState("text");
+
   const handleCancel = () => {};
 
   const handleSave = () => {};
 
   return (
     <Box sx={{ marginTop: 4, marginBottom: 3 }}>
-      <Paper elevation={0} sx={{ padding: 3 }}>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={3}
-        >
-          <IconButton onClick={handleCancel}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6">Crear Nuevo Evento</Typography>
-          <IconButton onClick={handleSave}>
-            <Save />
-          </IconButton>
-        </Box>
-
-        {/* Formulario */}
-        <Grid container spacing={3}>
-          {/* Primera columna */}
-          <Grid item xs={12} sm={6}>
-            {/* Fecha del evento */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={8}>
+          <Stack spacing={2}>
+            <Typography variant="h3">Agregar nuevo evento</Typography>
             <TextField
-              label="Fecha del evento"
-              type="date"
-              variant="outlined"
+              label="Escribir titulo del evento"
               fullWidth
-              margin="normal"
-              required
-              InputLabelProps={{
-                shrink: true,
-              }}
+              name="title"
             />
-          </Grid>
+            <Typography variant="h4">Descripción del evento</Typography>
+            <EditorView />
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Ubicación del evento"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-            />
-          </Grid>
+            <Typography variant="h4">Instrucciones del evento</Typography>
+            <EditorView />
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Nombre del evento"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Duración (en horas)"
-              type="number"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-            />
-          </Grid>
-          {/* Categoría */}
-          <Grid item xs={12}>
-            <FormControl variant="outlined" fullWidth margin="normal" required>
-              <InputLabel>Categoría</InputLabel>
-              <Select label="Categoría">
-                <MenuItem value="forestacion">Reforestación</MenuItem>
-                <MenuItem value="responsabilidad-social">
-                  Responsabilidad Social
-                </MenuItem>
-                <MenuItem value="caridad">Caridad</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          {/* Descripción del evento */}
-          <Grid item xs={12}>
-            <TextField
-              label="Descripción del evento"
-              multiline
-              rows={4}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-            />
-          </Grid>
-
-          {/* Instrucciones */}
-          <Grid item xs={12}>
-            <TextField
-              label="Instrucciones"
-              multiline
-              rows={4}
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              required
-            />
-          </Grid>
+            <Typography variant="h4">Imagen del evento</Typography>
+            <Paper sx={{ padding: 2 }} elevation={0}>
+              <DropZone accept="image/*" label="Arrastra una imagen aqui" />
+            </Paper>
+          </Stack>
         </Grid>
-
-        {/* Botones */}
-        <Box display="flex" justifyContent="flex-end" mt={3}>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={handleCancel}
-            sx={{
-              textTransform: "none",
-            }}
-          >
-            Cancelar
-          </Button>
-          <Box ml={2}>
-            <Button
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-                background: theme.palette.primary.highlight,
-              }}
-            >
-              Crear Evento
+        <Grid item xs={12} md={4}>
+          <Stack spacing={2}>
+            <Typography variant="h4">Datos del evento</Typography>
+            <Paper sx={{ padding: 2 }} elevation={0}>
+              <Stack spacing={2}>
+                <TextField
+                  label="Fecha de inicio"
+                  fullWidth
+                  type={dateType}
+                  onFocus={() => setDateType("date")}
+                  onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                    if (!e.target.value) {
+                      setDateType("text");
+                    }
+                  }}
+                />
+                <TextField
+                  label="Duracion del evento"
+                  fullWidth
+                  type={timeType}
+                  onFocus={() => setTimeType("time")}
+                  onBlur={(e: FocusEvent<HTMLInputElement>) => {
+                    if (!e.target.value) {
+                      setTimeType("text");
+                    }
+                  }}
+                />
+              </Stack>
+            </Paper>
+            <Button variant="text">Cancelar</Button>
+            <Button variant="contained" size="small">
+              Publicar evento
             </Button>
-          </Box>
-        </Box>
-      </Paper>
+            <Typography variant="h4">Ubicacion</Typography>
+            <Paper sx={{ padding: 2 }} elevation={0}>
+              <TextField label="Nombre del lugar" fullWidth />
+            </Paper>
+
+            <Typography variant="h4">Categoria</Typography>
+            <Paper sx={{ padding: 2 }} elevation={0}>
+              <DropdownCategories />
+            </Paper>
+          </Stack>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
