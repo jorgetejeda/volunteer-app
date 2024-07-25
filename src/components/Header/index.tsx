@@ -12,8 +12,8 @@ import {
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { TransitionLink } from "../TransitionLink";
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -41,7 +41,7 @@ export const Header = () => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <Box sx={{cursor: "pointer"}} onClick={() => router.push("/")}>
+            <TransitionLink href="/" passHref>
             <Image
               src="/assets/Logo.png"
               alt="Logo"
@@ -49,7 +49,7 @@ export const Header = () => {
               height={32}
               priority
             />
-            </Box>
+            </TransitionLink>
             <Box display="flex">
               <Box
                 id="fade-button"
@@ -73,20 +73,20 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <Link
+                <TransitionLink
                   href="/events/create"
                   passHref
                   style={{ textDecoration: "none" }}
                 >
                   <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
-                </Link>
-                <Link
+                </TransitionLink>
+                <TransitionLink
                   href="/events"
                   passHref
                   style={{ textDecoration: "none" }}
                 >
                   <MenuItem onClick={handleClose}>Mis eventos</MenuItem>
-                </Link>
+                </TransitionLink>
                 <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
               </Menu>
               <NotificationsNoneIcon
