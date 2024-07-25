@@ -6,8 +6,9 @@ const StyledButton = styled(MuiButton)`
   border-radius: 5em;
   box-shadow: none;
   margin-top: 8px;
-  &:hover {
-    background-color: ${({ theme }) => theme.palette.primary.highlight};
+    &:hover {
+    background-color: 'transparent';
+  }
   }
 `;
 

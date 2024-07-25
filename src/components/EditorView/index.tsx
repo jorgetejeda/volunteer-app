@@ -1,25 +1,30 @@
 import React, { useState } from "react";
-import Editor from "react-simple-wysiwyg";
+import Editor, { ContentEditableEvent } from "react-simple-wysiwyg";
 
-export const EditorView = () => {
-  const [html, setHtml] = useState("my <b>content</b>");
-  const customStyle = {
-    style: {
-      resize: "vertical",
-    },
-  };
-  const handleChange = (e) => {
+type EditorViewProps = {
+  placeholder: string;
+  onChange?: (value: string) => void;
+};
+export const EditorView = ({ placeholder, onChange }: EditorViewProps) => {
+  const [html, setHtml] = useState(placeholder || "");
+  
+  const handleChange = (e: ContentEditableEvent) => {
     setHtml(e.target.value);
+    onChange && onChange(e.target.value);
   };
 
   return (
-    <Editor containerProps={{
-      style: {
-        height: "300px",
-        background: "#fff",
-      },
-    }} value={html} onChange={handleChange} />
+    <Editor
+      containerProps={{
+        style: {
+          resize: "vertical",
+          height: "300px",
+          overflow: "auto",
+          backgroundColor: "#fff",
+        },
+      }}
+      value={html}
+      onChange={handleChange}
+    />
   );
 };
-
-

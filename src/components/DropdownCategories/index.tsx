@@ -14,6 +14,7 @@ import {
   DialogTitle,
   CircularProgress,
   Stack,
+  Checkbox,
 } from "@mui/material";
 import {
   Circle as CircleIcon,
@@ -28,6 +29,7 @@ import { Button } from "@/components";
 
 // Define el tipo para una categoría
 interface Category {
+  id: string;
   name: string;
   color: string;
 }
@@ -37,7 +39,13 @@ interface FormValues {
   color: string;
 }
 
-export const DropdownCategories: React.FC = () => {
+interface DropdownCategoriesProps {
+  onChange: (categoryId: string) => void;
+}
+
+export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
+  onChange,
+}) => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
@@ -45,10 +53,13 @@ export const DropdownCategories: React.FC = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryColor, setCategoryColor] = useState<string>("#000000");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null,
+  );
 
   const {
     register,
-    handleSubmit,
+    handleSubmit: handleCategorySubmit,
     setValue,
     getValues,
     reset,
@@ -62,10 +73,13 @@ export const DropdownCategories: React.FC = () => {
         editIndex !== null
           ? categories.map((category, index) =>
               index === editIndex
-                ? { name: data.name, color: data.color }
+                ? { ...category, name: data.name, color: data.color }
                 : category,
             )
-          : [...categories, { name: data.name, color: data.color }];
+          : [
+              ...categories,
+              { id: Date.now().toString(), name: data.name, color: data.color },
+            ];
 
       // Simulación de llamada al backend
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -120,13 +134,18 @@ export const DropdownCategories: React.FC = () => {
     reset();
   };
 
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    onChange(categoryId);
+  };
+
   return (
     <Box>
       {categories.length > 0 && (
         <List sx={{ marginBottom: 1 }}>
           {categories.map((category, index) => (
             <ListItem
-              key={index}
+              key={category.id}
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -134,7 +153,11 @@ export const DropdownCategories: React.FC = () => {
                 paddingRight: 0,
               }}
             >
-              <Box sx={{ display: "flex" }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Checkbox
+                  checked={selectedCategoryId === category.id}
+                  onChange={() => handleCategorySelect(category.id)}
+                />
                 <CircleIcon sx={{ color: category.color, marginRight: 1 }} />
                 <ListItemText primary={category.name} />
               </Box>
@@ -161,7 +184,8 @@ export const DropdownCategories: React.FC = () => {
       {showForm && (
         <Box
           component="form"
-          onSubmit={handleSubmit(handleAddCategory)}
+          onSubmit={handleCategorySubmit(handleAddCategory)}
+          onClick={(e) => e.stopPropagation()}
           sx={{ marginTop: 2 }}
         >
           <TextField

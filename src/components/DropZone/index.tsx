@@ -1,23 +1,45 @@
+import React from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
-import React from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
-export const DropZone = ({ accept, label = "Drop image here", maxFiles = 5 }) => {
+interface DropZoneProps {
+  accept: string;
+  label?: string;
+  maxFiles?: number;
+  setValue: (
+    name: string,
+    value: any,
+    options?: Partial<{
+      shouldValidate: boolean;
+      shouldDirty: boolean;
+      shouldTouch: boolean;
+    }>,
+  ) => void;
+  clearErrors: (name?: string) => void;
+}
+
+export const DropZone: React.FC<DropZoneProps> = ({
+  accept,
+  label = "Drop image here",
+  maxFiles = 5,
+  setValue,
+  clearErrors,
+}) => {
   const [files, setFiles] = React.useState([]);
-  const [error, setError] = React.useState(null);
-  const [mainImage, setMainImage] = React.useState(null);
+  const [error, setError] = React.useState<string | null>(null);
+  const [mainImage, setMainImage] = React.useState<string | null>(null);
+
   const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "image/*": [],
-    },
+    accept: { "image/*": [] },
     onDrop: (acceptedFiles) => {
       setError(null);
+      clearErrors("imageName"); // clear form error on successful drop
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-        })
+        }),
       );
 
       if (files.length + newFiles.length > maxFiles) {
@@ -26,27 +48,42 @@ export const DropZone = ({ accept, label = "Drop image here", maxFiles = 5 }) =>
         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, ...validFiles];
           if (mainImage === null) setMainImage(updatedFiles[0].name);
+          setValue("imageName.images", updatedFiles);
+          setValue("imageName.mainImage", updatedFiles[0]?.preview);
           return updatedFiles;
         });
       } else {
         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, ...newFiles];
           if (mainImage === null) setMainImage(updatedFiles[0].name);
+          setValue("imageName.images", updatedFiles);
+          setValue("imageName.mainImage", updatedFiles[0]?.preview);
           return updatedFiles;
         });
       }
     },
   });
 
-  const removeFile = (fileName) => {
-    setFiles(files.filter((file) => file.name !== fileName));
-    if (mainImage === fileName) {
-      setMainImage(files.length > 1 ? files[0].name : null);
-    }
+  const removeFile = (fileName: string) => {
+    setFiles((prevFiles) => {
+      const updatedFiles = prevFiles.filter((file) => file.name !== fileName);
+      setValue("imageName.images", updatedFiles);
+      if (mainImage === fileName) {
+        const newMainImage =
+          updatedFiles.length > 0 ? updatedFiles[0].name : null;
+        setMainImage(newMainImage);
+        setValue(
+          "imageName.mainImage",
+          newMainImage ? updatedFiles[0]?.preview : null,
+        );
+      }
+      return updatedFiles;
+    });
   };
 
-  const handleMainImageChange = (fileName) => {
+  const handleMainImageChange = (fileName: string) => {
     setMainImage(fileName);
+    setValue("imageName.mainImage", fileName);
   };
 
   const thumbs = files.map((file) => (
@@ -57,21 +94,22 @@ export const DropZone = ({ accept, label = "Drop image here", maxFiles = 5 }) =>
         value={file.name}
         checked={mainImage === file.name}
         onChange={() => handleMainImageChange(file.name)}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
       <Box
         sx={{
           display: "inline-flex",
           position: "relative",
           borderRadius: 1,
-          border: mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
+          border:
+            mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
           marginBottom: 2,
           marginRight: 2,
           width: 100,
           height: 100,
           padding: 1,
           boxSizing: "border-box",
-          cursor: 'pointer'
+          cursor: "pointer",
         }}
       >
         <IconButton
@@ -144,4 +182,3 @@ export const DropZone = ({ accept, label = "Drop image here", maxFiles = 5 }) =>
     </Box>
   );
 };
-
