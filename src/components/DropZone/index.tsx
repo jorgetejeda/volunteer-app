@@ -162,7 +162,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       <Box {...getRootProps()}>
         <Typography variant="h5">{label}</Typography>
         <input {...getInputProps({ className: "dropzone" })} />
-        <Typography variant="body2">or click to select image</Typography>
+        <Typography variant="body2">o haz click para seleccionar las imagenes</Typography>
       </Box>
       {error && (
         <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
