@@ -13,9 +13,11 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const router = useRouter();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -39,6 +41,7 @@ export const Header = () => {
             justifyContent="space-between"
             alignItems="center"
           >
+            <Box sx={{cursor: "pointer"}} onClick={() => router.push("/")}>
             <Image
               src="/assets/Logo.png"
               alt="Logo"
@@ -46,6 +49,7 @@ export const Header = () => {
               height={32}
               priority
             />
+            </Box>
             <Box display="flex">
               <Box
                 id="fade-button"
