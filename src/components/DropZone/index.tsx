@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 
 interface DropZoneProps {
-  accept: string;
+  accept: Record<string, string | string | string[]>;
   label?: string;
   maxFiles?: number;
   setValue: (
@@ -32,7 +32,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   const [mainImage, setMainImage] = React.useState<string | null>(null);
 
   const { getRootProps, getInputProps } = useDropzone({
-    accept: { "image/*": [] },
+    accept,
     onDrop: (acceptedFiles) => {
       setError(null);
       clearErrors("imageName"); // clear form error on successful drop

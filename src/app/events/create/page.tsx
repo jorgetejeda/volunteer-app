@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Box, Paper, TextField, Typography, Grid, Stack } from "@mui/material";
@@ -45,13 +45,7 @@ const EventForm = () => {
   const [dateType, setDateType] = useState("text");
   const [timeType, setTimeType] = useState("text");
 
-  const {
-    register,
-    handleSubmit: handleEventSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<Event>({
+  const { register, handleSubmit, setValue, clearErrors, watch, formState: { errors } } = useForm<Event>({
     defaultValues: INITIAL_STATE,
   });
 
@@ -61,11 +55,7 @@ const EventForm = () => {
 
   return (
     <Box sx={{ marginTop: 4, marginBottom: 3 }}>
-      <Box
-        component="form"
-        onSubmit={handleEventSubmit(handleSave)}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <form onSubmit={handleSubmit(handleSave)}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
             <Stack spacing={2}>
@@ -90,11 +80,10 @@ const EventForm = () => {
               <Typography variant="h4">Imagen del evento</Typography>
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropZone
-                  accept="image/*"
+                  accept={{ "image/*": [] }}
                   label="Arrastra una imagen aqui"
-                  onDrop={(acceptedFiles) =>
-                    setValue("imageName.mainImage", acceptedFiles[0]?.preview)
-                  }
+                  setValue={setValue}
+                  clearErrors={clearErrors}
                 />
               </Paper>
             </Stack>
@@ -108,9 +97,7 @@ const EventForm = () => {
                     label="Fecha de inicio"
                     fullWidth
                     type={dateType}
-                    {...register("date", {
-                      required: "La fecha es obligatoria",
-                    })}
+                    {...register("date", { required: "La fecha es obligatoria" })}
                     onFocus={() => setDateType("date")}
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       if (!e.target.value) {
@@ -124,9 +111,7 @@ const EventForm = () => {
                     label="Hora inicio del evento"
                     fullWidth
                     type={timeType}
-                    {...register("time", {
-                      required: "La hora es obligatoria",
-                    })}
+                    {...register("time", { required: "La hora es obligatoria" })}
                     onFocus={() => setTimeType("time")}
                     onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                       if (!e.target.value) {
@@ -150,14 +135,10 @@ const EventForm = () => {
                 </Stack>
               </Paper>
               <Stack spacing={2} direction="row">
-                <Button
-                  variant="text"
-                  color="error"
-                  onClick={() => console.log("Cancel")}
-                >
+                <Button variant="text" color="error" onClick={() => console.log("Cancel")}>
                   Cancelar
                 </Button>
-                <Button variant="contained" size="small">
+                <Button type="submit" variant="contained" size="small">
                   Publicar evento
                 </Button>
               </Stack>
@@ -166,9 +147,7 @@ const EventForm = () => {
                 <CustomTextField
                   label="Nombre del lugar"
                   fullWidth
-                  {...register("location", {
-                    required: "La ubicación es obligatoria",
-                  })}
+                  {...register("location", { required: "La ubicación es obligatoria" })}
                   error={!!errors.location}
                   helperText={errors.location?.message}
                 />
@@ -176,17 +155,16 @@ const EventForm = () => {
               <Typography variant="h4">Categoria</Typography>
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropdownCategories
-                  onChange={(categoryId) =>
-                    setValue("category", parseInt(categoryId))
-                  }
+                  onChange={(categoryId) => setValue("category", parseInt(categoryId))}
                 />
               </Paper>
             </Stack>
           </Grid>
         </Grid>
-      </Box>
+      </form>
     </Box>
   );
 };
 
 export default EventForm;
+

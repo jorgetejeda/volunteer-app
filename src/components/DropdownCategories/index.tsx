@@ -61,7 +61,6 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     register,
     handleSubmit: handleCategorySubmit,
     setValue,
-    getValues,
     reset,
     formState: { errors },
   } = useForm<FormValues>();
@@ -149,8 +148,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
-                paddingLeft: 0,
-                paddingRight: 0,
+                padding: 0,
               }}
             >
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -178,16 +176,11 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
           ))}
         </List>
       )}
-      <Link component="button" variant="body1" onClick={toggleForm}>
+      <Button variant="text" onClick={toggleForm}>
         Agregar una categoria
-      </Link>
+      </Button>
       {showForm && (
-        <Box
-          component="form"
-          onSubmit={handleCategorySubmit(handleAddCategory)}
-          onClick={(e) => e.stopPropagation()}
-          sx={{ marginTop: 2 }}
-        >
+        <Box sx={{ marginTop: 2 }}>
           <TextField
             fullWidth
             label="Nombre de la categoria"
@@ -207,7 +200,11 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
             />
           </Box>
           <Stack direction="row" spacing={2}>
-            <Button type="submit" variant="contained" disabled={loading}>
+            <Button
+              variant="contained"
+              disabled={loading}
+              onClick={handleCategorySubmit(handleAddCategory)}
+            >
               {loading ? (
                 <CircularProgress size={24} />
               ) : editIndex !== null ? (
