@@ -6,9 +6,9 @@ const StyledButton = styled(MuiButton)`
   border-radius: 5em;
   box-shadow: none;
   margin-top: 8px;
-    &:hover {
+  text-transform: capitalize;
+  &:hover {
     background-color: 'transparent';
-  }
   }
 `;
 
