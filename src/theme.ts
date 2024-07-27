@@ -25,11 +25,9 @@ const theme = createTheme({
     },
     primary: {
       main: "#00B1CB",
-      accent: "#1F6527",
     },
-    inverted: {
-      main: "#FFFFFF",
-      accent: "#F5F6F8",
+    secondary:{
+      main: "#1F6527",
     },
     grey: {
       50: "#FCFAFE",
@@ -41,6 +39,9 @@ const theme = createTheme({
     text: {
       primary: "#241742",
       secondary: "#444444",
+    },
+    common: {
+      white: "#FFFFFF",
     },
   },
 
@@ -69,14 +70,15 @@ const theme = createTheme({
             },
           },
           "&.MuiButton-text": {
-            color: "#1F6527",
+            color: "#00B1CB",
             textDecoration: "underline",
             fontFamily: "Open Sans Variable",
             marginTop: "0",
             fontSize: "0.75rem",
           },
           "&:hover": {
-            backgroundColor: "transparent",
+            backgroundColor: "none",
+            boxShadow: "none",
           },
         },
       },

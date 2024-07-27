@@ -54,7 +54,7 @@ export const Footer = () => {
         }}
       >
         <Container maxWidth="lg">
-          <Typography variant="caption" color={theme.palette.inverted.main}>
+          <Typography variant="caption" color={theme.palette.common.white}>
             ©2024. Todos los derechos reservados
           </Typography>
         </Container>

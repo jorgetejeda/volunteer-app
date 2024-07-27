@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
-import { useDropzone } from "react-dropzone";
+import { Accept, useDropzone } from "react-dropzone";
 import Image from "next/image";
 
 interface DropZoneProps {
-  accept: Record<string, string | string | string[]>;
+  accept: Accept;
   label?: string;
   maxFiles?: number;
   setValue: (

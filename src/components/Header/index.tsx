@@ -1,23 +1,13 @@
 import React from "react";
 import Image from "next/image";
-import {
-  Container,
-  Box,
-  Paper,
-  SvgIcon,
-  Menu,
-  MenuItem,
-  Fade,
-} from "@mui/material";
+import { Container, Box, Paper, Menu, MenuItem, Fade } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
-import { useRouter } from "next/navigation";
-import { TransitionLink } from "../TransitionLink";
+import Link from "next/link";
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const router = useRouter();
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -41,15 +31,15 @@ export const Header = () => {
             justifyContent="space-between"
             alignItems="center"
           >
-            <TransitionLink href="/" passHref>
-            <Image
-              src="/assets/Logo_voluntariado.svg"
-              alt="Logo"
-              width={144}
-              height={40}
-              priority
-            />
-            </TransitionLink>
+            <Link href="/" passHref>
+              <Image
+                src="/assets/Logo_voluntariado.svg"
+                alt="Logo"
+                width={144}
+                height={40}
+                priority
+              />
+            </Link>
             <Box display="flex">
               <Box
                 id="fade-button"
@@ -60,7 +50,7 @@ export const Header = () => {
                 sx={{ cursor: "pointer" }}
               >
                 <PersonOutlineIcon
-                  sx={{ color: theme.palette.primary.accent }}
+                  sx={{ color: theme.palette.primary.main }}
                 />
               </Box>
               <Menu
@@ -73,24 +63,24 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <TransitionLink
+                <Link
                   href="/events/create"
                   passHref
                   style={{ textDecoration: "none" }}
                 >
                   <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
-                </TransitionLink>
-                <TransitionLink
+                </Link>
+                <Link
                   href="/events"
                   passHref
                   style={{ textDecoration: "none" }}
                 >
                   <MenuItem onClick={handleClose}>Mis eventos</MenuItem>
-                </TransitionLink>
+                </Link>
                 <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
               </Menu>
               <NotificationsNoneIcon
-                sx={{ color: theme.palette.primary.accent }}
+                sx={{ color: theme.palette.primary.main }}
               />
             </Box>
           </Box>
