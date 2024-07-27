@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Button as MuiButton,
   Checkbox,
   FormControlLabel,
   Backdrop,
@@ -24,7 +23,7 @@ import {
 import { DropZone, DropdownCategories, EditorView } from "@/components";
 import styled from "@emotion/styled";
 
-const CustomTextField = styled(TextField)(({ theme }:{ theme?: Theme}) => ({
+const CustomTextField = styled(TextField)(({ theme }: { theme?: Theme }) => ({
   backgroundColor: "white",
   borderRadius: "24px",
   outline: "none",
@@ -97,7 +96,7 @@ const EventForm = () => {
       // Simulación de llamada al backend
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setEventData(data);
-      console.log('Saved data:', data);
+      console.log("Saved data:", data);
       setOpenModal(true);
       reset(INITIAL_STATE);
     } catch (error) {
@@ -247,9 +246,7 @@ const EventForm = () => {
               <Typography variant="h4">Categoría</Typography>
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropdownCategories
-                  onChange={(categoryId) =>
-                    setValue("categoryId", categoryId)
-                  }
+                  onChange={(categoryId) => setValue("categoryId", categoryId)}
                 />
               </Paper>
               <Stack spacing={2} direction="row">
@@ -280,15 +277,18 @@ const EventForm = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <MuiButton onClick={handleCloseModal} color="primary">
+            <Button onClick={handleCloseModal} color="primary">
               OK
-            </MuiButton>
+            </Button>
           </DialogActions>
         </Dialog>
       )}
 
       <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          color: (theme) => theme.palette.common.white,
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
         open={loading}
       >
         <CircularProgress color="inherit" />

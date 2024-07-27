@@ -40,7 +40,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
         Object.assign(file, {
           preview: URL.createObjectURL(file),
         }),
-      );
+      ); 
 
       if (files.length + newFiles.length > maxFiles) {
         setError(`Only ${maxFiles} images are allowed`);
