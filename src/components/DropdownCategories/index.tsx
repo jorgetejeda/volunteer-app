@@ -15,6 +15,7 @@ import {
   CircularProgress,
   Stack,
   Checkbox,
+  Button,
 } from "@mui/material";
 import {
   Circle as CircleIcon,
@@ -23,7 +24,6 @@ import {
 } from "@mui/icons-material";
 import { MuiColorInput } from "mui-color-input";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Button } from "@/components";
 
 // Define el tipo para una categoría
 interface Category {

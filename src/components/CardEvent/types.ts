@@ -1,4 +1,3 @@
-import { ButtonVariant } from "../ButtonLink/types";
 
 export type CardEventProps = {
   image?: {
@@ -15,7 +14,7 @@ export type CardEventProps = {
     backgroundColor?: string;
   };
   redirect?: {
-    variant: ButtonVariant;
+    variant: string;
     label: string;
     to: string;
   };

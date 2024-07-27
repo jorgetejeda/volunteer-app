@@ -20,7 +20,7 @@ export const CardEvent = ({
   chip,
 }: CardEventProps) => {
   const elisisDescription =
-    description?.length > 70 ? `${description.slice(0, 100)}...` : description;
+    description && description?.length > 70 ? `${description.slice(0, 100)}...` : description;
 
   const EventDate = () => (
     <InformationLabel
