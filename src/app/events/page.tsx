@@ -1,14 +1,32 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Paper, Typography, Skeleton, Stack, IconButton, Menu, MenuItem, Divider, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, Button as MuiButton } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  Skeleton,
+  IconButton,
+  Menu,
+  MenuItem,
+  Divider,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  CircularProgress,
+  Button,
+} from "@mui/material";
 import { Card, CardMedia, CardContent, CardActions } from "@mui/material";
 import { Masonry } from "@mui/lab";
-import { CalendarMonthOutlined, LocationOnOutlined, MoreVert as MoreVertIcon } from "@mui/icons-material";
+import {
+  CalendarMonthOutlined,
+  LocationOnOutlined,
+  MoreVert as MoreVertIcon,
+} from "@mui/icons-material";
 import {
   CategoryLabel,
   InformationLabel,
-  Button,
-  TransitionLink,
 } from "@/components";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
@@ -35,7 +53,10 @@ export default function EventPage() {
     fetchData();
   }, []);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    index: number,
+  ) => {
     setAnchorEl(event.currentTarget);
     setCurrentEvent(index);
   };
@@ -48,9 +69,13 @@ export default function EventPage() {
   const handlePublish = () => {
     setActionLoading(true);
     setTimeout(() => {
-      setEvents(events.map((event, index) => (
-        index === currentEvent ? { ...event, published: !event.published } : event
-      )));
+      setEvents(
+        events.map((event, index) =>
+          index === currentEvent
+            ? { ...event, published: !event.published }
+            : event,
+        ),
+      );
       setActionLoading(false);
       handleMenuClose();
     }, 2000); // Simulación de tiempo de carga
@@ -84,15 +109,15 @@ export default function EventPage() {
       {actionLoading && (
         <Box
           sx={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
             zIndex: 9999,
           }}
         >
@@ -125,26 +150,39 @@ export default function EventPage() {
                     position: "relative",
                   }}
                 >
-                  <Box sx={{ position: 'relative' }}>
+                  <Box sx={{ position: "relative" }}>
                     <CardMedia
                       component="img"
                       height="150"
                       image={event.imageUrl}
                       alt="Event"
-                      sx={{ width: '100%', height: '150px', objectFit: 'cover' }}
+                      sx={{
+                        width: "100%",
+                        height: "150px",
+                        objectFit: "cover",
+                      }}
                     />
                     <Box
                       sx={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 0,
                         left: 0,
                         right: 0,
-                        height: '100%',
-                        background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))',
+                        height: "100%",
+                        background:
+                          "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))",
                       }}
                     />
                   </Box>
-                  <Box sx={{ position: "absolute", right: 0, padding: 1, display: 'flex', alignItems: 'center' }}>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      right: 0,
+                      padding: 1,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <CategoryLabel
                       label={event.chip.label}
                       textColor={event.chip.textColor}
@@ -155,7 +193,11 @@ export default function EventPage() {
                       aria-controls="long-menu"
                       aria-haspopup="true"
                       onClick={(e) => handleMenuOpen(e, index)}
-                      sx={{ color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.7)', marginLeft: 1 }}
+                      sx={{
+                        color: "white",
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        marginLeft: 1,
+                      }}
                     >
                       <MoreVertIcon />
                     </IconButton>
@@ -191,7 +233,6 @@ export default function EventPage() {
 
                     <Typography
                       variant="h4"
-                      color={theme.palette.text.highlight}
                     >
                       {event.name}
                     </Typography>
@@ -213,37 +254,36 @@ export default function EventPage() {
                     />
                   </CardContent>
                   <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
-                    <TransitionLink href={`/events/${index + 1}`} passHref>
-                      <Button component="a" variant="text">
-                        Ver Detalle
-                      </Button>
-                    </TransitionLink>
+                    <Button
+                      component="a"
+                      variant="contained"
+                      href={`/events/${index + 1}`}
+                    >
+                      Ver Detalle
+                    </Button>
                   </CardActions>
                 </Card>
               </Paper>
             ))}
       </Masonry>
 
-      <Dialog
-        open={dialogOpen}
-        onClose={cancelDelete}
-      >
+      <Dialog open={dialogOpen} onClose={cancelDelete}>
         <DialogTitle>Eliminar Evento</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro que deseas eliminar el evento {currentEvent !== null && events[currentEvent].name}?
+            ¿Estás seguro que deseas eliminar el evento{" "}
+            {currentEvent !== null && events[currentEvent].name}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <MuiButton onClick={cancelDelete} color="primary">
+          <Button onClick={cancelDelete} color="primary">
             Cancelar
-          </MuiButton>
-          <MuiButton onClick={confirmDelete} color="primary" autoFocus>
+          </Button>
+          <Button onClick={confirmDelete} color="primary" autoFocus>
             Eliminar
-          </MuiButton>
+          </Button>
         </DialogActions>
       </Dialog>
     </>
   );
 }
-

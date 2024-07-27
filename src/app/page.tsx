@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Grid, Paper, Box, Typography, Container, Button } from "@mui/material";
+import { Grid, Paper, Box, Typography, Button } from "@mui/material";
 import theme from "@/theme";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -9,7 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
-import { ButtonLink, CardEvent } from "@/components";
+import { CardEvent } from "@/components";
 import { ButtonVariant } from "@/components/ButtonLink/types";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
@@ -77,7 +77,9 @@ export default function Home() {
                   marginBottom={2}
                 >
                   <Typography variant="h3">Proximos eventos</Typography>
-                  <ButtonLink to="/events" label="Ver todos" />
+                  <Button component="a" href="/events" variant="text">
+                    Ver todos
+                  </Button>
                 </Box>
 
                 <Box display="flex" gap={3} flexDirection="column">
@@ -108,10 +110,7 @@ export default function Home() {
                   <Typography variant="body1" color={theme.palette.grey[200]}>
                     Horas Acumuladas
                   </Typography>
-                  <Typography
-                    variant="h1"
-                    color={theme.palette.primary.highlight}
-                  >
+                  <Typography variant="h1" color={theme.palette.primary.main}>
                     120
                   </Typography>
                 </Box>
@@ -125,7 +124,9 @@ export default function Home() {
                   marginBottom={4}
                 >
                   <Typography variant="h3">Galeria</Typography>
-                  <ButtonLink to="/events" label="Ver todas las imagenes" />
+                  <Button component="a" href="/events" variant="text">
+                    Ver todas las imagenes
+                  </Button>
                 </Box>
                 <AutoPlaySwipeableViews
                   axis={theme.direction === "rtl" ? "x-reverse" : "x"}

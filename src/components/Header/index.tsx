@@ -43,10 +43,10 @@ export const Header = () => {
           >
             <TransitionLink href="/" passHref>
             <Image
-              src="/assets/Logo.png"
+              src="/assets/Logo_voluntariado.svg"
               alt="Logo"
-              width={32}
-              height={32}
+              width={144}
+              height={40}
               priority
             />
             </TransitionLink>

@@ -27,7 +27,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   setValue,
   clearErrors,
 }) => {
-  const [files, setFiles] = React.useState([]);
+  const [files, setFiles] = React.useState<File[]>([]);
   const [error, setError] = React.useState<string | null>(null);
   const [mainImage, setMainImage] = React.useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
     accept,
     onDrop: (acceptedFiles) => {
       setError(null);
-      clearErrors("imageName"); // clear form error on successful drop
+      clearErrors("images"); // clear form error on successful drop
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
@@ -47,17 +47,21 @@ export const DropZone: React.FC<DropZoneProps> = ({
         const validFiles = newFiles.slice(0, maxFiles - files.length);
         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, ...validFiles];
-          if (mainImage === null) setMainImage(updatedFiles[0].name);
-          setValue("imageName.images", updatedFiles);
-          setValue("imageName.mainImage", updatedFiles[0]?.preview);
+          if (mainImage === null && updatedFiles.length > 0) {
+            setMainImage(updatedFiles[0].name);
+          }
+          setValue("images", updatedFiles);
+          setValue("mainImage", updatedFiles[0]?.name);
           return updatedFiles;
         });
       } else {
         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, ...newFiles];
-          if (mainImage === null) setMainImage(updatedFiles[0].name);
-          setValue("imageName.images", updatedFiles);
-          setValue("imageName.mainImage", updatedFiles[0]?.preview);
+          if (mainImage === null && updatedFiles.length > 0) {
+            setMainImage(updatedFiles[0].name);
+          }
+          setValue("images", updatedFiles);
+          setValue("mainImage", updatedFiles[0]?.name);
           return updatedFiles;
         });
       }
@@ -67,15 +71,11 @@ export const DropZone: React.FC<DropZoneProps> = ({
   const removeFile = (fileName: string) => {
     setFiles((prevFiles) => {
       const updatedFiles = prevFiles.filter((file) => file.name !== fileName);
-      setValue("imageName.images", updatedFiles);
+      setValue("images", updatedFiles);
       if (mainImage === fileName) {
-        const newMainImage =
-          updatedFiles.length > 0 ? updatedFiles[0].name : null;
+        const newMainImage = updatedFiles.length > 0 ? updatedFiles[0].name : null;
         setMainImage(newMainImage);
-        setValue(
-          "imageName.mainImage",
-          newMainImage ? updatedFiles[0]?.preview : null,
-        );
+        setValue("mainImage", newMainImage);
       }
       return updatedFiles;
     });
@@ -83,7 +83,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   const handleMainImageChange = (fileName: string) => {
     setMainImage(fileName);
-    setValue("imageName.mainImage", fileName);
+    setValue("mainImage", fileName);
   };
 
   const thumbs = files.map((file) => (
@@ -101,8 +101,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
           display: "inline-flex",
           position: "relative",
           borderRadius: 1,
-          border:
-            mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
+          border: mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
           marginBottom: 2,
           marginRight: 2,
           width: 100,
@@ -162,7 +161,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       <Box {...getRootProps()}>
         <Typography variant="h5">{label}</Typography>
         <input {...getInputProps({ className: "dropzone" })} />
-        <Typography variant="body2">o haz click para seleccionar las imagenes</Typography>
+        <Typography variant="body2">o haz click para seleccionar las imágenes</Typography>
       </Box>
       {error && (
         <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>
@@ -182,3 +181,4 @@ export const DropZone: React.FC<DropZoneProps> = ({
     </Box>
   );
 };
+

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
@@ -18,11 +18,13 @@ import {
   FormControlLabel,
   Backdrop,
   CircularProgress,
+  Theme,
+  Button,
 } from "@mui/material";
-import { Button, DropZone, DropdownCategories, EditorView } from "@/components";
+import { DropZone, DropdownCategories, EditorView } from "@/components";
 import styled from "@emotion/styled";
 
-const CustomTextField = styled(TextField)(({ theme }) => ({
+const CustomTextField = styled(TextField)(({ theme }:{ theme?: Theme}) => ({
   backgroundColor: "white",
   borderRadius: "24px",
   outline: "none",
@@ -32,39 +34,49 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       borderRadius: "24px",
     },
     "&:hover fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme?.palette.primary.main,
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme?.palette.primary.main,
     },
   },
 }));
 
-interface Event {
-  id: number;
+interface EventData {
   title: string;
-  imageName: {
-    mainImage: string;
-    images: string[];
-  };
   description: string;
   instructions: string;
-  date: string;
+  categoryId: string;
   time: string;
+  date: string;
+  quota: number;
   location: string;
-  category: number;
-  duration?: number;
+  duration: number;
   allDay: boolean;
-  usersQuantity: number;
+  mainImage: string;
+  images: File[];
 }
 
-const INITIAL_STATE: Event = {} as Event;
+const INITIAL_STATE: EventData = {
+  title: "",
+  description: "",
+  instructions: "",
+  categoryId: "",
+  time: "",
+  date: "",
+  quota: 0,
+  location: "",
+  duration: 0,
+  allDay: false,
+  mainImage: "",
+  images: [],
+};
 
 const EventForm = () => {
   const [dateType, setDateType] = useState("text");
   const [timeType, setTimeType] = useState("text");
   const [openModal, setOpenModal] = useState(false);
-  const [eventData, setEventData] = useState<Event | null>(null);
+  const [eventData, setEventData] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
 
@@ -75,16 +87,17 @@ const EventForm = () => {
     clearErrors,
     formState: { errors },
     reset,
-  } = useForm<Event>({
+  } = useForm<EventData>({
     defaultValues: INITIAL_STATE,
   });
 
-  const handleSave: SubmitHandler<Event> = async (data) => {
+  const handleSave: SubmitHandler<EventData> = async (data) => {
     setLoading(true);
     try {
       // Simulación de llamada al backend
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setEventData(data);
+      console.log('Saved data:', data);
       setOpenModal(true);
       reset(INITIAL_STATE);
     } catch (error) {
@@ -103,7 +116,7 @@ const EventForm = () => {
     const checked = event.target.checked;
     setIsAllDay(checked);
     if (checked) {
-      setValue("duration", undefined);
+      setValue("duration", 0);
     }
   };
 
@@ -135,7 +148,7 @@ const EventForm = () => {
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropZone
                   accept={{ "image/*": [] }}
-                  label="Arrastra una imagen aqui"
+                  label="Arrastra una imagen aquí"
                   setValue={setValue}
                   clearErrors={clearErrors}
                 />
@@ -210,12 +223,12 @@ const EventForm = () => {
                   label="Cupos"
                   fullWidth
                   type="number"
-                  {...register("usersQuantity", {
+                  {...register("quota", {
                     required: "La cantidad de personas es obligatoria",
                     valueAsNumber: true,
                   })}
-                  error={!!errors.usersQuantity}
-                  helperText={errors.usersQuantity?.message}
+                  error={!!errors.quota}
+                  helperText={errors.quota?.message}
                 />
               </Paper>
 
@@ -235,7 +248,7 @@ const EventForm = () => {
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropdownCategories
                   onChange={(categoryId) =>
-                    setValue("category", parseInt(categoryId))
+                    setValue("categoryId", categoryId)
                   }
                 />
               </Paper>

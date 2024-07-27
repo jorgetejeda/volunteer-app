@@ -1,10 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import { Box, Chip, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 // Icons
 import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
-// Components
-import { ButtonLink } from "../ButtonLink";
 // Types
 import { CardEventProps } from "./types";
 // Styles
@@ -77,9 +75,7 @@ export const CardEvent = ({
             )}
 
             <Box>
-              <Typography variant="h4" color={theme.palette.text.highlight}>
-                {name}
-              </Typography>
+              <Typography variant="h4">{name}</Typography>
             </Box>
 
             {!chip && (
@@ -106,11 +102,9 @@ export const CardEvent = ({
             {chip && <Location />}
             {redirect && (
               <Box marginTop={1}>
-                <ButtonLink
-                  variant={redirect.variant}
-                  label={redirect.label}
-                  to={redirect.to}
-                />
+                <Button component="a" href={redirect.to} variant="contained">
+                  {redirect.label}
+                </Button>
               </Box>
             )}
           </Box>

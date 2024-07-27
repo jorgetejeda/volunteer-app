@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   TextField,
@@ -6,7 +7,6 @@ import {
   ListItem,
   ListItemText,
   IconButton,
-  Link,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,26 +21,24 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
-
 import { MuiColorInput } from "mui-color-input";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { Button } from "@/components";
 
 // Define el tipo para una categoría
 interface Category {
-  id: string;
-  name: string;
+  id: number; // Mantener como número
+  title: string;
   color: string;
 }
 
 interface FormValues {
-  name: string;
+  title: string;
   color: string;
 }
 
 interface DropdownCategoriesProps {
-  onChange: (categoryId: string) => void;
+  onChange: (categoryId: number) => void; // Cambiado a número
 }
 
 export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
@@ -53,9 +51,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryColor, setCategoryColor] = useState<string>("#000000");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null,
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null); // Cambiado a número
 
   const {
     register,
@@ -72,12 +68,12 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
         editIndex !== null
           ? categories.map((category, index) =>
               index === editIndex
-                ? { ...category, name: data.name, color: data.color }
+                ? { ...category, title: data.title, color: data.color }
                 : category,
             )
           : [
               ...categories,
-              { id: Date.now().toString(), name: data.name, color: data.color },
+              { id: Date.now(), title: data.title, color: data.color }, // Cambiado a número
             ];
 
       // Simulación de llamada al backend
@@ -114,7 +110,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
 
   const handleEditCategory = (index: number) => {
     const category = categories[index];
-    setValue("name", category.name);
+    setValue("title", category.title);
     setCategoryColor(category.color);
     setValue("color", category.color);
     setEditIndex(index);
@@ -133,7 +129,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     reset();
   };
 
-  const handleCategorySelect = (categoryId: string) => {
+  const handleCategorySelect = (categoryId: number) => { // Cambiado a número
     setSelectedCategoryId(categoryId);
     onChange(categoryId);
   };
@@ -157,7 +153,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
                   onChange={() => handleCategorySelect(category.id)}
                 />
                 <CircleIcon sx={{ color: category.color, marginRight: 1 }} />
-                <ListItemText primary={category.name} />
+                <ListItemText primary={category.title} />
               </Box>
               <Box>
                 <IconButton onClick={() => handleEditCategory(index)}>
@@ -177,19 +173,19 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
         </List>
       )}
       <Button variant="text" onClick={toggleForm}>
-        Agregar una categoria
+        Agregar una categoría
       </Button>
       {showForm && (
         <Box sx={{ marginTop: 2 }}>
           <TextField
             fullWidth
-            label="Nombre de la categoria"
-            {...register("name", {
+            label="Nombre de la categoría"
+            {...register("title", {
               required: "El nombre de la categoría es obligatorio",
             })}
             sx={{ marginBottom: 2 }}
-            error={!!errors.name}
-            helperText={errors.name?.message}
+            error={!!errors.title}
+            helperText={errors.title?.message}
           />
           <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
             <MuiColorInput

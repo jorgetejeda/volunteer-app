@@ -4,11 +4,11 @@ import { ButtonVariant } from "./types";
 export const LinkButtonStyled = (variant: ButtonVariant) => ({
   fontSize: ".75rem",
   ...(variant == ButtonVariant.Text && {
-    color: theme.palette.text.accent,
+    color: theme.palette.primary.main,
   }),
   ...(variant == ButtonVariant.Contained && {
     display: "inline-block",
-    backgroundColor: theme.palette.primary.highlight,
+    backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     textDecoration: "none",
     textAlign: "center",

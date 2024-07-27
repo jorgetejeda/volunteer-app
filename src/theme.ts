@@ -1,6 +1,8 @@
 "use client";
 import { createTheme } from "@mui/material/styles";
 import localFont from "next/font/local";
+// Supports weights 300-800
+import "@fontsource-variable/open-sans";
 
 const gilroyFont = localFont({
   src: [
@@ -22,9 +24,8 @@ const theme = createTheme({
       default: "#F5F6F8",
     },
     primary: {
-      main: "#24A49E",
+      main: "#00B1CB",
       accent: "#1F6527",
-      highlight: "#00B1CB",
     },
     inverted: {
       main: "#FFFFFF",
@@ -38,15 +39,11 @@ const theme = createTheme({
       400: "#252223",
     },
     text: {
-      accent: "#1F6527",
-      highlight: "#241742",
-      primary: "#252223",
+      primary: "#241742",
       secondary: "#444444",
     },
   },
-  typography: {
-    fontFamily: "Open Sans, sans-serif, Gilroy",
-  },
+
   components: {
     MuiAlert: {
       styleOverrides: {
@@ -57,13 +54,41 @@ const theme = createTheme({
         }),
       },
     },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "5em",
+          boxShadow: "none",
+          marginTop: "8px",
+          fontFamily: gilroyFont.style.fontFamily,
+          textTransform: "none",
+          "&.MuiButton-contained": {
+            color: "#FFFFFF",
+            "&:hover": {
+              backgroundColor: "none",
+            },
+          },
+          "&.MuiButton-text": {
+            color: "#1F6527",
+            textDecoration: "underline",
+            fontFamily: "Open Sans Variable",
+            marginTop: "0",
+            fontSize: "0.75rem",
+          },
+          "&:hover": {
+            backgroundColor: "transparent",
+          },
+        },
+      },
+    },
   },
-}as any);
+});
 
 theme.typography.h1 = {
   fontFamily: gilroyFont.style.fontFamily,
   fontSize: "2.25rem",
   lineHeight: "2.5rem",
+  color: theme.palette.text.primary,
 };
 
 theme.typography.h3 = {
@@ -84,6 +109,7 @@ theme.typography.h4 = {
 
 theme.typography.body1 = {
   fontSize: ".75rem",
+  fontFamily: "Open Sans Variable",
   fontWeight: 400,
   lineHeight: "1rem",
   color: theme.palette.text.secondary,
@@ -91,6 +117,7 @@ theme.typography.body1 = {
 
 theme.typography.caption = {
   fontSize: "0.75rem",
+  fontFamily: "Open Sans Variable",
   fontWeight: 400,
   lineHeight: "1rem",
   color: theme.palette.grey[200],

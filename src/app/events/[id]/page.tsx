@@ -7,12 +7,10 @@ import {
   Menu,
 } from "@mui/icons-material";
 import {
-  ButtonLink,
-  Button,
   InformationLabel,
   CategoryLabel,
 } from "@/components";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import theme from "@/theme";
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -21,7 +19,9 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <>
       <Box marginTop={3} marginBottom={2}>
-        <ButtonLink to="/events" label="Volver a eventos" />
+        <Button component="a" href="/events" variant="text">
+          Volver a eventos
+        </Button>
       </Box>
       <Box
         height={250}
@@ -41,7 +41,6 @@ export default function Page({ params }: { params: { id: string } }) {
         <CategoryLabel label="Reforestación" />
         <Typography
           variant="h1"
-          color={theme.palette.text.highlight as any}
           marginTop={1}
         >
           Nombre del evento {params.id}
@@ -52,13 +51,13 @@ export default function Page({ params }: { params: { id: string } }) {
         <Grid item sm={12} md={7}>
           <Paper elevation={0} sx={{ padding: 3 }}>
             <Box display="flex" flexDirection="column" gap={2}>
-              <Typography variant="body1" color={theme.palette.text.secondary}>
+              <Typography variant="body1">
                 lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
                 nisi ut aliquip ex ea commodo consequat.
               </Typography>
-              <Typography variant="body1" color={theme.palette.text.secondary}>
+              <Typography variant="body1">
                 Duis aute irure dolor in reprehenderit in voluptate velit esse
                 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
                 cupidatat non proident, sunt in culpa qui officia deserunt
@@ -68,10 +67,6 @@ export default function Page({ params }: { params: { id: string } }) {
                 <Button
                   variant="contained"
                   size="small"
-                  sx={{
-                    textTransform: "none",
-                    background: theme.palette.primary.highlight as any,
-                  }}
                 >
                   Quiero participar
                 </Button>
@@ -85,7 +80,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: CalendarMonthOutlined,
-                  color: theme.palette.primary.highlight as any,
+                  color: theme.palette.primary.main,
                 }}
                 label="7/2/2021"
               />
@@ -93,7 +88,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: LocationOnOutlined,
-                  color: theme.palette.primary.highlight as any,
+                  color: theme.palette.primary.main,
                 }}
                 label="36 Paramount Drive, Raynham MA 276"
               />
@@ -101,7 +96,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 label="Instrucciones"
                 icon={{
-                  color: theme.palette.primary.highlight,
+                  color: theme.palette.primary.main,
                   component: Menu,
                 }}
               />
