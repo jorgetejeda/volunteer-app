@@ -1,18 +1,17 @@
-
 "use client";
 import React, { useState, useEffect } from "react";
-import { Box, Paper, Typography, Skeleton, Stack, IconButton, Menu, MenuItem, Divider } from "@mui/material";
+import { Box, Paper, Typography, Skeleton, Stack, IconButton, Menu, MenuItem, Divider, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, Button as MuiButton } from "@mui/material";
 import { Card, CardMedia, CardContent, CardActions } from "@mui/material";
 import { Masonry } from "@mui/lab";
 import { CalendarMonthOutlined, LocationOnOutlined, MoreVert as MoreVertIcon } from "@mui/icons-material";
 import {
-  ButtonLink,
   CategoryLabel,
   InformationLabel,
   Button,
   TransitionLink,
 } from "@/components";
 import theme from "@/theme";
+import { useRouter } from "next/navigation";
 import eventData from "../../data/event.json";
 
 export default function EventPage() {
@@ -20,31 +19,9 @@ export default function EventPage() {
   const [events, setEvents] = useState([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentEvent, setCurrentEvent] = useState<number | null>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
-    setAnchorEl(event.currentTarget);
-    setCurrentEvent(index);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setCurrentEvent(null);
-  };
-
-  const handlePublish = () => {
-    console.log('Publish event', currentEvent);
-    handleMenuClose();
-  };
-
-  const handleEdit = () => {
-    console.log('Edit event', currentEvent);
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    console.log('Delete event', currentEvent);
-    handleMenuClose();
-  };
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,8 +35,70 @@ export default function EventPage() {
     fetchData();
   }, []);
 
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    setAnchorEl(event.currentTarget);
+    setCurrentEvent(index);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setCurrentEvent(null);
+  };
+
+  const handlePublish = () => {
+    setActionLoading(true);
+    setTimeout(() => {
+      setEvents(events.map((event, index) => (
+        index === currentEvent ? { ...event, published: !event.published } : event
+      )));
+      setActionLoading(false);
+      handleMenuClose();
+    }, 2000); // Simulación de tiempo de carga
+  };
+
+  const handleEdit = () => {
+    router.push("/events/create");
+  };
+
+  const handleDelete = () => {
+    setDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    setActionLoading(true);
+    setTimeout(() => {
+      setEvents(events.filter((_, index) => index !== currentEvent));
+      setActionLoading(false);
+      setDialogOpen(false);
+      handleMenuClose();
+    }, 2000); // Simulación de tiempo de carga
+  };
+
+  const cancelDelete = () => {
+    setDialogOpen(false);
+    handleMenuClose();
+  };
+
   return (
     <>
+      {actionLoading && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3} sx={{ margin: 0 }}>
         {loading
           ? Array.from({ length: 6 }).map((_, index) => (
@@ -125,7 +164,9 @@ export default function EventPage() {
                       open={Boolean(anchorEl) && currentEvent === index}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem onClick={handlePublish}>Publicar</MenuItem>
+                      <MenuItem onClick={handlePublish}>
+                        {event.published ? "Despublicar" : "Publicar"}
+                      </MenuItem>
                       <Divider />
                       <MenuItem onClick={handleEdit}>Editar</MenuItem>
                       <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
@@ -182,6 +223,27 @@ export default function EventPage() {
               </Paper>
             ))}
       </Masonry>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={cancelDelete}
+      >
+        <DialogTitle>Eliminar Evento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro que deseas eliminar el evento {currentEvent !== null && events[currentEvent].name}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <MuiButton onClick={cancelDelete} color="primary">
+            Cancelar
+          </MuiButton>
+          <MuiButton onClick={confirmDelete} color="primary" autoFocus>
+            Eliminar
+          </MuiButton>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
+

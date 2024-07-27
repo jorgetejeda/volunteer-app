@@ -185,7 +185,9 @@ const EventForm = () => {
                     type="number"
                     disabled={isAllDay}
                     {...register("duration", {
-                      required: !isAllDay ? "La duración es obligatoria" : false,
+                      required: !isAllDay
+                        ? "La duración es obligatoria"
+                        : false,
                       valueAsNumber: true,
                     })}
                     error={!!errors.duration}
@@ -259,9 +261,9 @@ const EventForm = () => {
           <DialogTitle>Evento creado</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              El evento "{eventData.title}" que empezará a la hora "
-              {eventData.time}" en el lugar "{eventData.location}" ha sido
-              creado.
+              El evento <b>{eventData.title}</b> que empezará a la hora{" "}
+              <b>{eventData.time}</b> en el lugar <b>{eventData.location}</b> ha
+              sido creado.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -283,4 +285,3 @@ const EventForm = () => {
 };
 
 export default EventForm;
-

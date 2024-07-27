@@ -58,7 +58,7 @@ const theme = createTheme({
       },
     },
   },
-});
+}as any);
 
 theme.typography.h1 = {
   fontFamily: gilroyFont.style.fontFamily,

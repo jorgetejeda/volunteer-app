@@ -224,7 +224,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
         <DialogContent>
           <DialogContentText>
             Si eliminas esta categoría, todos los eventos relacionados a dicha
-            categoría estarán mostrando un estatus de "sin categoría". ¿Estás
+            categoría estarán mostrando un estatus de (sin categoría). ¿Estás
             seguro de que quieres realizar esto?
           </DialogContentText>
         </DialogContent>

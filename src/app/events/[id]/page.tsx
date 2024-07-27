@@ -41,7 +41,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <CategoryLabel label="Reforestación" />
         <Typography
           variant="h1"
-          color={theme.palette.text.highlight}
+          color={theme.palette.text.highlight as any}
           marginTop={1}
         >
           Nombre del evento {params.id}
@@ -70,7 +70,7 @@ export default function Page({ params }: { params: { id: string } }) {
                   size="small"
                   sx={{
                     textTransform: "none",
-                    background: theme.palette.primary.highlight,
+                    background: theme.palette.primary.highlight as any,
                   }}
                 >
                   Quiero participar
@@ -85,7 +85,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: CalendarMonthOutlined,
-                  color: theme.palette.primary.highlight,
+                  color: theme.palette.primary.highlight as any,
                 }}
                 label="7/2/2021"
               />
@@ -93,7 +93,7 @@ export default function Page({ params }: { params: { id: string } }) {
               <InformationLabel
                 icon={{
                   component: LocationOnOutlined,
-                  color: theme.palette.primary.highlight,
+                  color: theme.palette.primary.highlight as any,
                 }}
                 label="36 Paramount Drive, Raynham MA 276"
               />
