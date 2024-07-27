@@ -146,9 +146,9 @@ const EventForm = () => {
               <Typography variant="h4">Imagen del evento</Typography>
               <Paper sx={{ padding: 2 }} elevation={0}>
                 <DropZone
-                  accept={{ "image/*": [] }}
+                  accept={{ "image/jpg": ['.jpg', '.jpeg'] }}
                   label="Arrastra una imagen aquí"
-                  setValue={(name, value) => setValue("images", value)}
+                  setValue={setValue as any}
                   clearErrors={() => clearErrors()}
                 />
               </Paper>

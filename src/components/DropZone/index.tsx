@@ -141,9 +141,9 @@ export const DropZone: React.FC<DropZoneProps> = ({
             width={100}
             height={100}
             layout="responsive"
-            src={file.preview}
+            src={(file as any).preview}
             alt="preview"
-            onLoad={() => URL.revokeObjectURL(file.preview)}
+            onLoad={() => URL.revokeObjectURL((file as any).preview)}
           />
         </Box>
       </Box>
@@ -152,7 +152,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   React.useEffect(() => {
     return () => {
-      files.forEach((file) => URL.revokeObjectURL(file.preview));
+      files.forEach((file) => URL.revokeObjectURL((file as any).preview));
     };
   }, [files]);
 
