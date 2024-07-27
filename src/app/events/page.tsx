@@ -30,11 +30,25 @@ import {
 } from "@/components";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
-import eventData from "../../data/event.json";
+
+type Event = {
+  published: boolean;
+  name: string;
+  date: string;
+  location: string;
+  chip: {
+    textColor: string | undefined;
+    label: string;
+    color: string;
+    backgroundColor: string;
+  };
+  description: string;
+  imageUrl: string;
+};
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentEvent, setCurrentEvent] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -45,7 +59,6 @@ export default function EventPage() {
     const fetchData = async () => {
       setLoading(true);
       setTimeout(() => {
-        setEvents(eventData); // Asigna los datos a tu estado
         setLoading(false);
       }, 2000); // Simulación de tiempo de carga
     };

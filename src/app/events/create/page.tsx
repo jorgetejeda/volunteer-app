@@ -45,7 +45,7 @@ interface EventData {
   title: string;
   description: string;
   instructions: string;
-  categoryId: string;
+  categoryId: number;
   time: string;
   date: string;
   quota: number;
@@ -60,7 +60,7 @@ const INITIAL_STATE: EventData = {
   title: "",
   description: "",
   instructions: "",
-  categoryId: "",
+  categoryId: 0,
   time: "",
   date: "",
   quota: 0,
@@ -148,8 +148,8 @@ const EventForm = () => {
                 <DropZone
                   accept={{ "image/*": [] }}
                   label="Arrastra una imagen aquí"
-                  setValue={setValue}
-                  clearErrors={clearErrors}
+                  setValue={(name, value) => setValue("images", value)}
+                  clearErrors={() => clearErrors()}
                 />
               </Paper>
             </Stack>

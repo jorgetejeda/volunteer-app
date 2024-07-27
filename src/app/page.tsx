@@ -10,7 +10,6 @@ import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
 import { CardEvent } from "@/components";
-import { ButtonVariant } from "@/components/ButtonLink/types";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -94,7 +93,7 @@ export default function Home() {
                         "
                         location="36 Paramount Drive, Raynham MA 2767"
                         redirect={{
-                          variant: "contained" as ButtonVariant,
+                          variant: "contained",
                           label: "Ver detalles",
                           to: `/events/${index + 1}`,
                         }}
