@@ -8,7 +8,6 @@ import { IHttp } from './http.contract';
 import {
     apiAuthInstance,
   apiInstance,
-  apiRegisterInstance,
   apiS3Instance,
   defaultHeaders,
 } from './http.instance';
@@ -20,7 +19,6 @@ const axiosInstances = new Map<string, AxiosInstance>([
   [ServicesInstanceEnum.API_INSTANCE, apiInstance],
   [ServicesInstanceEnum.API_S3, apiS3Instance],
   [ServicesInstanceEnum.API_AUTH, apiAuthInstance],
-  [ServicesInstanceEnum.API_REGISTER, apiRegisterInstance],
 ]);
 
 const tokenInterceptor = (config: any): any => {

@@ -31,6 +31,7 @@ import {
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
 import eventData from "../../data/event.json";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 type Event = {
   published: boolean;
@@ -48,6 +49,7 @@ type Event = {
 };
 
 export default function EventPage() {
+  const { isAdmin } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -203,6 +205,8 @@ export default function EventPage() {
                       textColor={event.chip.textColor}
                       backgroundColor={event.chip.backgroundColor}
                     />
+                  {isAdmin && (
+                    <Box>
                     <IconButton
                       aria-label="more"
                       aria-controls="long-menu"
@@ -228,6 +232,8 @@ export default function EventPage() {
                       <MenuItem onClick={handleEdit}>Editar</MenuItem>
                       <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
                     </Menu>
+                    </Box>
+                    )}
                   </Box>
 
                   <CardContent

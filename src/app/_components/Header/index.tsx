@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 import Image from "next/image";
 import {
@@ -35,20 +36,26 @@ const registerUser = async (data: {
 };
 
 export const Header = () => {
-  const { login,logout, isAuthenticated } = useAuthContext();
+  const { login, logout, isAuthenticated } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
     logout();
     setAnchorEl(null);
   };
 
   const handleLogin = useCallback(async () => {
     login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
-  }, []);
+  }, [login]);
 
   const handleRegister = useCallback(async () => {
     const data = await registerUser({
@@ -120,17 +127,17 @@ export const Header = () => {
                   <MenuItem onClick={handleClose}>Mis eventos</MenuItem>
                 </Link>
                 {!isAuthenticated ? (
-                  <>
+                  <Box>
                     <MenuItem onClick={handleLogin}>Iniciar sesión</MenuItem>
                     <MenuItem onClick={handleRegister}>
                       Registrarse
                     </MenuItem>
-                  </>
+                  </Box>
                 ) : (
-                  <>
+                  <Box>
                     <Divider />
-                    <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
-                  </>
+                    <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                  </Box>
                 )}
               </Menu>
               <NotificationsNoneIcon
