@@ -49,7 +49,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
       <Grid container spacing={2}>
         <Grid item sm={12} md={7}>
-          <Paper elevation={0} sx={{ padding: 3 }}>
+          <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={2}>
               <Typography variant="body1">
                 lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
@@ -75,7 +75,7 @@ export default function Page({ params }: { params: { id: string } }) {
           </Paper>
         </Grid>
         <Grid item sm={12} md={5}>
-          <Paper elevation={0} sx={{ padding: 3 }}>
+          <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={3}>
               <InformationLabel
                 icon={{

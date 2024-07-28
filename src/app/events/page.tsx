@@ -30,6 +30,7 @@ import {
 } from "@components/index";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
+import eventData from "../../data/event.json";
 
 type Event = {
   published: boolean;
@@ -59,6 +60,7 @@ export default function EventPage() {
     const fetchData = async () => {
       setLoading(true);
       setTimeout(() => {
+        setEvents(eventData)
         setLoading(false);
       }, 2000); // Simulación de tiempo de carga
     };
@@ -140,7 +142,7 @@ export default function EventPage() {
       <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3} sx={{ margin: 0 }}>
         {loading
           ? Array.from({ length: 6 }).map((_, index) => (
-              <Paper key={index} elevation={0}>
+              <Paper key={index}>
                 <Skeleton variant="rectangular" width="100%" height={150} />
                 <Box sx={{ padding: 2 }}>
                   <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
@@ -153,7 +155,7 @@ export default function EventPage() {
               </Paper>
             ))
           : events.map((event, index) => (
-              <Paper key={index} elevation={0}>
+              <Paper key={index}>
                 <Card
                   elevation={0}
                   sx={{
@@ -208,7 +210,7 @@ export default function EventPage() {
                       onClick={(e) => handleMenuOpen(e, index)}
                       sx={{
                         color: "white",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        backgroundColor: "rgba(255, 255, 255, 0.3)",
                         marginLeft: 1,
                       }}
                     >

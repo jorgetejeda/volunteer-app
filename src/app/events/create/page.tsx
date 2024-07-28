@@ -144,7 +144,7 @@ const EventForm = () => {
                 onChange={(value) => setValue("instructions", value)}
               />
               <Typography variant="h4">Imagen del evento</Typography>
-              <Paper sx={{ padding: 2 }} elevation={0}>
+              <Paper sx={{ padding: 2 }}>
                 <DropZone
                   accept={{ "image/jpg": ['.jpg', '.jpeg'] }}
                   label="Arrastra una imagen aquí"
@@ -157,7 +157,7 @@ const EventForm = () => {
           <Grid item xs={12} md={4}>
             <Stack spacing={2}>
               <Typography variant="h4">Datos del evento</Typography>
-              <Paper sx={{ padding: 2 }} elevation={0}>
+              <Paper sx={{ padding: 2 }}>
                 <Stack spacing={2}>
                   <CustomTextField
                     label="Fecha de inicio"
@@ -217,7 +217,7 @@ const EventForm = () => {
                 </Stack>
               </Paper>
               <Typography variant="h4">Cantidad de personas</Typography>
-              <Paper sx={{ padding: 2 }} elevation={0}>
+              <Paper sx={{ padding: 2 }}>
                 <CustomTextField
                   label="Cupos"
                   fullWidth
@@ -232,7 +232,7 @@ const EventForm = () => {
               </Paper>
 
               <Typography variant="h4">Ubicación</Typography>
-              <Paper sx={{ padding: 2 }} elevation={0}>
+              <Paper sx={{ padding: 2 }}>
                 <CustomTextField
                   label="Nombre del lugar"
                   fullWidth
@@ -244,7 +244,7 @@ const EventForm = () => {
                 />
               </Paper>
               <Typography variant="h4">Categoría</Typography>
-              <Paper sx={{ padding: 2 }} elevation={0}>
+              <Paper sx={{ padding: 2 }}>
                 <DropdownCategories
                   onChange={(categoryId) => setValue("categoryId", categoryId)}
                 />

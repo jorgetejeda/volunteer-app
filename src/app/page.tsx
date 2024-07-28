@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Grid, Paper, Box, Typography, Button } from "@mui/material";
+import { Grid, Paper, Box, Typography, Button, Stack } from "@mui/material";
 import theme from "@/theme";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -65,10 +65,7 @@ export default function Home() {
 
           <Grid container spacing={2}>
             <Grid item md={7} sm={12}>
-              <Paper
-                elevation={0}
-                sx={{ paddingTop: 3, paddingBottom: 4, paddingX: 2 }}
-              >
+              <Paper sx={{ padding: 2 }}>
                 <Box
                   display="flex"
                   justifyContent="space-between"
@@ -104,94 +101,96 @@ export default function Home() {
               </Paper>
             </Grid>
             <Grid item md={5} sm={12}>
-              <Paper elevation={0} sx={{ padding: 2 }}>
-                <Box display="flex" flexDirection="column" gap={1}>
-                  <Typography variant="body1" color={theme.palette.grey[200]}>
-                    Horas Acumuladas
-                  </Typography>
-                  <Typography variant="h1" color={theme.palette.primary.main}>
-                    120
-                  </Typography>
-                </Box>
-              </Paper>
+              <Stack spacing={2}>
+                <Paper sx={{ padding: 2 }}>
+                  <Box display="flex" flexDirection="column" gap={1}>
+                    <Typography variant="body1" color={theme.palette.grey[200]}>
+                      Horas Acumuladas
+                    </Typography>
+                    <Typography variant="h1" color={theme.palette.primary.main}>
+                      120
+                    </Typography>
+                  </Box>
+                </Paper>
 
-              <Paper elevation={0} sx={{ padding: 2, marginTop: 2 }}>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  marginBottom={4}
-                >
-                  <Typography variant="h3">Galeria</Typography>
-                  <Button component="a" href="/events" variant="text">
-                    Ver todas las imagenes
-                  </Button>
-                </Box>
-                <AutoPlaySwipeableViews
-                  axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                  index={activeStep}
-                  onChangeIndex={handleStepChange}
-                  enableMouseEvents
-                >
-                  {images.map((step, index) => (
-                    <div key={step.label}>
-                      {Math.abs(activeStep - index) <= 2 ? (
-                        <Box
-                          component="img"
-                          sx={{
-                            height: 232,
-                            display: "block",
-                            maxWidth: 400,
-                            overflow: "hidden",
-                            width: "100%",
-                            borderRadius: "8px",
-                          }}
-                          src={step.imgPath}
-                          alt={step.label}
-                        />
-                      ) : null}
-                    </div>
-                  ))}
-                </AutoPlaySwipeableViews>
-                <MobileStepper
-                  steps={maxSteps}
-                  position="static"
-                  activeStep={activeStep}
-                  sx={{ background: "transparent", marginTop: 1 }}
-                  nextButton={
-                    <Button
-                      size="small"
-                      onClick={handleNext}
-                      disabled={activeStep === maxSteps - 1}
-                    >
-                      {/* {theme.direction === "rtl" ? (
+                <Paper sx={{ padding: 2 }}>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    marginBottom={4}
+                  >
+                    <Typography variant="h3">Galeria</Typography>
+                    <Button component="a" href="/events" variant="text">
+                      Ver todas las imagenes
+                    </Button>
+                  </Box>
+                  <AutoPlaySwipeableViews
+                    axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                    index={activeStep}
+                    onChangeIndex={handleStepChange}
+                    enableMouseEvents
+                  >
+                    {images.map((step, index) => (
+                      <div key={step.label}>
+                        {Math.abs(activeStep - index) <= 2 ? (
+                          <Box
+                            component="img"
+                            sx={{
+                              height: 232,
+                              display: "block",
+                              maxWidth: 400,
+                              overflow: "hidden",
+                              width: "100%",
+                              borderRadius: "8px",
+                            }}
+                            src={step.imgPath}
+                            alt={step.label}
+                          />
+                        ) : null}
+                      </div>
+                    ))}
+                  </AutoPlaySwipeableViews>
+                  <MobileStepper
+                    steps={maxSteps}
+                    position="static"
+                    activeStep={activeStep}
+                    sx={{ background: "transparent", marginTop: 1 }}
+                    nextButton={
+                      <Button
+                        size="small"
+                        onClick={handleNext}
+                        disabled={activeStep === maxSteps - 1}
+                      >
+                        {/* {theme.direction === "rtl" ? (
                           <KeyboardArrowLeft />
                         ) : (
                           <KeyboardArrowRight />
                         )} */}
-                    </Button>
-                  }
-                  backButton={
-                    <Button
-                      size="small"
-                      onClick={handleBack}
-                      disabled={activeStep === 0}
-                    >
-                      {/* {theme.direction === "rtl" ? (
+                      </Button>
+                    }
+                    backButton={
+                      <Button
+                        size="small"
+                        onClick={handleBack}
+                        disabled={activeStep === 0}
+                      >
+                        {/* {theme.direction === "rtl" ? (
                           <KeyboardArrowRight />
                         ) : (
                           <KeyboardArrowLeft />
                         )} */}
-                    </Button>
-                  }
-                />
-              </Paper>
+                      </Button>
+                    }
+                  />
+                </Paper>
+              </Stack>
             </Grid>
           </Grid>
         </Grid>
         {/* Calendar */}
         <Grid item md={3} sm={12}>
-          <Paper elevation={0} sx={{ padding: 2 }}>
+          <Paper sx={{ padding: 2 }}>
             <Typography variant="h3">Calendario</Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateCalendar
