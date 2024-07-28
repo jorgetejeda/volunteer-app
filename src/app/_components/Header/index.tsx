@@ -56,16 +56,16 @@ export const Header = () => {
   const handleLogin = useCallback(async () => {
     const data = await loginUser({
       email: "jorgetejeda0804@gmail.com",
-      password: "teje3000",
+      password: "Teje3000",
     });
     console.log(data);
   }, []);
 
   const handleRegister = useCallback(async () => {
     const data = await registerUser({
-      userName: "jtejeda",
-      email: "jorgetejeda0804@gmail.com",
-      password: "teje3000",
+      userName: "dominique",
+      email: "dominique@gmail.com",
+      password: "Teje3000",
       firstName: "Jorge",
       lastName: "Tejeda",
       gender: "M",
