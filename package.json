@@ -19,6 +19,7 @@
     "@mui/x-date-pickers": "^7.5.0",
     "@types/react-swipeable-views": "^0.13.5",
     "@types/react-swipeable-views-utils": "^0.13.7",
+    "axios": "^1.7.2",
     "dayjs": "^1.11.11",
     "mui-color-input": "^3.0.0",
     "next": "14.2.3",
