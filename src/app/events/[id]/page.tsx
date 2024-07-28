@@ -9,7 +9,7 @@ import {
 import {
   InformationLabel,
   CategoryLabel,
-} from "@/components";
+} from "@components/index";
 import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import theme from "@/theme";
 

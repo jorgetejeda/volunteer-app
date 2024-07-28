@@ -9,7 +9,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
-import { CardEvent } from "@/components";
+import { CardEvent } from "@components/index";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 

@@ -7,7 +7,7 @@ import theme from "@/theme";
 
 // Components
 import { Box, Container } from "@mui/material";
-import { Header, Footer } from "../components";
+import { Header, Footer } from "@components/index";
 // css
 import "../styles/globals.css";
 const openSansFont = Open_Sans({

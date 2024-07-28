@@ -20,7 +20,7 @@ import {
   Theme,
   Button,
 } from "@mui/material";
-import { DropZone, DropdownCategories, EditorView } from "@/components";
+import { DropZone, DropdownCategories, EditorView } from "@components/index";
 import styled from "@emotion/styled";
 
 const CustomTextField = styled(TextField)(({ theme }: { theme?: Theme }) => ({

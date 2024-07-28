@@ -27,7 +27,7 @@ import {
 import {
   CategoryLabel,
   InformationLabel,
-} from "@/components";
+} from "@components/index";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
 
