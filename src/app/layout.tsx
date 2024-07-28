@@ -8,8 +8,10 @@ import theme from "@/theme";
 // Components
 import { Box, Container } from "@mui/material";
 import { Header, Footer } from "@components/index";
-// css
+// Css
 import "../styles/globals.css";
+import AuthContextProvider from "@/store/auth/AuthContext";
+
 const openSansFont = Open_Sans({
   display: "swap",
   subsets: ["latin"],
@@ -21,17 +23,19 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body className={openSansFont.className}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Box
-            sx={{
-              minHeight: "100vh",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Header />
-            <Container maxWidth="lg"> {props.children} </Container>
-            <Footer />
-          </Box>
+          <AuthContextProvider>
+            <Box
+              sx={{
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Header />
+              <Container maxWidth="lg"> {props.children} </Container>
+              <Footer />
+            </Box>
+          </AuthContextProvider>
         </ThemeProvider>
       </body>
     </html>

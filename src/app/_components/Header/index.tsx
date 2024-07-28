@@ -15,16 +15,7 @@ import theme from "@/theme";
 import Link from "next/link";
 import HttpImplementation from "@/core-libraries/http/http.implementation";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-
-const loginUser = async (data: { email: string; password: string }) => {
-  const http = new HttpImplementation();
-  const response = await http.post(
-    ServicesInstanceEnum.API_AUTH,
-    "/login",
-    data,
-  );
-  return response;
-};
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 const registerUser = async (data: {
   userName: string;
@@ -44,21 +35,19 @@ const registerUser = async (data: {
 };
 
 export const Header = () => {
+  const { login,logout, isAuthenticated } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
+    logout();
     setAnchorEl(null);
   };
 
   const handleLogin = useCallback(async () => {
-    const data = await loginUser({
-      email: "jorgetejeda0804@gmail.com",
-      password: "Teje3000",
-    });
-    console.log(data);
+    login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
   }, []);
 
   const handleRegister = useCallback(async () => {
@@ -130,10 +119,19 @@ export const Header = () => {
                 >
                   <MenuItem onClick={handleClose}>Mis eventos</MenuItem>
                 </Link>
-                <MenuItem onClick={handleLogin}>Iniciar sesión</MenuItem>
-                <MenuItem onClick={handleRegister}>Registrarse</MenuItem>
-                <Divider />
-                <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
+                {!isAuthenticated ? (
+                  <>
+                    <MenuItem onClick={handleLogin}>Iniciar sesión</MenuItem>
+                    <MenuItem onClick={handleRegister}>
+                      Registrarse
+                    </MenuItem>
+                  </>
+                ) : (
+                  <>
+                    <Divider />
+                    <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
+                  </>
+                )}
               </Menu>
               <NotificationsNoneIcon
                 sx={{ color: theme.palette.primary.main }}

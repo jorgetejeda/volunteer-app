@@ -5,6 +5,8 @@ import theme from "@/theme";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+// Auth
+import { useAuthContext } from "@/store/auth/AuthContext";
 // Slider
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
@@ -32,6 +34,7 @@ const images = [
 ];
 
 export default function Home() {
+  const { user, isAuthenticated } = useAuthContext();
   const [activeStep, setActiveStep] = useState(0);
   const maxSteps = images.length;
 
@@ -52,7 +55,7 @@ export default function Home() {
       <Grid container spacing={2} id="container">
         <Grid item md={9} sm={12} display="flex" flexDirection="column" gap={2}>
           <Box>
-            <Typography variant="h3">Bienvenido, usuario!</Typography>
+            <Typography variant="h3">Bienvenido, {isAuthenticated && user?.userName}</Typography>
           </Box>
           <Box>
             <Typography variant="body1">
