@@ -26,7 +26,7 @@ const theme = createTheme({
     primary: {
       main: "#00B1CB",
     },
-    secondary:{
+    secondary: {
       main: "#1F6527",
     },
     grey: {
@@ -55,9 +55,18 @@ const theme = createTheme({
         }),
       },
     },
+    MuiPaper: {
+      defaultProps: {
+        elevation: 0,
+        sx: {
+          borderRadius: 2,
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
+          disableRipple: true,
           borderRadius: "5em",
           boxShadow: "none",
           marginTop: "8px",
