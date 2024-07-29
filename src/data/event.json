@@ -1,110 +1,165 @@
+
 [
   {
-    "name": "Día de la Reforestación",
-    "date": "2023-03-21",
-    "location": "Parque Nacional, Ciudad de México",
-    "chip": {
-      "label": "Reforestación",
-      "color": "#385B4A",
-      "backgroundColor": "#D4FC92"
-    },
+    "id": 1,
+    "title": "Día de la Reforestación",
+    "imageName": "https://picsum.photos/200/300?random=1",
     "description": "Únete a nosotros para un día dedicado a la plantación de árboles en el Parque Nacional. Ayuda a preservar nuestro medio ambiente y a fomentar la biodiversidad.",
-    "imageUrl": "https://picsum.photos/200/300?random=1"
-  },
-  {
-    "name": "Fiesta de la Responsabilidad Social",
-    "date": "2023-04-15",
-    "location": "Jardines de Luxemburgo, París",
-    "chip": {
-      "label": "Responsabilidad Social",
-      "color": "#491111",
-      "backgroundColor": "#FF8B8B"
-    },
-    "description": "Celebra la importancia de la responsabilidad social con una fiesta dedicada a la ayuda comunitaria y el compromiso con el bienestar social.",
-    "imageUrl": "https://picsum.photos/200/300?random=2"
-  },
-  {
-    "name": "Carrera de Caridad",
-    "date": "2023-05-10",
-    "location": "Centro de Convenciones Moscone, San Francisco",
-    "chip": {
-      "label": "Caridad",
-      "color": "#193E53",
-      "backgroundColor": "#B2F5FF"
-    },
-    "description": "Participa en nuestra carrera benéfica para recaudar fondos en apoyo a causas humanitarias y proyectos de caridad en todo el mundo.",
-    "imageUrl": "https://picsum.photos/200/300?random=3"
-  },
-  {
-    "name": "Día de la Educación",
-    "date": "2023-06-01",
-    "location": "Escuelas Primarias, Madrid",
-    "chip": {
-      "label": "Responsabilidad Social",
-      "color": "#491111",
-      "backgroundColor": "#FF8B8B"
-    },
-    "description": "Celebra el Día de la Educación con actividades educativas y charlas inspiradoras para niños y jóvenes.",
-    "imageUrl": "https://picsum.photos/200/300?random=4"
-  },
-  {
-    "name": "Conferencia Médica Internacional",
-    "date": "2023-07-20",
-    "location": "Centro de Convenciones de Nueva York",
-    "chip": {
-      "label": "Caridad",
-      "color": "#193E53",
-      "backgroundColor": "#B2F5FF"
-    },
-    "description": "Asiste a la conferencia médica internacional más grande del año, con sesiones sobre avances médicos, investigaciones y tratamientos innovadores.",
-    "imageUrl": "https://picsum.photos/200/300?random=5"
-  },
-  {
-    "name": "Campaña de Reciclaje Comunitario",
-    "date": "2023-08-15",
-    "location": "Plaza Central, Barcelona",
-    "chip": {
-      "label": "Reforestación",
-      "color": "#385B4A",
+    "date": "2023-03-21",
+    "quota": 100,
+    "location": "Parque Nacional, Ciudad de México",
+    "duration": "8h",
+    "allDay": true,
+    "published": true,
+    "category": {
+      "id": 1,
+      "title": "Reforestación",
       "backgroundColor": "#D4FC92"
     },
-    "description": "Únete a nuestra campaña de reciclaje comunitario para reducir la contaminación y promover el reciclaje responsable en nuestra ciudad.",
-    "imageUrl": "https://picsum.photos/200/300?random=6"
+    "usersQuantity": 50
   },
   {
-    "name": "Concierto Benéfico de Navidad",
-    "date": "2023-12-10",
-    "location": "Teatro Municipal, Londres",
-    "chip": {
-      "label": "Caridad",
-      "color": "#193E53",
-      "backgroundColor": "#B2F5FF"
-    },
-    "description": "Disfruta de una noche de música y solidaridad en nuestro concierto benéfico de Navidad, recaudando fondos para familias necesitadas durante las fiestas.",
-    "imageUrl": "https://picsum.photos/200/300?random=7"
-  },
-  {
-    "name": "Jornada de Voluntariado Juvenil",
-    "date": "2023-09-05",
-    "location": "Parque Central, Buenos Aires",
-    "chip": {
-      "label": "Responsabilidad Social",
-      "color": "#491111",
+    "id": 2,
+    "title": "Fiesta de la Responsabilidad Social",
+    "imageName": "https://picsum.photos/200/300?random=2",
+    "description": "Celebra la importancia de la responsabilidad social con una fiesta dedicada a la ayuda comunitaria y el compromiso con el bienestar social.",
+    "date": "2023-04-15",
+    "quota": 200,
+    "location": "Jardines de Luxemburgo, París",
+    "duration": "5h",
+    "allDay": false,
+    "published": true,
+    "category": {
+      "id": 2,
+      "title": "Responsabilidad Social",
       "backgroundColor": "#FF8B8B"
     },
-    "description": "Únete a otros jóvenes voluntarios en nuestra jornada de limpieza y embellecimiento de parques públicos, promoviendo la responsabilidad social y el cuidado del medio ambiente.",
-    "imageUrl": "https://picsum.photos/200/300?random=8"
+    "usersQuantity": 150
   },
   {
-    "name": "Maratón por la Salud Mental",
-    "date": "2023-10-30",
-    "location": "Paseo del Prado, Madrid",
-    "chip": {
-      "label": "Caridad",
-      "color": "#193E53",
+    "id": 3,
+    "title": "Carrera de Caridad",
+    "imageName": "https://picsum.photos/200/300?random=3",
+    "description": "Participa en nuestra carrera benéfica para recaudar fondos en apoyo a causas humanitarias y proyectos de caridad en todo el mundo.",
+    "date": "2023-05-10",
+    "quota": 300,
+    "location": "Centro de Convenciones Moscone, San Francisco",
+    "duration": "3h",
+    "allDay": false,
+    "published": false,
+    "category": {
+      "id": 3,
+      "title": "Caridad",
       "backgroundColor": "#B2F5FF"
     },
+    "usersQuantity": 250
+  },
+  {
+    "id": 4,
+    "title": "Día de la Educación",
+    "imageName": "https://picsum.photos/200/300?random=4",
+    "description": "Celebra el Día de la Educación con actividades educativas y charlas inspiradoras para niños y jóvenes.",
+    "date": "2023-06-01",
+    "quota": 150,
+    "location": "Escuelas Primarias, Madrid",
+    "duration": "7h",
+    "allDay": true,
+    "published": true,
+    "category": {
+      "id": 2,
+      "title": "Responsabilidad Social",
+      "backgroundColor": "#FF8B8B"
+    },
+    "usersQuantity": 100
+  },
+  {
+    "id": 5,
+    "title": "Conferencia Médica Internacional",
+    "imageName": "https://picsum.photos/200/300?random=5",
+    "description": "Asiste a la conferencia médica internacional más grande del año, con sesiones sobre avances médicos, investigaciones y tratamientos innovadores.",
+    "date": "2023-07-20",
+    "quota": 500,
+    "location": "Centro de Convenciones de Nueva York",
+    "duration": "10h",
+    "allDay": true,
+    "published": true,
+    "category": {
+      "id": 3,
+      "title": "Caridad",
+      "backgroundColor": "#B2F5FF"
+    },
+    "usersQuantity": 450
+  },
+  {
+    "id": 6,
+    "title": "Campaña de Reciclaje Comunitario",
+    "imageName": "https://picsum.photos/200/300?random=6",
+    "description": "Únete a nuestra campaña de reciclaje comunitario para reducir la contaminación y promover el reciclaje responsable en nuestra ciudad.",
+    "date": "2023-08-15",
+    "quota": 200,
+    "location": "Plaza Central, Barcelona",
+    "duration": "6h",
+    "allDay": true,
+    "published": false,
+    "category": {
+      "id": 1,
+      "title": "Reforestación",
+      "backgroundColor": "#D4FC92"
+    },
+    "usersQuantity": 180
+  },
+  {
+    "id": 7,
+    "title": "Concierto Benéfico de Navidad",
+    "imageName": "https://picsum.photos/200/300?random=7",
+    "description": "Disfruta de una noche de música y solidaridad en nuestro concierto benéfico de Navidad, recaudando fondos para familias necesitadas durante las fiestas.",
+    "date": "2023-12-10",
+    "quota": 400,
+    "location": "Teatro Municipal, Londres",
+    "duration": "4h",
+    "allDay": false,
+    "published": true,
+    "category": {
+      "id": 3,
+      "title": "Caridad",
+      "backgroundColor": "#B2F5FF"
+    },
+    "usersQuantity": 350
+  },
+  {
+    "id": 8,
+    "title": "Jornada de Voluntariado Juvenil",
+    "imageName": "https://picsum.photos/200/300?random=8",
+    "description": "Únete a otros jóvenes voluntarios en nuestra jornada de limpieza y embellecimiento de parques públicos, promoviendo la responsabilidad social y el cuidado del medio ambiente.",
+    "date": "2023-09-05",
+    "quota": 150,
+    "location": "Parque Central, Buenos Aires",
+    "duration": "7h",
+    "allDay": true,
+    "published": true,
+    "category": {
+      "id": 2,
+      "title": "Responsabilidad Social",
+      "backgroundColor": "#FF8B8B"
+    },
+    "usersQuantity": 120
+  },
+  {
+    "id": 9,
+    "title": "Maratón por la Salud Mental",
+    "imageName": "https://picsum.photos/200/300?random=9",
     "description": "Participa en nuestra maratón anual por la salud mental, promoviendo la conciencia y recaudando fondos para apoyar los servicios de salud mental en nuestra comunidad.",
-    "imageUrl": "https://picsum.photos/200/300?random=9"
+    "date": "2023-10-30",
+    "quota": 250,
+    "location": "Paseo del Prado, Madrid",
+    "duration": "8h",
+    "allDay": true,
+    "published": true,
+    "category": {
+      "id": 3,
+      "title": "Caridad",
+      "backgroundColor": "#B2F5FF"
+    },
+    "usersQuantity": 200
   }
 ]

@@ -1,4 +1,4 @@
-export const lightOrDarkColor = (color: string): 'white' | 'black' => {
+export const lightOrDarkColor = (color: string): string => {
   let r: number, g: number, b: number, hsp: number;
 
   if (color.match(/^rgb/)) {
@@ -25,7 +25,8 @@ export const lightOrDarkColor = (color: string): 'white' | 'black' => {
     0.114 * (b * b)
   );
 
-  return hsp > 127.5 ? 'white' : 'black';
+
+  return hsp > 127.5 ? '#000' : '#fff';
 }
 
 

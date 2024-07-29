@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Paper,
@@ -29,9 +29,6 @@ import { CategoryLabel, InformationLabel } from "@components/index";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
 import eventData from "../../data/event.json";
-import { useAuthContext } from "@/store/auth/AuthContext";
-import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-import HttpImplementation from "@/core-libraries/http/http.implementation";
 import { lightOrDarkColor } from "@utils/index";
 
 export interface Event {
@@ -39,7 +36,7 @@ export interface Event {
   title: string;
   imageName: string;
   description: string;
-  date: Date;
+  date: string;
   quota: number;
   location: string;
   duration: string;
@@ -56,7 +53,6 @@ export interface Category {
 }
 
 export default function EventPage() {
-  const { isAdmin, isAuthenticated } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -68,17 +64,13 @@ export default function EventPage() {
     "all",
   );
   const router = useRouter();
+  const isAdmin = true;
 
   const getEvents = async () => {
     setLoading(true);
     try {
-      const http = new HttpImplementation();
-      const { data } = await http.get<{ data: Event[] }, unknown>(
-        ServicesInstanceEnum.API_INSTANCE,
-        "/events",
-      );
-      console.log(data);
-      setEvents(data);
+      setEvents(eventData);
+      console.log(events)
     } catch (error: any) {
       console.error("Error getting events", error.message);
     } finally {
@@ -86,8 +78,8 @@ export default function EventPage() {
     }
   };
 
-  useEffect(() => {
-    getEvents();
+  React.useLayoutEffect(() => {
+     getEvents();
   }, []);
 
   const handleMenuOpen = (
@@ -153,8 +145,6 @@ export default function EventPage() {
       return matchesSearch && matchesFilter;
     });
   }, [events, searchTerm, filter]);
-
-  if (!isAuthenticated) return null;
 
   return (
     <>
@@ -225,7 +215,6 @@ export default function EventPage() {
         {!loading &&
           filteredEvents.length > 0 &&
           filteredEvents.map((event, index) => {
-            if (!event.published && !isAdmin) return null;
             return (
               <Paper key={index}>
                 <Card
@@ -272,7 +261,7 @@ export default function EventPage() {
                   >
                     <CategoryLabel
                       label={event.category.title}
-                      textColor={event.category.backgroundColor}
+                      textColor={lightOrDarkColor(event.category.backgroundColor)}
                       backgroundColor={event.category.backgroundColor}
                     />
                     {isAdmin && (

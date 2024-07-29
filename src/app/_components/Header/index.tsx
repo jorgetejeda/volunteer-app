@@ -1,4 +1,3 @@
-
 import React, { useCallback } from "react";
 import Image from "next/image";
 import {
@@ -14,29 +13,8 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
-import HttpImplementation from "@/core-libraries/http/http.implementation";
-import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-import { useAuthContext } from "@/store/auth/AuthContext";
-
-const registerUser = async (data: {
-  userName: string;
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  gender: string;
-}) => {
-  const http = new HttpImplementation();
-  const response = await http.post(
-    ServicesInstanceEnum.API_AUTH,
-    "/register",
-    data,
-  );
-  return response;
-};
 
 export const Header = () => {
-  const { login, logout, isAuthenticated } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -49,25 +27,8 @@ export const Header = () => {
   };
 
   const handleLogout = () => {
-    logout();
     setAnchorEl(null);
   };
-
-  const handleLogin = useCallback(async () => {
-    login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
-  }, [login]);
-
-  const handleRegister = useCallback(async () => {
-    const data = await registerUser({
-      userName: "dominique",
-      email: "dominique@gmail.com",
-      password: "Teje3000",
-      firstName: "Jorge",
-      lastName: "Tejeda",
-      gender: "M",
-    });
-    console.log(data);
-  }, []);
 
   return (
     <Container maxWidth="lg">
@@ -126,19 +87,10 @@ export const Header = () => {
                 >
                   <MenuItem onClick={handleClose}>Mis eventos</MenuItem>
                 </Link>
-                {!isAuthenticated ? (
-                  <Box>
-                    <MenuItem onClick={handleLogin}>Iniciar sesión</MenuItem>
-                    <MenuItem onClick={handleRegister}>
-                      Registrarse
-                    </MenuItem>
-                  </Box>
-                ) : (
-                  <Box>
-                    <Divider />
-                    <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
-                  </Box>
-                )}
+                <Box>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+                </Box>
               </Menu>
               <NotificationsNoneIcon
                 sx={{ color: theme.palette.primary.main }}
