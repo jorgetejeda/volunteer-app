@@ -1,0 +1,1 @@
+export { lightOrDarkColor } from "./lightOrDarkColor";

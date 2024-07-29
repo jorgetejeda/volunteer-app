@@ -99,7 +99,7 @@ const EventForm = () => {
       console.log("Saved data:", data);
       setOpenModal(true);
       reset(INITIAL_STATE);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al guardar el evento:", error);
     } finally {
       setLoading(false);

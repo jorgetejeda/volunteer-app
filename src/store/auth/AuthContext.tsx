@@ -43,7 +43,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         }
       });
       sessionStorage.setItem("token", user.token);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error logging in", error.message);
     } finally {
       setLoading(false);
@@ -56,7 +56,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setIsAuthenticated(false);
       sessionStorage.removeItem("token");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error logging out", error.message);
     } finally {
       setLoading(false);

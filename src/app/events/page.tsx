@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Box,
   Paper,
@@ -16,6 +16,7 @@ import {
   DialogTitle,
   CircularProgress,
   Button,
+  TextField,
 } from "@mui/material";
 import { Card, CardMedia, CardContent, CardActions } from "@mui/material";
 import { Masonry } from "@mui/lab";
@@ -24,50 +25,69 @@ import {
   LocationOnOutlined,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
-import {
-  CategoryLabel,
-  InformationLabel,
-} from "@components/index";
+import { CategoryLabel, InformationLabel } from "@components/index";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
 import eventData from "../../data/event.json";
 import { useAuthContext } from "@/store/auth/AuthContext";
+import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
+import HttpImplementation from "@/core-libraries/http/http.implementation";
+import { lightOrDarkColor } from "@utils/index";
 
-type Event = {
-  published: boolean;
-  name: string;
-  date: string;
-  location: string;
-  chip: {
-    textColor: string | undefined;
-    label: string;
-    color: string;
-    backgroundColor: string;
-  };
+export interface Event {
+  id: number;
+  title: string;
+  imageName: string;
   description: string;
-  imageUrl: string;
-};
+  date: Date;
+  quota: number;
+  location: string;
+  duration: string;
+  allDay: boolean;
+  published: boolean;
+  category: Category;
+  usersQuantity: number;
+}
+
+export interface Category {
+  id: number;
+  title: string;
+  backgroundColor: string;
+}
 
 export default function EventPage() {
-  const { isAdmin } = useAuthContext();
+  const { isAdmin, isAuthenticated } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentEvent, setCurrentEvent] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
+    "all",
+  );
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setTimeout(() => {
-        setEvents(eventData)
-        setLoading(false);
-      }, 2000); // Simulación de tiempo de carga
-    };
+  const getEvents = async () => {
+    setLoading(true);
+    try {
+      const http = new HttpImplementation();
+      const { data } = await http.get<{ data: Event[] }, unknown>(
+        ServicesInstanceEnum.API_INSTANCE,
+        "/events",
+      );
+      console.log(data);
+      setEvents(data);
+    } catch (error: any) {
+      console.error("Error getting events", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    getEvents();
   }, []);
 
   const handleMenuOpen = (
@@ -121,6 +141,21 @@ export default function EventPage() {
     handleMenuClose();
   };
 
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      const matchesSearch = event.title
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "published" && event.published) ||
+        (filter === "unpublished" && !event.published);
+      return matchesSearch && matchesFilter;
+    });
+  }, [events, searchTerm, filter]);
+
+  if (!isAuthenticated) return null;
+
   return (
     <>
       {actionLoading && (
@@ -141,22 +176,57 @@ export default function EventPage() {
           <CircularProgress />
         </Box>
       )}
+      <Box mb={3}>
+        <TextField
+          label="Buscar eventos"
+          variant="outlined"
+          fullWidth
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </Box>
+      {isAdmin && (
+        <Box mb={3} display="flex" gap={2}>
+          <Button
+            variant={filter === "all" ? "contained" : "outlined"}
+            onClick={() => setFilter("all")}
+          >
+            Todos
+          </Button>
+          <Button
+            variant={filter === "published" ? "contained" : "outlined"}
+            onClick={() => setFilter("published")}
+          >
+            Publicados
+          </Button>
+          <Button
+            variant={filter === "unpublished" ? "contained" : "outlined"}
+            onClick={() => setFilter("unpublished")}
+          >
+            Sin Publicar
+          </Button>
+        </Box>
+      )}
       <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3} sx={{ margin: 0 }}>
-        {loading
-          ? Array.from({ length: 6 }).map((_, index) => (
-              <Paper key={index}>
-                <Skeleton variant="rectangular" width="100%" height={150} />
-                <Box sx={{ padding: 2 }}>
-                  <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                  <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-                  <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-                </Box>
-                <Box sx={{ padding: 2 }}>
-                  <Skeleton variant="rectangular" width={100} height={30} />
-                </Box>
-              </Paper>
-            ))
-          : events.map((event, index) => (
+        {loading &&
+          Array.from({ length: 6 }).map((_, index) => (
+            <Paper key={index}>
+              <Skeleton variant="rectangular" width="100%" height={150} />
+              <Box sx={{ padding: 2 }}>
+                <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
+                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
+              </Box>
+              <Box sx={{ padding: 2 }}>
+                <Skeleton variant="rectangular" width={100} height={30} />
+              </Box>
+            </Paper>
+          ))}
+        {!loading &&
+          filteredEvents.length > 0 &&
+          filteredEvents.map((event, index) => {
+            if (!event.published && !isAdmin) return null;
+            return (
               <Paper key={index}>
                 <Card
                   elevation={0}
@@ -171,7 +241,7 @@ export default function EventPage() {
                     <CardMedia
                       component="img"
                       height="150"
-                      image={event.imageUrl}
+                      image={event.imageName}
                       alt="Event"
                       sx={{
                         width: "100%",
@@ -201,38 +271,38 @@ export default function EventPage() {
                     }}
                   >
                     <CategoryLabel
-                      label={event.chip.label}
-                      textColor={event.chip.textColor}
-                      backgroundColor={event.chip.backgroundColor}
+                      label={event.category.title}
+                      textColor={event.category.backgroundColor}
+                      backgroundColor={event.category.backgroundColor}
                     />
-                  {isAdmin && (
-                    <Box>
-                    <IconButton
-                      aria-label="more"
-                      aria-controls="long-menu"
-                      aria-haspopup="true"
-                      onClick={(e) => handleMenuOpen(e, index)}
-                      sx={{
-                        color: "white",
-                        backgroundColor: "rgba(255, 255, 255, 0.3)",
-                        marginLeft: 1,
-                      }}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl) && currentEvent === index}
-                      onClose={handleMenuClose}
-                    >
-                      <MenuItem onClick={handlePublish}>
-                        {event.published ? "Despublicar" : "Publicar"}
-                      </MenuItem>
-                      <Divider />
-                      <MenuItem onClick={handleEdit}>Editar</MenuItem>
-                      <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
-                    </Menu>
-                    </Box>
+                    {isAdmin && (
+                      <Box>
+                        <IconButton
+                          aria-label="more"
+                          aria-controls="long-menu"
+                          aria-haspopup="true"
+                          onClick={(e) => handleMenuOpen(e, index)}
+                          sx={{
+                            color: "white",
+                            backgroundColor: "rgba(255, 255, 255, 0.3)",
+                            marginLeft: 1,
+                          }}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          anchorEl={anchorEl}
+                          open={Boolean(anchorEl) && currentEvent === index}
+                          onClose={handleMenuClose}
+                        >
+                          <MenuItem onClick={handlePublish}>
+                            {event.published ? "Despublicar" : "Publicar"}
+                          </MenuItem>
+                          <Divider />
+                          <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                          <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
+                        </Menu>
+                      </Box>
                     )}
                   </Box>
 
@@ -248,15 +318,11 @@ export default function EventPage() {
                       icon={{
                         component: CalendarMonthOutlined,
                       }}
-                      label={event.date}
+                      label={event.date.toString()}
                       color={theme.palette.grey[200]}
                     />
 
-                    <Typography
-                      variant="h4"
-                    >
-                      {event.name}
-                    </Typography>
+                    <Typography variant="h4">{event.title}</Typography>
 
                     <Typography
                       variant="body1"
@@ -285,15 +351,22 @@ export default function EventPage() {
                   </CardActions>
                 </Card>
               </Paper>
-            ))}
+            );
+          })}
       </Masonry>
+
+      {!loading && filteredEvents.length === 0 && (
+        <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
+          Lo sentimos, no pudimos encontrar el evento que estás buscando.
+        </Typography>
+      )}
 
       <Dialog open={dialogOpen} onClose={cancelDelete}>
         <DialogTitle>Eliminar Evento</DialogTitle>
         <DialogContent>
           <DialogContentText>
             ¿Estás seguro que deseas eliminar el evento{" "}
-            {currentEvent !== null && events[currentEvent].name}?
+            {currentEvent !== null && events[currentEvent].title}?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
