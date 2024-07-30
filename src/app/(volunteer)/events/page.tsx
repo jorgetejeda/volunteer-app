@@ -28,7 +28,7 @@ import {
 import { CategoryLabel, InformationLabel } from "@components/index";
 import theme from "@/theme";
 import { useRouter } from "next/navigation";
-import eventData from "../../data/event.json";
+import eventData from "../../../data/event.json";
 import { lightOrDarkColor } from "@utils/index";
 
 export interface Event {

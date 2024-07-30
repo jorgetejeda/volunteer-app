@@ -59,10 +59,7 @@ export default function Home() {
           </Box>
           <Box>
             <Typography variant="body1">
-              Gorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc
-              vulputate libero et velit interdum, ac aliquet odio mattis. Class
-              aptent taciti sociosqu ad litora torquent per conubia nostra, per
-              inceptos himenaeos.
+            En Crecer, creemos firmemente en la responsabilidad social y en el poder de la colaboración para generar cambios significativos. Nuestro programa de voluntariado corporativo nace de la convicción de que cada acción cuenta y de que juntos podemos contribuir para forjar un mundo mejor.
             </Typography>
           </Box>
 

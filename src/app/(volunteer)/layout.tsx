@@ -9,7 +9,6 @@ import theme from "@/theme";
 import { Box, Container } from "@mui/material";
 import { Header, Footer } from "@components/index";
 // Css
-import "../styles/globals.css";
 import AuthContextProvider from "@/store/auth/AuthContext";
 
 const openSansFont = Open_Sans({

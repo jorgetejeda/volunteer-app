@@ -74,7 +74,7 @@ export const Header = () => {
                 TransitionComponent={Fade}
               >
                 <Link
-                  href="/events/create"
+                  href="/panel/create"
                   passHref
                   style={{ textDecoration: "none" }}
                 >
