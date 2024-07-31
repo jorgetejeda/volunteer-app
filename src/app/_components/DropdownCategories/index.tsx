@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Box,
@@ -30,10 +30,12 @@ import { CategoryService } from "@/services";
 
 interface DropdownCategoriesProps {
   onChange: (categoryId: number) => void; 
+  value?: number;  // Prop para el valor seleccionado
 }
 
 export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   onChange,
+  value,  // Recibe el valor seleccionado como prop
 }) => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,7 +45,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryColor, setCategoryColor] = useState<string>("#000000");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null,
+    value || null,  // Establece el valor seleccionado inicial
   ); 
 
   const {
@@ -54,9 +56,13 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     formState: { errors },
   } = useForm<CategoryDto>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCategories();
   }, []);
+
+  useEffect(() => {
+    setSelectedCategoryId(value || null);  // Actualiza el valor seleccionado cuando cambie el prop
+  }, [value]);
 
   const getCategories = async () => {
     try {

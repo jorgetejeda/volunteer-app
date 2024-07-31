@@ -34,6 +34,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
           setIsAdmin(true);
         }
       });
+      sessionStorage.setItem('token', user.token);
       
     } catch (error: any) {
       console.error('Error al iniciar sesión', error.message);

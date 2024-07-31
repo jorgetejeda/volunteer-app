@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import Editor, { ContentEditableEvent } from "react-simple-wysiwyg";
 
 type EditorViewProps = {
-  placeholder: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
 };
-export const EditorView = ({ placeholder, onChange }: EditorViewProps) => {
-  const [html, setHtml] = useState(placeholder || "");
+export const EditorView = ({ defaultValue, onChange }: EditorViewProps) => {
+  const [html, setHtml] = useState(defaultValue || "");
   
   const handleChange = (e: ContentEditableEvent) => {
     setHtml(e.target.value);
