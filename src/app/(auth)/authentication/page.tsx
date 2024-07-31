@@ -1,26 +1,17 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
-import {
-  Container,
-  Box,
-  Button,
-  Typography,
-  Link,
-  Stack,
-  SvgIcon,
-  Icon,
-} from "@mui/material";
+import { Container, Box, Button, Typography, Stack } from "@mui/material";
 import Image from "next/image";
 
 import styled from "@emotion/styled";
 import httpImplementation from "@/core-libraries/http/http.implementation";
 import { User, UserCredentials } from "@/core/types/user";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-import Microsoft from "../../../../public/assets/microsoft_icon.svg";
 import { useRouter } from "next/navigation";
 
 import theme from "@/theme";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 const CenteredBox = styled(Box)({
   display: "flex",
@@ -47,20 +38,17 @@ const MicrosoftButton = styled(Button)({
 
 export default function Authentication() {
   const router = useRouter();
+  const { login, isAuthenticated } = useAuthContext();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
+
   const handleLogin = async () => {
     try {
-      const response = await httpImplementation.post<User, UserCredentials>(
-        ServicesInstanceEnum.API_AUTH,
-        "/login",
-        {
-          email: "jorgetejeda0804@gmail.com",
-          password: "Teje3000",
-        }
-      );
-
-      router.push("/");
-
-      console.log(response);
+      login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
     } catch (error) {
       console.log(error);
     }

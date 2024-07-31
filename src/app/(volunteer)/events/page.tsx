@@ -30,6 +30,8 @@ import theme from "@/theme";
 import { useRouter } from "next/navigation";
 import eventData from "../../../data/event.json";
 import { lightOrDarkColor } from "@utils/index";
+import httpImplementation from "@/core-libraries/http/http.implementation";
+import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 
 export interface Event {
   id: number;
@@ -69,6 +71,9 @@ export default function EventPage() {
   const getEvents = async () => {
     setLoading(true);
     try {
+      //TODO: add category background color
+     const response = await httpImplementation.get<Event, unknown>(ServicesInstanceEnum.API_INSTANCE, "/events"); 
+      console.log(response)
       setEvents(eventData);
       console.log(events)
     } catch (error: any) {
