@@ -1,10 +1,26 @@
-'use client'
+"use client";
 import React from "react";
 
-import { Container, Box, Button, Typography, Link } from "@mui/material";
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Link,
+  Stack,
+  SvgIcon,
+  Icon,
+} from "@mui/material";
 import Image from "next/image";
 
 import styled from "@emotion/styled";
+import httpImplementation from "@/core-libraries/http/http.implementation";
+import { User, UserCredentials } from "@/core/types/user";
+import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
+import Microsoft from "../../../../public/assets/microsoft_icon.svg";
+import { useRouter } from "next/navigation";
+
+import theme from "@/theme";
 
 const CenteredBox = styled(Box)({
   display: "flex",
@@ -15,9 +31,39 @@ const CenteredBox = styled(Box)({
   textAlign: "center",
 });
 
-export default function Authentication(){
-  const handleLogin = () => {
-    // Implement your login logic here
+const MicrosoftButton = styled(Button)({
+  backgroundColor: "#fff",
+  border: "2px solid #e2e8f0",
+  padding: "1rem",
+  borderRadius: "2rem",
+  "&.MuiButton-contained": {
+    color: "#1E293B",
+    textTransform: "none",
+    "&:hover": {
+      backgroundColor: "transparent",
+    },
+  },
+});
+
+export default function Authentication() {
+  const router = useRouter();
+  const handleLogin = async () => {
+    try {
+      const response = await httpImplementation.post<User, UserCredentials>(
+        ServicesInstanceEnum.API_AUTH,
+        "/login",
+        {
+          email: "jorgetejeda0804@gmail.com",
+          password: "Teje3000",
+        }
+      );
+
+      router.push("/");
+
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -26,21 +72,33 @@ export default function Authentication(){
         <Image
           src="/assets/Logo_voluntariado.svg"
           alt="Logo"
-          width={144}
-          height={40}
+          width={214}
+          height={64}
           priority
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleLogin}
-          sx={{ mb: 2 }}
-        >
-          Iniciar sesión con Microsoft
-        </Button>
-        <Link href="mailto:soporte@tudominio.com">Contactar a soporte</Link>
+        <Box marginTop={8}>
+          <Stack spacing={2}>
+            <MicrosoftButton onClick={handleLogin} variant="contained">
+              Iniciar Sesión
+            </MicrosoftButton>
+
+            <Stack spacing={1} direction="row">
+              <Typography variant="body1" color={theme.palette.text.primary}>
+                ¿No puedes iniciar sesión?
+              </Typography>
+              <Box
+                component="a"
+                href="mailto:soporte@tudominio.com"
+                sx={{
+                  color: theme.palette.text.primary,
+                }}
+              >
+                Contactar a soporte
+              </Box>
+            </Stack>
+          </Stack>
+        </Box>
       </CenteredBox>
     </Container>
   );
-};
-
+}

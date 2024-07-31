@@ -35,7 +35,7 @@ axiosInstances.forEach((instance) => {
   );
 });
 
-export default class HttpImplementation implements IHttp {
+class HttpImplementation implements IHttp {
   private readonly REQUEST_TIMEOUT: number = 30000;
 
   private getInstance(typeApi: string): AxiosInstance {
@@ -161,3 +161,5 @@ export default class HttpImplementation implements IHttp {
   }
 }
 
+const httpImplementation = new HttpImplementation();
+export default httpImplementation;
