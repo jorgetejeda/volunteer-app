@@ -14,6 +14,7 @@ import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import theme from "@/theme";
 
 export default function Page({ params }: { params: { id: string } }) {
+  
   console.log(params.id);
 
   return (

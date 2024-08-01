@@ -8,7 +8,7 @@ import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 export default class AuthService {
   static async login(data: UserCredentials): Promise<ApiResponse<User>> {
     const response = await axios.post<ApiResponse<User>>(
-      "/api/authentication/login",
+      "/api/authentication/",
       data
     );
     return response.data;

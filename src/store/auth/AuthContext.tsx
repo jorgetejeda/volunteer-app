@@ -34,6 +34,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
           setIsAdmin(true);
         }
       });
+
       sessionStorage.setItem('token', user.token);
       
     } catch (error: any) {
@@ -48,7 +49,6 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setUser(null);
       setIsAuthenticated(false);
-      sessionStorage.removeItem('token');
     } catch (error: any) {
       console.error('Error al cerrar sesión', error.message);
     } finally {

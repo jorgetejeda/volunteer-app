@@ -1,17 +1,24 @@
 import httpImplementation from "@/core-libraries/http/http.implementation";
 import { ApiResponse } from "@/core-libraries/http/types/api-response";
-import { Event, EventDto } from "@/core/types/event"; 
+import { Event, EventDto } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
+import { AxiosHeaders } from "axios";
 
 export default class EventService {
   static async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
     const formData = new FormData();
 
-    Object.keys(data).forEach(key => {
-      if (key === 'images') {
-        data.images.forEach((image, index) => {
-          formData.append(`images[${index}]`, image);
-        });
+    const defaultHeaders: AxiosHeaders = {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    } as unknown as AxiosHeaders;
+
+    // Add simple fields
+    Object.keys(data).forEach((key) => {
+      if (key === "images") {
+        for (let i = 0; i < data.images.length; i++) {
+          formData.append("images", data.images[i]);
+        }
       } else {
         formData.append(key, String(data[key as keyof EventDto]));
       }
@@ -20,7 +27,9 @@ export default class EventService {
     return httpImplementation.post<ApiResponse<Event>, FormData>(
       ServicesInstanceEnum.API_INSTANCE,
       "/events",
-      formData
+      formData,
+      "json",
+      defaultHeaders
     );
   }
 
@@ -38,12 +47,15 @@ export default class EventService {
     );
   }
 
-  static async updateEvent(id: number, data: Partial<EventDto>): Promise<ApiResponse<Event>> {
+  static async updateEvent(
+    id: number,
+    data: Partial<EventDto>
+  ): Promise<ApiResponse<Event>> {
     const formData = new FormData();
 
     // Añadir los campos del DTO al FormData
-    Object.keys(data).forEach(key => {
-      if (key === 'images') {
+    Object.keys(data).forEach((key) => {
+      if (key === "images") {
         data.images?.forEach((image, index) => {
           formData.append(`images[${index}]`, image);
         });

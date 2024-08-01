@@ -67,8 +67,7 @@ const EventForm = () => {
   const [isAllDay, setIsAllDay] = useState(false);
   const [eventData, setEventData] = useState<EventDto | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const eventId = Number(searchParams.get("id")); // Obtiene el ID de la URL
+  const eventId = null;
 
   const {
     register,
@@ -139,7 +138,7 @@ const EventForm = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    router.push("/events"); // Redirige a la página de eventos después de cerrar el modal
+    router.push("/events");
   };
 
   const handleAllDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,12 +168,17 @@ const EventForm = () => {
               <Typography variant="h4">Descripción del evento</Typography>
               <EditorView
                 onChange={(value) => setValue("description", value)}
-                defaultValue={eventData?.description || "Agrega la descripción del evento"}
+                defaultValue={
+                  eventData?.description || "Agrega la descripción del evento"
+                }
               />
               <Typography variant="h4">Instrucciones del evento</Typography>
               <EditorView
                 onChange={(value) => setValue("instructions", value)}
-                defaultValue={eventData?.instructions || "Agrega las instrucciones del evento"}
+                defaultValue={
+                  eventData?.instructions ||
+                  "Agrega las instrucciones del evento"
+                }
               />
               <Typography variant="h4">Imagen del evento</Typography>
               <Paper sx={{ padding: 2 }}>

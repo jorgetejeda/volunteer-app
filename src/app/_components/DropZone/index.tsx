@@ -8,15 +8,7 @@ interface DropZoneProps {
   accept: Accept;
   label?: string;
   maxFiles?: number;
-  setValue: (
-    name: string,
-    value: any,
-    options?: Partial<{
-      shouldValidate: boolean;
-      shouldDirty: boolean;
-      shouldTouch: boolean;
-    }>,
-  ) => void;
+  setValue: (name: string, value: File[] | string) => void;
   clearErrors: (name?: string) => void;
 }
 
@@ -33,18 +25,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   const { getRootProps, getInputProps } = useDropzone({
     accept,
-    onDrop: (acceptedFiles) => {
+    onDrop: (acceptedFiles: File[]) => {
       setError(null);
       clearErrors("images"); // clear form error on successful drop
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }),
-      ); 
+      console.log(acceptedFiles);
 
-      if (files.length + newFiles.length > maxFiles) {
+      if (files.length + acceptedFiles.length > maxFiles) {
         setError(`Only ${maxFiles} images are allowed`);
-        const validFiles = newFiles.slice(0, maxFiles - files.length);
+        const validFiles = acceptedFiles.slice(0, maxFiles - files.length);
         setFiles((prevFiles) => {
           const updatedFiles = [...prevFiles, ...validFiles];
           if (mainImage === null && updatedFiles.length > 0) {
@@ -56,7 +44,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
         });
       } else {
         setFiles((prevFiles) => {
-          const updatedFiles = [...prevFiles, ...newFiles];
+          const updatedFiles = [...prevFiles, ...acceptedFiles];
           if (mainImage === null && updatedFiles.length > 0) {
             setMainImage(updatedFiles[0].name);
           }
@@ -75,7 +63,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
       if (mainImage === fileName) {
         const newMainImage = updatedFiles.length > 0 ? updatedFiles[0].name : null;
         setMainImage(newMainImage);
-        setValue("mainImage", newMainImage);
+        setValue("mainImage", newMainImage!);
       }
       return updatedFiles;
     });
@@ -141,9 +129,9 @@ export const DropZone: React.FC<DropZoneProps> = ({
             width={100}
             height={100}
             layout="responsive"
-            src={(file as any).preview}
+            src={URL.createObjectURL(file)}
             alt="preview"
-            onLoad={() => URL.revokeObjectURL((file as any).preview)}
+            onLoad={() => URL.revokeObjectURL(URL.createObjectURL(file))}
           />
         </Box>
       </Box>
@@ -152,7 +140,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   React.useEffect(() => {
     return () => {
-      files.forEach((file) => URL.revokeObjectURL((file as any).preview));
+      files.forEach((file) => URL.revokeObjectURL(URL.createObjectURL(file)));
     };
   }, [files]);
 
@@ -181,4 +169,3 @@ export const DropZone: React.FC<DropZoneProps> = ({
     </Box>
   );
 };
-

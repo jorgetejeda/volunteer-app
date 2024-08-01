@@ -20,7 +20,3 @@ export const apiAuthInstance = axios.create({
   headers: defaultHeaders,
 });
 
-export const apiRegisterInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_REGISTER_API,
-  headers: defaultHeaders,
-});
