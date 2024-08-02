@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
     const {data, isSucceeded} = await httpImplementation.post<ApiResponse<User>, UserCredentials>(
       ServicesInstanceEnum.API_AUTH,
-      "/login",
+      "login",
       { email, password }
     );
 

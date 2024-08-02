@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Accept, useDropzone } from "react-dropzone";
@@ -16,12 +16,18 @@ export const DropZone: React.FC<DropZoneProps> = ({
   accept,
   label = "Drop image here",
   maxFiles = 5,
+  error: mainImageError,
   setValue,
   clearErrors,
 }) => {
-  const [files, setFiles] = React.useState<File[]>([]);
-  const [error, setError] = React.useState<string | null>(null);
-  const [mainImage, setMainImage] = React.useState<string | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [mainImage, setMainImage] = useState<string | null>(null);
+
+  // create useeffect to listen mainImageerror
+  useEffect(() => {
+    setError(!!mainImageError && mainImageError.message);
+  }, [mainImageError]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept,
@@ -61,7 +67,8 @@ export const DropZone: React.FC<DropZoneProps> = ({
       const updatedFiles = prevFiles.filter((file) => file.name !== fileName);
       setValue("images", updatedFiles);
       if (mainImage === fileName) {
-        const newMainImage = updatedFiles.length > 0 ? updatedFiles[0].name : null;
+        const newMainImage =
+          updatedFiles.length > 0 ? updatedFiles[0].name : null;
         setMainImage(newMainImage);
         setValue("mainImage", newMainImage!);
       }
@@ -89,7 +96,8 @@ export const DropZone: React.FC<DropZoneProps> = ({
           display: "inline-flex",
           position: "relative",
           borderRadius: 1,
-          border: mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
+          border:
+            mainImage === file.name ? "2px solid blue" : "1px solid #eaeaea",
           marginBottom: 2,
           marginRight: 2,
           width: 100,
@@ -138,18 +146,20 @@ export const DropZone: React.FC<DropZoneProps> = ({
     </label>
   ));
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       files.forEach((file) => URL.revokeObjectURL(URL.createObjectURL(file)));
     };
   }, [files]);
 
   return (
-    <Box className="container">
+    <Box sx={{ borderColor: !!error ? "red" : "transparent" }}>
       <Box {...getRootProps()}>
         <Typography variant="h5">{label}</Typography>
         <input {...getInputProps({ className: "dropzone" })} />
-        <Typography variant="body2">o haz click para seleccionar las imágenes</Typography>
+        <Typography variant="body2">
+          o haz click para seleccionar las imágenes
+        </Typography>
       </Box>
       {error && (
         <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>

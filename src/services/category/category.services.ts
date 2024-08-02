@@ -3,39 +3,44 @@ import { ApiResponse } from "@/core-libraries/http/types/api-response";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { Category } from "@/core/types/category";
 
-export default class CategoryService {
-  static async createCategory(
+class CategoryService {
+  private readonly baseUrl = "categories";
+
+  async createCategory(
     data: Partial<Category>,
   ): Promise<ApiResponse<Category>> {
     return httpImplementation.post<ApiResponse<Category>, Partial<Category>>(
       ServicesInstanceEnum.API_INSTANCE,
-      "/categories",
+      this.baseUrl,
       data,
     );
   }
 
-  static async getCategories(): Promise<ApiResponse<Category[]>> {
+  async getCategories(): Promise<ApiResponse<Category[]>> {
     return httpImplementation.get<ApiResponse<Category[]>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      "/categories",
+      this.baseUrl,
     );
   }
 
-  static async updateCategory(
+  async updateCategory(
     id: string | number,
     data: Partial<Category>,
   ): Promise<ApiResponse<Category>> {
     return httpImplementation.patch<ApiResponse<Category>, Partial<Category>>(
       ServicesInstanceEnum.API_INSTANCE,
-      `/categories/${id}`,
+      `${this.baseUrl}/${id}`,
       data,
     );
   }
 
-  static async deleteCategory(id: string | number): Promise<void> {
+  async deleteCategory(id: string | number): Promise<void> {
     return httpImplementation.delete<void, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `/categories/${id}`,
+      `${this.baseUrl}/${id}`,
     );
   }
 }
+
+const categoryService = new CategoryService();
+export default categoryService;

@@ -17,32 +17,12 @@ import {
   FormControlLabel,
   Backdrop,
   CircularProgress,
-  Theme,
   Button,
 } from "@mui/material";
 import { DropZone, DropdownCategories, EditorView } from "@components/index";
-import styled from "@emotion/styled";
 import { EventDto } from "@/core/types";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import EventService from "@/services/event/event.services";
-
-const CustomTextField = styled(TextField)(({ theme }: { theme?: Theme }) => ({
-  backgroundColor: "white",
-  borderRadius: "24px",
-  outline: "none",
-  border: "none",
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderRadius: "24px",
-    },
-    "&:hover fieldset": {
-      borderColor: theme?.palette.primary.main,
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme?.palette.primary.main,
-    },
-  },
-}));
 
 const INITIAL_STATE: EventDto = {
   title: "",
@@ -68,12 +48,12 @@ const EventForm = () => {
   const [eventData, setEventData] = useState<EventDto | null>(null);
   const router = useRouter();
   const eventId = null;
-
   const {
     register,
     handleSubmit,
     setValue,
     clearErrors,
+    setError,
     formState: { errors },
     reset,
   } = useForm<EventDto>({
@@ -82,7 +62,6 @@ const EventForm = () => {
 
   useEffect(() => {
     if (eventId) {
-      // Cargar los datos del evento para edición si hay un ID
       const fetchEventData = async () => {
         setLoading(true);
         try {
@@ -115,6 +94,12 @@ const EventForm = () => {
 
   const handleSave: SubmitHandler<EventDto> = async (data) => {
     setLoading(true);
+    //Validate mainImage
+    if (!data.mainImage) {
+      setError("mainImage", { message: "La imagen principal es obligatoria" });
+      setLoading(false);
+      return;
+    }
     try {
       let response;
       if (eventId) {
@@ -158,7 +143,7 @@ const EventForm = () => {
               <Typography variant="h3">
                 {eventId ? "Editar evento" : "Agregar nuevo evento"}
               </Typography>
-              <CustomTextField
+              <TextField
                 label="Escribir título del evento"
                 fullWidth
                 {...register("title", { required: "El título es obligatorio" })}
@@ -186,6 +171,7 @@ const EventForm = () => {
                   accept={{ "image/jpg": [".jpg", ".jpeg"] }}
                   label="Arrastra una imagen aquí"
                   setValue={setValue as any}
+                  error={errors.mainImage}
                   clearErrors={() => clearErrors()}
                   //FIXME: add defaultValue prop to DropZone component
                   // defaultValue={
@@ -200,7 +186,7 @@ const EventForm = () => {
               <Typography variant="h4">Datos del evento</Typography>
               <Paper sx={{ padding: 2 }}>
                 <Stack spacing={2}>
-                  <CustomTextField
+                  <TextField
                     label="Fecha de inicio"
                     fullWidth
                     type={dateType}
@@ -216,7 +202,7 @@ const EventForm = () => {
                     error={!!errors.date}
                     helperText={errors.date?.message}
                   />
-                  <CustomTextField
+                  <TextField
                     label="Hora inicio del evento"
                     fullWidth
                     type={timeType}
@@ -232,7 +218,7 @@ const EventForm = () => {
                     error={!!errors.time}
                     helperText={errors.time?.message}
                   />
-                  <CustomTextField
+                  <TextField
                     label="Duración (horas)"
                     fullWidth
                     type="number"
@@ -259,7 +245,7 @@ const EventForm = () => {
               </Paper>
               <Typography variant="h4">Cantidad de personas</Typography>
               <Paper sx={{ padding: 2 }}>
-                <CustomTextField
+                <TextField
                   label="Cupos"
                   fullWidth
                   type="number"
@@ -274,7 +260,7 @@ const EventForm = () => {
 
               <Typography variant="h4">Ubicación</Typography>
               <Paper sx={{ padding: 2 }}>
-                <CustomTextField
+                <TextField
                   label="Nombre del lugar"
                   fullWidth
                   {...register("location", {

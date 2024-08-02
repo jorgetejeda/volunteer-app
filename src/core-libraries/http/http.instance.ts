@@ -5,18 +5,15 @@ export const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
-export const apiInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  headers: defaultHeaders,
-});
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export const apiS3Instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_FILES_API,
+export const apiInstance = axios.create({
+  baseURL: `${BASE_URL}/${process.env.NEXT_PUBLIC_API_URL}`,
   headers: defaultHeaders,
 });
 
 export const apiAuthInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_AUTH_API,
+  baseURL: `${BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}`,
   headers: defaultHeaders,
 });
 

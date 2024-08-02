@@ -1,21 +1,28 @@
 import { Category } from "./category";
 
-export interface Event {
+type Event = {
   id: number;
   title: string;
-  imageName: string;
+  mainImage: string;
   description: string;
+  instructions: string;
   date: Date;
   quota: number;
   location: string;
-  duration: string | number;
+  duration: string;
   allDay: boolean;
   published: boolean;
   category: Category;
   usersQuantity: number;
-  instructions: string;
-  time: string;
-}
+  isUserRegistered: number;
+  images: Image[];
+};
+
+type Image = {
+  id: number;
+  documentName: string;
+  documentUrl: string;
+};
 
 export interface EventDto {
   title: string;

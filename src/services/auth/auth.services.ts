@@ -20,7 +20,7 @@ export default class AuthService {
     const response = await httpImplementation.post<
       ApiResponse<User>,
       UserCredentials
-    >(ServicesInstanceEnum.API_AUTH, "/login", data);
+    >(ServicesInstanceEnum.API_AUTH, "login", data);
     return response;
   }
 }

@@ -30,33 +30,12 @@ import theme from "@/theme";
 import { useRouter } from "next/navigation";
 import eventData from "../../../data/event.json";
 import { lightOrDarkColor } from "@utils/index";
-import httpImplementation from "@/core-libraries/http/http.implementation";
-import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-
-export interface Event {
-  id: number;
-  title: string;
-  imageName: string;
-  description: string;
-  date: string;
-  quota: number;
-  location: string;
-  duration: string;
-  allDay: boolean;
-  published: boolean;
-  category: Category;
-  usersQuantity: number;
-}
-
-export interface Category {
-  id: number;
-  title: string;
-  backgroundColor: string;
-}
+import EventService from "@/services/event/event.services";
+import { Event as EventResponse } from "@/core/types";
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventResponse[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentEvent, setCurrentEvent] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -72,10 +51,10 @@ export default function EventPage() {
     setLoading(true);
     try {
       //TODO: add category background color
-     const response = await httpImplementation.get<Event, unknown>(ServicesInstanceEnum.API_INSTANCE, "/events"); 
-      console.log(response)
-      setEvents(eventData);
-      console.log(events)
+      const { data, isSucceeded } = await EventService.getEvents();
+      console.log(isSucceeded);
+      setEvents(data);
+      console.log(data);
     } catch (error: any) {
       console.error("Error getting events", error.message);
     } finally {
@@ -84,7 +63,7 @@ export default function EventPage() {
   };
 
   React.useLayoutEffect(() => {
-     getEvents();
+    getEvents();
   }, []);
 
   const handleMenuOpen = (
@@ -235,7 +214,7 @@ export default function EventPage() {
                     <CardMedia
                       component="img"
                       height="150"
-                      image={event.imageName}
+                      image={event.images[0].documentUrl}
                       alt="Event"
                       sx={{
                         width: "100%",
@@ -266,8 +245,8 @@ export default function EventPage() {
                   >
                     <CategoryLabel
                       label={event.category.title}
-                      textColor={lightOrDarkColor(event.category.backgroundColor)}
-                      backgroundColor={event.category.backgroundColor}
+                      textColor={lightOrDarkColor(event.category.color)}
+                      backgroundColor={event.category.color}
                     />
                     {isAdmin && (
                       <Box>

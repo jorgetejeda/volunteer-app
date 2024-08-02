@@ -4,10 +4,12 @@ import { Event, EventDto } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
 
-export default class EventService {
-  static async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
-    const formData = new FormData();
+class EventService {
+  private readonly baseUrl = "events";
 
+  async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
+    const formData = new FormData();
+console.log(data)
     const defaultHeaders: AxiosHeaders = {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
@@ -26,34 +28,33 @@ export default class EventService {
 
     return httpImplementation.post<ApiResponse<Event>, FormData>(
       ServicesInstanceEnum.API_INSTANCE,
-      "/events",
+      this.baseUrl,
       formData,
       "json",
-      defaultHeaders
+      defaultHeaders,
     );
   }
 
-  static async getEvents(): Promise<ApiResponse<Event[]>> {
+  async getEvents(): Promise<ApiResponse<Event[]>> {
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      "/events"
+      this.baseUrl,
     );
   }
 
-  static async getEventById(id: number): Promise<ApiResponse<Event>> {
+  async getEventById(id: number): Promise<ApiResponse<Event>> {
     return httpImplementation.get<ApiResponse<Event>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `/events/${id}`
+      `${this.baseUrl}/${id}`,
     );
   }
 
-  static async updateEvent(
+  async updateEvent(
     id: number,
-    data: Partial<EventDto>
+    data: Partial<EventDto>,
   ): Promise<ApiResponse<Event>> {
     const formData = new FormData();
 
-    // Añadir los campos del DTO al FormData
     Object.keys(data).forEach((key) => {
       if (key === "images") {
         data.images?.forEach((image, index) => {
@@ -68,15 +69,18 @@ export default class EventService {
 
     return httpImplementation.put<ApiResponse<Event>, FormData>(
       ServicesInstanceEnum.API_INSTANCE,
-      `/events/${id}`,
-      formData
+      `${this.baseUrl}/${id}`,
+      formData,
     );
   }
 
-  static async deleteEvent(id: number): Promise<ApiResponse<void>> {
+  async deleteEvent(id: number): Promise<ApiResponse<void>> {
     return httpImplementation.delete<ApiResponse<void>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `/events/${id}`
+      `${this.baseUrl}/${id}`,
     );
   }
 }
+
+const eventService = new EventService();
+export default eventService;
