@@ -3,13 +3,14 @@ import { ApiResponse } from "@/core-libraries/http/types/api-response";
 import { Event, EventDto } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
+import { QueryParams } from "@/core-libraries/http/types/query-params";
 
 class EventService {
   private readonly baseUrl = "events";
 
   async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
     const formData = new FormData();
-console.log(data)
+    console.log(data);
     const defaultHeaders: AxiosHeaders = {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
@@ -35,10 +36,22 @@ console.log(data)
     );
   }
 
-  async getEvents(): Promise<ApiResponse<Event[]>> {
+  async getEvents(query?: QueryParams): Promise<ApiResponse<Event[]>> {
+    const params = {
+      limit: query?.limit || 10,
+      offset: query?.offset || 0,
+      published: query?.published || false,
+    };
+
+    const URL = `${this.baseUrl}?${new URLSearchParams({
+      limit: String(params.limit),
+      offset: String(params.offset),
+      published: String(params.published),
+    }).toString()}`;
+
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      this.baseUrl,
+      URL,
     );
   }
 

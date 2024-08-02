@@ -13,10 +13,13 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -26,7 +29,9 @@ export const Header = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await signOut({ redirect: false, callbackUrl: "/" });
+    router.push("/authentication");
     setAnchorEl(null);
   };
 

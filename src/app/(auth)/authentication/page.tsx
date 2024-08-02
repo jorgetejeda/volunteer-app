@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 
 import theme from "@/theme";
 import { useAuthContext } from "@/store/auth/AuthContext";
+import { signIn } from "next-auth/react";
 
 const CenteredBox = styled(Box)({
   display: "flex",
@@ -49,6 +50,7 @@ export default function Authentication() {
   const handleLogin = async () => {
     try {
       login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
+      //signIn("azure-ad")
     } catch (error) {
       console.log(error);
     }

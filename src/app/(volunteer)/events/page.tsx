@@ -41,6 +41,7 @@ import { Event } from "@/core/types";
 //@Libraries
 import renderHTML from "react-render-html";
 import DOMPurify from "dompurify";
+import { QueryParams } from "@/core-libraries/http/types/query-params";
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
@@ -59,8 +60,11 @@ export default function EventPage() {
   const getEvents = async () => {
     setLoading(true);
     try {
-      //TODO: add category background color
-      const { data, isSucceeded } = await EventService.getEvents();
+      const { data, isSucceeded } = await EventService.getEvents({
+        limit: 10,
+        offset: 0,
+      });
+
       setEvents(data);
     } catch (error: any) {
       console.error("Error getting events", error.message);
@@ -345,6 +349,12 @@ export default function EventPage() {
       {!loading && filteredEvents.length === 0 && (
         <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
           Lo sentimos, no pudimos encontrar el evento que estás buscando.
+        </Typography>
+      )}
+
+      {!loading && events.length === 0 && (
+        <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
+          No hay eventos disponibles
         </Typography>
       )}
 
