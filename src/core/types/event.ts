@@ -1,6 +1,6 @@
 import { Category } from "./category";
 
-type Event = {
+export type Event = {
   id: number;
   title: string;
   mainImage: string;

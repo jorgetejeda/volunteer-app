@@ -60,37 +60,37 @@ const EventForm = () => {
     defaultValues: INITIAL_STATE,
   });
 
-  useEffect(() => {
-    if (eventId) {
-      const fetchEventData = async () => {
-        setLoading(true);
-        try {
-          const { data: event, isSucceeded } =
-            await EventService.getEventById(eventId);
-          if (!isSucceeded) {
-            throw new Error("Error al cargar los datos del evento");
-          }
-          setValue("title", event.title);
-          setValue("description", event.description);
-          setValue("instructions", event.instructions);
-          setValue("categoryId", event.category.id);
-          setValue("time", event.time);
-          setValue("date", event.date.toISOString().split("T")[0]);
-          setValue("quota", event.quota);
-          setValue("location", event.location);
-          setValue("duration", +event.duration);
-          setValue("allDay", event.allDay);
-          setIsAllDay(event.allDay);
-        } catch (error) {
-          console.error("Error al cargar los datos del evento:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchEventData();
-    }
-  }, [eventId, setValue]);
+  // useEffect(() => {
+  //   if (eventId) {
+  //     const fetchEventData = async () => {
+  //       setLoading(true);
+  //       try {
+  //         const { data: event, isSucceeded } =
+  //           await EventService.getEventById(eventId);
+  //         if (!isSucceeded) {
+  //           throw new Error("Error al cargar los datos del evento");
+  //         }
+  //         setValue("title", event.title);
+  //         setValue("description", event.description);
+  //         setValue("instructions", event.instructions);
+  //         setValue("categoryId", event.category.id);
+  //         setValue("time", event.time);
+  //         setValue("date", event.date.toISOString().split("T")[0]);
+  //         setValue("quota", event.quota);
+  //         setValue("location", event.location);
+  //         setValue("duration", +event.duration);
+  //         setValue("allDay", event.allDay);
+  //         setIsAllDay(event.allDay);
+  //       } catch (error) {
+  //         console.error("Error al cargar los datos del evento:", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //
+  //     fetchEventData();
+  //   }
+  // }, [eventId, setValue]);
 
   const handleSave: SubmitHandler<EventDto> = async (data) => {
     setLoading(true);

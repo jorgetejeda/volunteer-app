@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import theme from "@/theme";
 import {
   Box,
   Paper,
@@ -17,25 +18,33 @@ import {
   CircularProgress,
   Button,
   TextField,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
 } from "@mui/material";
-import { Card, CardMedia, CardContent, CardActions } from "@mui/material";
-import { Masonry } from "@mui/lab";
 import {
   CalendarMonthOutlined,
   LocationOnOutlined,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
+import { Masonry } from "@mui/lab";
 import { CategoryLabel, InformationLabel } from "@components/index";
-import theme from "@/theme";
+//@Hooks
 import { useRouter } from "next/navigation";
-import eventData from "../../../data/event.json";
+//@Utils
 import { lightOrDarkColor } from "@utils/index";
+//@Services
 import EventService from "@/services/event/event.services";
-import { Event as EventResponse } from "@/core/types";
+//@Types
+import { Event } from "@/core/types";
+//@Libraries
+import renderHTML from "react-render-html";
+import DOMPurify from "dompurify";
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
-  const [events, setEvents] = useState<EventResponse[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentEvent, setCurrentEvent] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -52,9 +61,7 @@ export default function EventPage() {
     try {
       //TODO: add category background color
       const { data, isSucceeded } = await EventService.getEvents();
-      console.log(isSucceeded);
       setEvents(data);
-      console.log(data);
     } catch (error: any) {
       console.error("Error getting events", error.message);
     } finally {
@@ -129,6 +136,13 @@ export default function EventPage() {
       return matchesSearch && matchesFilter;
     });
   }, [events, searchTerm, filter]);
+
+  const cleanHtml = (html: string) => {
+    const cleanHtml = DOMPurify.sanitize(html, {
+      USE_PROFILES: { html: true },
+    });
+    return renderHTML(cleanHtml);
+  };
 
   return (
     <>
@@ -302,7 +316,7 @@ export default function EventPage() {
                       color={theme.palette.text.secondary}
                       sx={{ mt: 1 }}
                     >
-                      {event.description}
+                      {cleanHtml(event.description)}
                     </Typography>
 
                     <InformationLabel

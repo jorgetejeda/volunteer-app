@@ -3,11 +3,13 @@ import { Box, Typography, IconButton } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Accept, useDropzone } from "react-dropzone";
 import Image from "next/image";
+import { FieldError } from "react-hook-form";
 
 interface DropZoneProps {
   accept: Accept;
   label?: string;
   maxFiles?: number;
+  error?: FieldError;
   setValue: (name: string, value: File[] | string) => void;
   clearErrors: (name?: string) => void;
 }
@@ -23,11 +25,6 @@ export const DropZone: React.FC<DropZoneProps> = ({
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [mainImage, setMainImage] = useState<string | null>(null);
-
-  // create useeffect to listen mainImageerror
-  useEffect(() => {
-    setError(!!mainImageError && mainImageError.message);
-  }, [mainImageError]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept,
@@ -153,7 +150,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   }, [files]);
 
   return (
-    <Box sx={{ borderColor: !!error ? "red" : "transparent" }}>
+    <Box sx={{ borderColor: error || mainImageError?.message  ? "red" : "transparent" }}>
       <Box {...getRootProps()}>
         <Typography variant="h5">{label}</Typography>
         <input {...getInputProps({ className: "dropzone" })} />
