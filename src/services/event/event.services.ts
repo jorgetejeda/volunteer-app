@@ -93,6 +93,15 @@ class EventService {
       `${this.baseUrl}/${id}`,
     );
   }
+
+  async enrollEvent(eventId: number): Promise<ApiResponse<void>> {
+    console.log(typeof eventId);
+    return httpImplementation.post<ApiResponse<void>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/register-user`,
+      { eventId },
+    );
+  }
 }
 
 const eventService = new EventService();

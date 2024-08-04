@@ -6,7 +6,7 @@ export type Event = {
   mainImage: string;
   description: string;
   instructions: string;
-  date: Date;
+  date: string;
   quota: number;
   location: string;
   duration: string;
@@ -14,7 +14,7 @@ export type Event = {
   published: boolean;
   category: Category;
   usersQuantity: number;
-  isUserRegistered: number;
+  isUserRegistered: boolean;
   images: Image[];
 };
 

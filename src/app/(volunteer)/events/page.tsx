@@ -33,15 +33,11 @@ import { CategoryLabel, InformationLabel } from "@components/index";
 //@Hooks
 import { useRouter } from "next/navigation";
 //@Utils
-import { lightOrDarkColor } from "@utils/index";
+import { cleanHtml, lightOrDarkColor } from "@utils/index";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Types
 import { Event } from "@/core/types";
-//@Libraries
-import renderHTML from "react-render-html";
-import DOMPurify from "dompurify";
-import { QueryParams } from "@/core-libraries/http/types/query-params";
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
@@ -140,13 +136,6 @@ export default function EventPage() {
       return matchesSearch && matchesFilter;
     });
   }, [events, searchTerm, filter]);
-
-  const cleanHtml = (html: string) => {
-    const cleanHtml = DOMPurify.sanitize(html, {
-      USE_PROFILES: { html: true },
-    });
-    return renderHTML(cleanHtml);
-  };
 
   return (
     <>

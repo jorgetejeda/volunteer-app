@@ -1,21 +1,87 @@
+
 "use client";
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import theme from "@/theme";
+import {
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 import {
   LocationOnOutlined,
   CalendarMonthOutlined,
   Menu,
+  TimerOutlined,
 } from "@mui/icons-material";
-import {
-  InformationLabel,
-  CategoryLabel,
-} from "@components/index";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
-import theme from "@/theme";
+import { InformationLabel, CategoryLabel } from "@components/index";
+//@Types
+import { Event } from "@/core/types";
+//@Services
+import EventService from "@/services/event/event.services";
+//@Utils
+import { cleanHtml, lightOrDarkColor } from "@/utils";
 
-export default function Page({ params }: { params: { id: string } }) {
-  
-  console.log(params.id);
+export default function Page({ params }: { params: { id: number } }) {
+  const id = +params.id;
+
+  const [event, setEvent] = useState<Event>({} as Event);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [isUserRegistered, setIsUserRegistered] = useState<boolean>(false);
+  const [enrollMessage, setEnrollMessage] = useState<string>("");
+
+  const getEvents = useCallback(async () => {
+    const { data, isSucceeded } = await EventService.getEventById(id);
+    if (!isSucceeded || !data) {
+      console.log("Error");
+    }
+    setIsUserRegistered(data.isUserRegistered);
+    setEvent(data);
+    setLoading(false);
+  }, [id]);
+
+  useEffect(() => {
+    getEvents();
+  }, [getEvents]);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handleEnroll = async () => {
+    setIsEnrolling(true);
+    const { isSucceeded } = await EventService.enrollEvent(id);
+    setIsEnrolling(false);
+    setEnrollMessage(isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.");
+    setOpenDialog(false);
+  };
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -39,12 +105,13 @@ export default function Page({ params }: { params: { id: string } }) {
       </Box>
 
       <Box marginTop={3} marginBottom={2}>
-        <CategoryLabel label="Reforestación" />
-        <Typography
-          variant="h1"
-          marginTop={1}
-        >
-          Nombre del evento {params.id}
+        <CategoryLabel
+          label={event.category.title}
+          textColor={lightOrDarkColor(event.category.color)}
+          backgroundColor={event.category.color}
+        />
+        <Typography variant="h1" marginTop={1}>
+          {event.title}
         </Typography>
       </Box>
 
@@ -53,23 +120,28 @@ export default function Page({ params }: { params: { id: string } }) {
           <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={2}>
               <Typography variant="body1">
-                lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
-              </Typography>
-              <Typography variant="body1">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit anim id est laborum.
+                {cleanHtml(event.description)}
               </Typography>
               <Box>
                 <Button
-                  variant="contained"
-                  size="small"
+                  variant={isUserRegistered ? "contained" : "outlined"}
+                  onClick={handleOpenDialog}
+                  disabled={event.isUserRegistered}
                 >
-                  Quiero participar
+                  {isUserRegistered ? "Quiero participar" : "No quiero participar"}
+                  {isEnrolling && (
+                    <CircularProgress
+                      size={24}
+                      sx={{
+                        color: "white",
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        marginTop: "-12px",
+                        marginLeft: "-12px",
+                      }}
+                    />
+                  )}
                 </Button>
               </Box>
             </Box>
@@ -83,7 +155,15 @@ export default function Page({ params }: { params: { id: string } }) {
                   component: CalendarMonthOutlined,
                   color: theme.palette.primary.main,
                 }}
-                label="7/2/2021"
+                label={event.date}
+              />
+
+              <InformationLabel
+                icon={{
+                  component: TimerOutlined,
+                  color: theme.palette.primary.main,
+                }}
+                label={`Duración: ${event.duration} horas`}
               />
 
               <InformationLabel
@@ -91,7 +171,7 @@ export default function Page({ params }: { params: { id: string } }) {
                   component: LocationOnOutlined,
                   color: theme.palette.primary.main,
                 }}
-                label="36 Paramount Drive, Raynham MA 276"
+                label={event.location}
               />
 
               <InformationLabel
@@ -101,10 +181,53 @@ export default function Page({ params }: { params: { id: string } }) {
                   component: Menu,
                 }}
               />
+              <Typography variant="body1">
+                {cleanHtml(event.instructions)}
+              </Typography>
             </Box>
           </Paper>
         </Grid>
       </Grid>
+
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Confirmar Inscripción</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            ¿Estás seguro que deseas inscribirte en el evento "{event.title}"?
+            <br />
+            <strong>Fecha:</strong> {event.date}
+            <br />
+            <strong>Ubicación:</strong> {event.location}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleEnroll}
+            color="primary"
+            disabled={isEnrolling}
+            startIcon={isEnrolling && <CircularProgress size={20} />}
+          >
+            Inscribirme
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {enrollMessage && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          marginTop={3}
+        >
+          <Typography variant="h6" color="success">
+            {enrollMessage}
+          </Typography>
+        </Box>
+      )}
     </>
   );
 }
+
