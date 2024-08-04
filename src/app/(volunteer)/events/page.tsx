@@ -29,7 +29,11 @@ import {
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
 import { Masonry } from "@mui/lab";
-import { CategoryLabel, InformationLabel } from "@components/index";
+import {
+  CategoryLabel,
+  DataNotFound,
+  InformationLabel,
+} from "@components/index";
 //@Hooks
 import { useRouter } from "next/navigation";
 //@Utils
@@ -116,7 +120,7 @@ export default function EventPage() {
       setActionLoading(false);
       setDialogOpen(false);
       handleMenuClose();
-    }, 2000); 
+    }, 2000);
   };
 
   const cancelDelete = () => {
@@ -336,9 +340,7 @@ export default function EventPage() {
       </Masonry>
 
       {!loading && filteredEvents.length === 0 && (
-        <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
-          Lo sentimos, no pudimos encontrar el evento que estás buscando.
-        </Typography>
+        <DataNotFound message="Lo sentimos, no pudimos encontrar el evento que estás buscando" />
       )}
 
       {!loading && events.length === 0 && (
