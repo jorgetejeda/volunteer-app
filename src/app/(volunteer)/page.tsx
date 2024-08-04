@@ -1,17 +1,27 @@
-"use client";
-import React, { useState } from "react";
-import { Grid, Paper, Box, Typography, Button, Stack } from "@mui/material";
-import theme from "@/theme";
+"use client"
+import React, { useState, useEffect } from "react";
+import {
+  Grid,
+  Paper,
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
-// Auth
 import { useAuthContext } from "@/store/auth/AuthContext";
-// Slider
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
-import { CardEvent } from "@components/index";
+import { CardEvent, DataNotFound } from "@components/index";
+import EventService from "@/services/event/event.services";
+import { Event } from "@/core/types";
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import theme from "@/theme";
+import { lightOrDarkColor } from "@/utils";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -36,7 +46,29 @@ const images = [
 export default function Home() {
   const { user, isAuthenticated } = useAuthContext();
   const [activeStep, setActiveStep] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<Event[]>([]);
   const maxSteps = images.length;
+
+  const getEvents = async () => {
+    setLoading(true);
+    try {
+      const { data, isSucceeded } = await EventService.getEvents({
+        limit: 10,
+        offset: 0,
+      });
+
+      setEvents(data);
+    } catch (error: any) {
+      console.error("Error getting events", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getEvents();
+  }, []);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -52,175 +84,187 @@ export default function Home() {
 
   return (
     <>
-      <Grid container spacing={2} id="container">
-        <Grid item md={9} sm={12} display="flex" flexDirection="column" gap={2}>
-          <Box>
-            <Typography variant="h3">Bienvenido, {isAuthenticated && user?.userName}</Typography>
-          </Box>
-          <Box>
-            <Typography variant="body1">
-            En Crecer, creemos firmemente en la responsabilidad social y en el poder de la colaboración para generar cambios significativos. Nuestro programa de voluntariado corporativo nace de la convicción de que cada acción cuenta y de que juntos podemos contribuir para forjar un mundo mejor.
-            </Typography>
-          </Box>
+      {loading && (
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+      {!loading && (
+        <Grid container spacing={2} id="container">
+          <Grid item md={9} sm={12} display="flex" flexDirection="column" gap={2}>
+            <Box>
+              <Typography variant="h3">Bienvenido, {isAuthenticated && user?.userName}</Typography>
+            </Box>
+            <Box>
+              <Typography variant="body1">
+                En Crecer, creemos firmemente en la responsabilidad social y en el poder de la colaboración para generar cambios significativos. Nuestro programa de voluntariado corporativo nace de la convicción de que cada acción cuenta y de que juntos podemos contribuir para forjar un mundo mejor.
+              </Typography>
+            </Box>
 
-          <Grid container spacing={2}>
-            <Grid item md={7} sm={12}>
-              <Paper sx={{ padding: 2 }}>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  marginBottom={2}
-                >
-                  <Typography variant="h3">Proximos eventos</Typography>
-                  <Button component="a" href="/events" variant="text">
-                    Ver todos
-                  </Button>
-                </Box>
-
-                <Box display="flex" gap={3} flexDirection="column">
-                  {[...Array(2)].map((_, index) => (
-                    <Box key={index}>
-                      <CardEvent
-                        name={`Nombre del evento ${index + 1}`}
-                        date="7/2/2021"
-                        description=" Jorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Nunc vulputate libero et velit interdum, ac
-                            aliquet odio mattis.
-                        "
-                        location="36 Paramount Drive, Raynham MA 2767"
-                        redirect={{
-                          variant: "contained",
-                          label: "Ver detalles",
-                          to: `/events/${index + 1}`,
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              </Paper>
-            </Grid>
-            <Grid item md={5} sm={12}>
-              <Stack spacing={2}>
-                <Paper sx={{ padding: 2 }}>
-                  <Box display="flex" flexDirection="column" gap={1}>
-                    <Typography variant="body1" color={theme.palette.grey[200]}>
-                      Horas Acumuladas
-                    </Typography>
-                    <Typography variant="h1" color={theme.palette.primary.main}>
-                      120
-                    </Typography>
-                  </Box>
-                </Paper>
-
+            <Grid container spacing={2}>
+              <Grid item md={7} sm={12}>
                 <Paper sx={{ padding: 2 }}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    marginBottom={4}
+                    marginBottom={2}
                   >
-                    <Typography variant="h3">Galeria</Typography>
+                    <Typography variant="h3">Próximos eventos</Typography>
                     <Button component="a" href="/events" variant="text">
-                      Ver todas las imagenes
+                      Ver todos
                     </Button>
                   </Box>
-                  <AutoPlaySwipeableViews
-                    axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                    index={activeStep}
-                    onChangeIndex={handleStepChange}
-                    enableMouseEvents
-                  >
-                    {images.map((step, index) => (
-                      <div key={step.label}>
-                        {Math.abs(activeStep - index) <= 2 ? (
-                          <Box
-                            component="img"
-                            sx={{
-                              height: 232,
-                              display: "block",
-                              maxWidth: 400,
-                              overflow: "hidden",
-                              width: "100%",
-                              borderRadius: "8px",
+
+                  <Box display="flex" gap={3} flexDirection="column">
+                    {!loading && events.length > 0 ? (
+                      events.map((event) => (
+                        <Box key={event.id}>
+                          <CardEvent
+                            name={event.title}
+                            date={event.date}
+                            description={event.description}
+                            location={event.location}
+                            chip={{
+                              label: event.category.title,
+                              color: lightOrDarkColor(event.category.color),
+                              backgroundColor: event.category.color,
                             }}
-                            src={step.imgPath}
-                            alt={step.label}
+                            redirect={{
+                              variant: "contained",
+                              label: "Ver detalles",
+                              to: `/events/${event.id}`,
+                            }}
                           />
-                        ) : null}
-                      </div>
-                    ))}
-                  </AutoPlaySwipeableViews>
-                  <MobileStepper
-                    steps={maxSteps}
-                    position="static"
-                    activeStep={activeStep}
-                    sx={{ background: "transparent", marginTop: 1 }}
-                    nextButton={
-                      <Button
-                        size="small"
-                        onClick={handleNext}
-                        disabled={activeStep === maxSteps - 1}
-                      >
-                        {/* {theme.direction === "rtl" ? (
-                          <KeyboardArrowLeft />
-                        ) : (
-                          <KeyboardArrowRight />
-                        )} */}
-                      </Button>
-                    }
-                    backButton={
-                      <Button
-                        size="small"
-                        onClick={handleBack}
-                        disabled={activeStep === 0}
-                      >
-                        {/* {theme.direction === "rtl" ? (
-                          <KeyboardArrowRight />
-                        ) : (
-                          <KeyboardArrowLeft />
-                        )} */}
-                      </Button>
-                    }
-                  />
+                        </Box>
+                      ))
+                    ) : (
+                     <DataNotFound /> 
+                    )}
+                  </Box>
                 </Paper>
-              </Stack>
+              </Grid>
+              <Grid item md={5} sm={12}>
+                <Stack spacing={2}>
+                  <Paper sx={{ padding: 2 }}>
+                    <Box display="flex" flexDirection="column" gap={1}>
+                      <Typography variant="body1" color={theme.palette.grey[200]}>
+                        Horas Acumuladas
+                      </Typography>
+                      <Typography variant="h1" color="primary.main">
+                        120
+                      </Typography>
+                    </Box>
+                  </Paper>
+
+                  <Paper sx={{ padding: 2 }}>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      marginBottom={4}
+                    >
+                      <Typography variant="h3">Galería</Typography>
+                      <Button component="a" href="/events" variant="text">
+                        Ver todas las imágenes
+                      </Button>
+                    </Box>
+                    <AutoPlaySwipeableViews
+                      axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                      index={activeStep}
+                      onChangeIndex={handleStepChange}
+                      enableMouseEvents
+                    >
+                      {images.map((step, index) => (
+                        <div key={step.label}>
+                          {Math.abs(activeStep - index) <= 2 ? (
+                            <Box
+                              component="img"
+                              sx={{
+                                height: 232,
+                                display: "block",
+                                maxWidth: 400,
+                                overflow: "hidden",
+                                width: "100%",
+                                borderRadius: "8px",
+                              }}
+                              src={step.imgPath}
+                              alt={step.label}
+                            />
+                          ) : null}
+                        </div>
+                      ))}
+                    </AutoPlaySwipeableViews>
+                    <MobileStepper
+                      steps={maxSteps}
+                      position="static"
+                      activeStep={activeStep}
+                      sx={{ background: "transparent", marginTop: 1 }}
+                      nextButton={
+                        <Button
+                          size="small"
+                          onClick={handleNext}
+                          disabled={activeStep === maxSteps - 1}
+                        >
+                          {/* {theme.direction === "rtl" ? (
+                            <KeyboardArrowLeft />
+                          ) : (
+                            <KeyboardArrowRight />
+                          )} */}
+                        </Button>
+                      }
+                      backButton={
+                        <Button
+                          size="small"
+                          onClick={handleBack}
+                          disabled={activeStep === 0}
+                        >
+                          {/* {theme.direction === "rtl" ? (
+                            <KeyboardArrowRight />
+                          ) : (
+                            <KeyboardArrowLeft />
+                          )} */}
+                        </Button>
+                      }
+                    />
+                  </Paper>
+                </Stack>
+              </Grid>
             </Grid>
           </Grid>
+          <Grid item md={3} sm={12}>
+            <Paper sx={{ padding: 2 }}>
+              <Typography variant="h3">Calendario</Typography>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateCalendar
+                  sx={{
+                    width: "auto",
+                    maxWidth: "100%",
+                    fontSize: "0.75rem",
+                    "& .MuiPickersCalendarHeader-root": {
+                      paddingLeft: "0",
+                      paddingRight: "0",
+                    },
+                    "& .MuiPickersDay-today": {
+                      color: theme.palette.common.white,
+                      background: theme.palette.primary.main,
+                      border: "none",
+                      outline: "none",
+                    },
+                    "& .MuiPickersDay-dayWithMargin": {
+                      width: "30px",
+                      height: "30px",
+                    },
+                    "& .MuiDayCalendar-weekDayLabel": {
+                      width: "30px",
+                    },
+                  }}
+                />
+              </LocalizationProvider>
+            </Paper>
+          </Grid>
         </Grid>
-        {/* Calendar */}
-        <Grid item md={3} sm={12}>
-          <Paper sx={{ padding: 2 }}>
-            <Typography variant="h3">Calendario</Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar
-                sx={{
-                  width: "auto",
-                  maxWidth: "100%",
-                  fontSize: "0.75rem",
-                  "& .MuiPickersCalendarHeader-root": {
-                    paddingLeft: "0",
-                    paddingRight: "0",
-                  },
-                  "& .MuiPickersDay-today": {
-                    color: theme.palette.common.white,
-                    background: theme.palette.primary.main,
-                    border: "none",
-                    outline: "none",
-                  },
-                  "& .MuiPickersDay-dayWithMargin": {
-                    width: "30px",
-                    height: "30px",
-                  },
-                  "& .MuiDayCalendar-weekDayLabel": {
-                    width: "30px",
-                  },
-                }}
-              />
-            </LocalizationProvider>
-          </Paper>
-        </Grid>
-      </Grid>
+      )}
     </>
   );
 }

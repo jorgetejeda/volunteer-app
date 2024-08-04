@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import {
   BtnBold,
@@ -17,13 +18,37 @@ import {
   BtnStyles,
 } from "react-simple-wysiwyg";
 import DOMPurify from "dompurify";
+import theme from "@/theme";
 
 type EditorViewProps = {
   defaultValue?: string;
   onChange?: (value: string) => void;
+  undo?: boolean;
+  redo?: boolean;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikeThrough?: boolean;
+  numberedList?: boolean;
+  bulletList?: boolean;
+  clearFormatting?: boolean;
+  styles?: boolean;
 };
 
-export const EditorView = ({ defaultValue, onChange }: EditorViewProps) => {
+export const EditorView = ({
+  defaultValue,
+  onChange,
+  undo,
+  redo,
+  bold,
+  italic,
+  underline,
+  strikeThrough,
+  numberedList,
+  bulletList,
+  clearFormatting,
+  styles,
+}: EditorViewProps) => {
   const [html, setHtml] = useState(defaultValue || "");
 
   const handleChange = (e: ContentEditableEvent) => {
@@ -42,32 +67,34 @@ export const EditorView = ({ defaultValue, onChange }: EditorViewProps) => {
             resize: "vertical",
             height: "300px",
             overflow: "auto",
-            backgroundColor: "#fff",
+            backgroundColor: theme.palette.common.white,
           },
         }}
         value={html}
         onChange={handleChange}
       >
         <Toolbar>
-          <BtnUndo />
-          <BtnRedo />
-          <Separator />
+          {undo && <BtnUndo />}
+          {redo && <BtnRedo />}
+          {undo || redo ? <Separator /> : null}
 
-          <BtnBold />
-          <BtnItalic />
-          <BtnUnderline />
-          <BtnStrikeThrough />
-          <Separator />
+          {bold && <BtnBold />}
+          {italic && <BtnItalic />}
+          {underline && <BtnUnderline />}
+          {strikeThrough && <BtnStrikeThrough />}
+          {(bold || italic || underline || strikeThrough) && <Separator />}
 
-          <BtnNumberedList />
-          <BtnBulletList />
-          <Separator />
+          {numberedList && <BtnNumberedList />}
+          {bulletList && <BtnBulletList />}
+          {(numberedList || bulletList) && <Separator />}
 
-          <BtnClearFormatting />
-          <Separator />
-          <BtnStyles />
+          {clearFormatting && <BtnClearFormatting />}
+          {clearFormatting && <Separator />}
+
+          {styles && <BtnStyles />}
         </Toolbar>
       </Editor>
     </EditorProvider>
   );
-}
+};
+

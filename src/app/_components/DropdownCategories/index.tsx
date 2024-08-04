@@ -61,7 +61,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   }, []);
 
   useEffect(() => {
-    setSelectedCategoryId(value || null);  // Actualiza el valor seleccionado cuando cambie el prop
+    setSelectedCategoryId(value || null); 
   }, [value]);
 
   const getCategories = async () => {

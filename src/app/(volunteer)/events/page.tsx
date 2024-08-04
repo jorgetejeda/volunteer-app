@@ -116,7 +116,7 @@ export default function EventPage() {
       setActionLoading(false);
       setDialogOpen(false);
       handleMenuClose();
-    }, 2000); // Simulación de tiempo de carga
+    }, 2000); 
   };
 
   const cancelDelete = () => {

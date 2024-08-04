@@ -152,6 +152,10 @@ const EventForm = () => {
               />
               <Typography variant="h4">Descripción del evento</Typography>
               <EditorView
+                undo
+                redo
+                bold
+                italic
                 onChange={(value) => setValue("description", value)}
                 defaultValue={
                   eventData?.description || "Agrega la descripción del evento"
@@ -159,6 +163,16 @@ const EventForm = () => {
               />
               <Typography variant="h4">Instrucciones del evento</Typography>
               <EditorView
+                undo
+                redo
+                bold
+                italic
+                underline
+                strikeThrough
+                numberedList
+                bulletList
+                clearFormatting
+                styles
                 onChange={(value) => setValue("instructions", value)}
                 defaultValue={
                   eventData?.instructions ||
