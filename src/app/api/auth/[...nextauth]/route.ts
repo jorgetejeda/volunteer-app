@@ -17,13 +17,6 @@ declare module "next-auth/jwt" {
   }
 }
 
-console.log({
-  clientId: process.env.AZURE_AD_CLIENT_ID as string,
-  clientSecret: process.env.AZURE_AD_CLIENT_SECRET as string,
-  tenantId: process.env.AZURE_AD_TENANT_ID as string,
-  authorization: { params: { scope: "openid profile user.Read email" } },
-});
-
 const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
@@ -36,6 +29,7 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async jwt({ token, account }) {
+      console.log('User info', account)
       if (account) {
         token.idToken = account.id_token as string;
         token.accessToken = account.access_token as string;
