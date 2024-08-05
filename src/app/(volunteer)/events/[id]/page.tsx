@@ -193,7 +193,7 @@ export default function Page({ params }: { params: { id: number } }) {
         <DialogTitle>Confirmar Inscripción</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro que deseas inscribirte en el evento "{event.title}"?
+            ¿Estás seguro que deseas inscribirte en el evento `${event.title}`?
             <br />
             <strong>Fecha:</strong> {event.date}
             <br />
