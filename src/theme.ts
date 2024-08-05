@@ -63,6 +63,24 @@ const theme = createTheme({
         },
       },
     },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          outline: "none",
+          border: "none",
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#FFFFFF",
+            borderRadius: "5em",
+            "&:hover fieldset": {
+              borderColor: "#00B1CB",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#00B1CB",
+            },
+          },
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {

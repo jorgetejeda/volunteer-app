@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import theme from "@/theme";
 import {
   Box,
   Paper,
@@ -17,40 +18,30 @@ import {
   CircularProgress,
   Button,
   TextField,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
 } from "@mui/material";
-import { Card, CardMedia, CardContent, CardActions } from "@mui/material";
-import { Masonry } from "@mui/lab";
 import {
   CalendarMonthOutlined,
   LocationOnOutlined,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
-import { CategoryLabel, InformationLabel } from "@components/index";
-import theme from "@/theme";
+import { Masonry } from "@mui/lab";
+import {
+  CategoryLabel,
+  DataNotFound,
+  InformationLabel,
+} from "@components/index";
+//@Hooks
 import { useRouter } from "next/navigation";
-import eventData from "../../data/event.json";
-import { lightOrDarkColor } from "@utils/index";
-
-export interface Event {
-  id: number;
-  title: string;
-  imageName: string;
-  description: string;
-  date: string;
-  quota: number;
-  location: string;
-  duration: string;
-  allDay: boolean;
-  published: boolean;
-  category: Category;
-  usersQuantity: number;
-}
-
-export interface Category {
-  id: number;
-  title: string;
-  backgroundColor: string;
-}
+//@Utils
+import { cleanHtml, lightOrDarkColor } from "@utils/index";
+//@Services
+import EventService from "@/services/event/event.services";
+//@Types
+import { Event } from "@/core/types";
 
 export default function EventPage() {
   const [loading, setLoading] = useState(true);
@@ -69,8 +60,12 @@ export default function EventPage() {
   const getEvents = async () => {
     setLoading(true);
     try {
-      setEvents(eventData);
-      console.log(events)
+      const { data, isSucceeded } = await EventService.getEvents({
+        limit: 10,
+        offset: 0,
+      });
+
+      setEvents(data);
     } catch (error: any) {
       console.error("Error getting events", error.message);
     } finally {
@@ -79,7 +74,7 @@ export default function EventPage() {
   };
 
   React.useLayoutEffect(() => {
-     getEvents();
+    getEvents();
   }, []);
 
   const handleMenuOpen = (
@@ -125,7 +120,7 @@ export default function EventPage() {
       setActionLoading(false);
       setDialogOpen(false);
       handleMenuClose();
-    }, 2000); // Simulación de tiempo de carga
+    }, 2000);
   };
 
   const cancelDelete = () => {
@@ -230,7 +225,7 @@ export default function EventPage() {
                     <CardMedia
                       component="img"
                       height="150"
-                      image={event.imageName}
+                      image={event.images[0].documentUrl}
                       alt="Event"
                       sx={{
                         width: "100%",
@@ -261,8 +256,8 @@ export default function EventPage() {
                   >
                     <CategoryLabel
                       label={event.category.title}
-                      textColor={lightOrDarkColor(event.category.backgroundColor)}
-                      backgroundColor={event.category.backgroundColor}
+                      textColor={lightOrDarkColor(event.category.color)}
+                      backgroundColor={event.category.color}
                     />
                     {isAdmin && (
                       <Box>
@@ -318,7 +313,7 @@ export default function EventPage() {
                       color={theme.palette.text.secondary}
                       sx={{ mt: 1 }}
                     >
-                      {event.description}
+                      {cleanHtml(event.description)}
                     </Typography>
 
                     <InformationLabel
@@ -345,8 +340,12 @@ export default function EventPage() {
       </Masonry>
 
       {!loading && filteredEvents.length === 0 && (
+        <DataNotFound message="Lo sentimos, no pudimos encontrar el evento que estás buscando" />
+      )}
+
+      {!loading && events.length === 0 && (
         <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
-          Lo sentimos, no pudimos encontrar el evento que estás buscando.
+          No hay eventos disponibles
         </Typography>
       )}
 

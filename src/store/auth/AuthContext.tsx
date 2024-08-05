@@ -1,20 +1,16 @@
-import HttpImplementation from "@/core-libraries/http/http.implementation";
-import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-import { User, UserCredentials } from "@/core/types/user";
-import {
-  ReactChild,
-  ReactNode,
-  createContext,
-  useContext,
-  useState,
-} from "react";
+
+import { ReactNode, createContext, useContext, useState } from 'react';
+//@Type
+import { User, UserCredentials } from '@/core/types';
+//@Services
+import { AuthService } from '@/services';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   loading: boolean;
-  login: (data: { email: string; password: string }) => void;
+  login: (data: UserCredentials) => void;
   logout: () => void;
 }
 
@@ -22,29 +18,27 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   const login = async (data: UserCredentials) => {
     try {
       setLoading(true);
-      const http = new HttpImplementation();
-      const user = await http.post<User, UserCredentials>(
-        ServicesInstanceEnum.API_AUTH,
-        "/login",
-        data,
-      );
+      const { data: user } = await AuthService.alternativeLogin(data);
+
       setUser(user);
       setIsAuthenticated(true);
       user.userRoles.forEach((role) => {
-        if (role.role.title === "Admin") {
+        if (role.role.title === 'Admin') {
           setIsAdmin(true);
         }
       });
-      sessionStorage.setItem("token", user.token);
+
+      sessionStorage.setItem('token', user.token);
+      
     } catch (error: any) {
-      console.error("Error logging in", error.message);
+      console.error('Error al iniciar sesión', error.message);
     } finally {
       setLoading(false);
     }
@@ -55,18 +49,15 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setUser(null);
       setIsAuthenticated(false);
-      sessionStorage.removeItem("token");
     } catch (error: any) {
-      console.error("Error logging out", error.message);
+      console.error('Error al cerrar sesión', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, isAdmin, isAuthenticated, loading, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, isAdmin, isAuthenticated, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -75,7 +66,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuthContext must be used within a AuthContextProvider");
+    throw new Error('useAuthContext must be used within a AuthContextProvider');
   }
   return context;
 };

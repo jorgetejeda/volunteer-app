@@ -3,26 +3,20 @@ import {
   AxiosRequestConfig,
   AxiosRequestHeaders,
   AxiosResponse,
-} from 'axios';
-import { IHttp } from './http.contract';
-import {
-    apiAuthInstance,
-  apiInstance,
-  apiS3Instance,
-  defaultHeaders,
-} from './http.instance';
-import { ServicesInstanceEnum } from '@/core/enums/services-instance.enum';
+} from "axios";
+import { IHttp } from "./http.contract";
+import { apiAuthInstance, apiInstance, defaultHeaders } from "./http.instance";
+import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 const axiosInstances = new Map<string, AxiosInstance>([
   [ServicesInstanceEnum.API_INSTANCE, apiInstance],
-  [ServicesInstanceEnum.API_S3, apiS3Instance],
   [ServicesInstanceEnum.API_AUTH, apiAuthInstance],
 ]);
 
 const tokenInterceptor = (config: any): any => {
-  const token = sessionStorage.getItem('token');
+  const token = sessionStorage.getItem("token");
   if (token) {
     config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
   }
@@ -35,7 +29,7 @@ axiosInstances.forEach((instance) => {
   );
 });
 
-export default class HttpImplementation implements IHttp {
+class HttpImplementation implements IHttp {
   private readonly REQUEST_TIMEOUT: number = 30000;
 
   private getInstance(typeApi: string): AxiosInstance {
@@ -47,7 +41,7 @@ export default class HttpImplementation implements IHttp {
     method: HttpMethod,
     url: string,
     body?: U,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     const config: AxiosRequestConfig = {
@@ -67,12 +61,12 @@ export default class HttpImplementation implements IHttp {
     typeApi: string,
     url: string,
     body?: U,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     if (body) {
       const validData = Object.entries(body).reduce((prev, [key, value]) => {
-        if (![null, null, undefined, ''].includes(value as any)) {
+        if (![null, null, undefined, ""].includes(value as any)) {
           prev = {
             ...prev,
             [key]: value,
@@ -86,7 +80,7 @@ export default class HttpImplementation implements IHttp {
     }
     return this.request<T>(
       typeApi,
-      'GET',
+      "GET",
       url,
       undefined,
       responseType,
@@ -98,12 +92,12 @@ export default class HttpImplementation implements IHttp {
     typeApi: string,
     url: string,
     body: U,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     return this.request<T, U>(
       typeApi,
-      'POST',
+      "POST",
       url,
       body,
       responseType,
@@ -120,25 +114,25 @@ export default class HttpImplementation implements IHttp {
     url: string,
     body: U,
     id?: string | number,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     if (id) {
       url = `${url}/${id}`;
     }
-    return this.request<T, U>(typeApi, 'PUT', url, body, responseType, headers);
+    return this.request<T, U>(typeApi, "PUT", url, body, responseType, headers);
   }
 
   public patch<T, U>(
     typeApi: string,
     url: string,
     body: U,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     return this.request<T, U>(
       typeApi,
-      'PATCH',
+      "PATCH",
       url,
       body,
       responseType,
@@ -151,13 +145,15 @@ export default class HttpImplementation implements IHttp {
     url: string,
     id?: string | number | null,
     body?: U,
-    responseType: 'json' | 'text' = 'json',
+    responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {
     if (id) {
       url = `${url}/${id}`;
     }
-    return this.request<T>(typeApi, 'DELETE', url, body, responseType, headers);
+    return this.request<T>(typeApi, "DELETE", url, body, responseType, headers);
   }
 }
 
+const httpImplementation = new HttpImplementation();
+export default httpImplementation;

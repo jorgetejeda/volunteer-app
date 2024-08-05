@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Box,
@@ -24,25 +23,19 @@ import {
 } from "@mui/icons-material";
 import { MuiColorInput } from "mui-color-input";
 import { useForm, SubmitHandler } from "react-hook-form";
-
-// Define el tipo para una categoría
-interface Category {
-  id: number; // Mantener como número
-  title: string;
-  color: string;
-}
-
-interface FormValues {
-  title: string;
-  color: string;
-}
+//@Types
+import { Category, CategoryDto } from "@/core/types";
+//@Services
+import { CategoryService } from "@/services";
 
 interface DropdownCategoriesProps {
-  onChange: (categoryId: number) => void; // Cambiado a número
+  onChange: (categoryId: number) => void; 
+  value?: number;  // Prop para el valor seleccionado
 }
 
 export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   onChange,
+  value,  // Recibe el valor seleccionado como prop
 }) => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -51,7 +44,9 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryColor, setCategoryColor] = useState<string>("#000000");
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null); // Cambiado a número
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    value || null,  // Establece el valor seleccionado inicial
+  ); 
 
   const {
     register,
@@ -59,27 +54,53 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     setValue,
     reset,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<CategoryDto>();
 
-  const handleAddCategory: SubmitHandler<FormValues> = async (data) => {
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  useEffect(() => {
+    setSelectedCategoryId(value || null); 
+  }, [value]);
+
+  const getCategories = async () => {
+    try {
+      setLoading(true);
+      const { data, isSucceeded } = await CategoryService.getCategories();
+
+      if (isSucceeded) {
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Error al obtener las categorías", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddCategory: SubmitHandler<CategoryDto> = async (data) => {
     setLoading(true);
     try {
-      const updatedCategories =
-        editIndex !== null
-          ? categories.map((category, index) =>
-              index === editIndex
-                ? { ...category, title: data.title, color: data.color }
-                : category,
-            )
-          : [
-              ...categories,
-              { id: Date.now(), title: data.title, color: data.color }, // Cambiado a número
-            ];
+      let response;
 
-      // Simulación de llamada al backend
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      if (editIndex !== null) {
+        const id = categories[editIndex].id;
+        const category = {
+          title: data.title,
+          color: data.color,
+        };
+        response = await CategoryService.updateCategory(id, category);
+      } else {
+        const category = { title: data.title, color: data.color };
+        response = await CategoryService.createCategory(category);
+      }
 
-      setCategories(updatedCategories);
+      if (!response.isSucceeded) {
+        throw new Error("Error al guardar la categoría");
+      }
+
+      await getCategories();
       setEditIndex(null);
       setShowForm(false);
       reset();
@@ -94,9 +115,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     if (deleteIndex !== null) {
       setLoading(true);
       try {
-        // Simulación de llamada al backend
         await new Promise((resolve) => setTimeout(resolve, 2000));
-
         setCategories(categories.filter((_, i) => i !== deleteIndex));
         setDeleteIndex(null);
         setOpenDialog(false);
@@ -129,7 +148,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
     reset();
   };
 
-  const handleCategorySelect = (categoryId: number) => { // Cambiado a número
+  const handleCategorySelect = (categoryId: number) => {
     setSelectedCategoryId(categoryId);
     onChange(categoryId);
   };

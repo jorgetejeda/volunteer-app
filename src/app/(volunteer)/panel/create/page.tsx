@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
   Box,
@@ -17,46 +17,14 @@ import {
   FormControlLabel,
   Backdrop,
   CircularProgress,
-  Theme,
   Button,
 } from "@mui/material";
 import { DropZone, DropdownCategories, EditorView } from "@components/index";
-import styled from "@emotion/styled";
+import { EventDto } from "@/core/types";
+import { useRouter } from "next/navigation";
+import EventService from "@/services/event/event.services";
 
-const CustomTextField = styled(TextField)(({ theme }: { theme?: Theme }) => ({
-  backgroundColor: "white",
-  borderRadius: "24px",
-  outline: "none",
-  border: "none",
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderRadius: "24px",
-    },
-    "&:hover fieldset": {
-      borderColor: theme?.palette.primary.main,
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme?.palette.primary.main,
-    },
-  },
-}));
-
-interface EventData {
-  title: string;
-  description: string;
-  instructions: string;
-  categoryId: number;
-  time: string;
-  date: string;
-  quota: number;
-  location: string;
-  duration: number;
-  allDay: boolean;
-  mainImage: string;
-  images: File[];
-}
-
-const INITIAL_STATE: EventData = {
+const INITIAL_STATE: EventDto = {
   title: "",
   description: "",
   instructions: "",
@@ -75,30 +43,77 @@ const EventForm = () => {
   const [dateType, setDateType] = useState("text");
   const [timeType, setTimeType] = useState("text");
   const [openModal, setOpenModal] = useState(false);
-  const [eventData, setEventData] = useState<EventData | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
-
+  const [eventData, setEventData] = useState<EventDto | null>(null);
+  const router = useRouter();
+  const eventId = null;
   const {
     register,
     handleSubmit,
     setValue,
     clearErrors,
+    setError,
     formState: { errors },
     reset,
-  } = useForm<EventData>({
+  } = useForm<EventDto>({
     defaultValues: INITIAL_STATE,
   });
 
-  const handleSave: SubmitHandler<EventData> = async (data) => {
+  // useEffect(() => {
+  //   if (eventId) {
+  //     const fetchEventData = async () => {
+  //       setLoading(true);
+  //       try {
+  //         const { data: event, isSucceeded } =
+  //           await EventService.getEventById(eventId);
+  //         if (!isSucceeded) {
+  //           throw new Error("Error al cargar los datos del evento");
+  //         }
+  //         setValue("title", event.title);
+  //         setValue("description", event.description);
+  //         setValue("instructions", event.instructions);
+  //         setValue("categoryId", event.category.id);
+  //         setValue("time", event.time);
+  //         setValue("date", event.date.toISOString().split("T")[0]);
+  //         setValue("quota", event.quota);
+  //         setValue("location", event.location);
+  //         setValue("duration", +event.duration);
+  //         setValue("allDay", event.allDay);
+  //         setIsAllDay(event.allDay);
+  //       } catch (error) {
+  //         console.error("Error al cargar los datos del evento:", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //
+  //     fetchEventData();
+  //   }
+  // }, [eventId, setValue]);
+
+  const handleSave: SubmitHandler<EventDto> = async (data) => {
     setLoading(true);
+    //Validate mainImage
+    if (!data.mainImage) {
+      setError("mainImage", { message: "La imagen principal es obligatoria" });
+      setLoading(false);
+      return;
+    }
     try {
-      // Simulación de llamada al backend
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setEventData(data);
-      console.log("Saved data:", data);
+      let response;
+      if (eventId) {
+        response = await EventService.updateEvent(eventId, data);
+      } else {
+        response = await EventService.createEvent(data);
+      }
+      if (!response.isSucceeded) {
+        throw new Error("Error al guardar el evento");
+      }
+
       setOpenModal(true);
       reset(INITIAL_STATE);
+      setEventData(data);
     } catch (error: any) {
       console.error("Error al guardar el evento:", error);
     } finally {
@@ -108,7 +123,7 @@ const EventForm = () => {
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    // Aquí puedes agregar lógica para limpiar el formulario o redirigir al usuario
+    router.push("/events");
   };
 
   const handleAllDayChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,9 +140,11 @@ const EventForm = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={8}>
             <Stack spacing={2}>
-              <Typography variant="h3">Agregar nuevo evento</Typography>
-              <CustomTextField
-                label="Escribir titulo del evento"
+              <Typography variant="h3">
+                {eventId ? "Editar evento" : "Agregar nuevo evento"}
+              </Typography>
+              <TextField
+                label="Escribir título del evento"
                 fullWidth
                 {...register("title", { required: "El título es obligatorio" })}
                 error={!!errors.title}
@@ -135,21 +152,45 @@ const EventForm = () => {
               />
               <Typography variant="h4">Descripción del evento</Typography>
               <EditorView
-                placeholder="Agrega la descripción del evento"
+                undo
+                redo
+                bold
+                italic
                 onChange={(value) => setValue("description", value)}
+                defaultValue={
+                  eventData?.description || "Agrega la descripción del evento"
+                }
               />
               <Typography variant="h4">Instrucciones del evento</Typography>
               <EditorView
-                placeholder="Agrega las instrucciones del evento"
+                undo
+                redo
+                bold
+                italic
+                underline
+                strikeThrough
+                numberedList
+                bulletList
+                clearFormatting
+                styles
                 onChange={(value) => setValue("instructions", value)}
+                defaultValue={
+                  eventData?.instructions ||
+                  "Agrega las instrucciones del evento"
+                }
               />
               <Typography variant="h4">Imagen del evento</Typography>
               <Paper sx={{ padding: 2 }}>
                 <DropZone
-                  accept={{ "image/jpg": ['.jpg', '.jpeg'] }}
+                  accept={{ "image/jpg": [".jpg", ".jpeg"] }}
                   label="Arrastra una imagen aquí"
                   setValue={setValue as any}
+                  error={errors.mainImage}
                   clearErrors={() => clearErrors()}
+                  //FIXME: add defaultValue prop to DropZone component
+                  // defaultValue={
+                  //   eventData?.mainImage ? [eventData.mainImage] : []
+                  // }
                 />
               </Paper>
             </Stack>
@@ -159,7 +200,7 @@ const EventForm = () => {
               <Typography variant="h4">Datos del evento</Typography>
               <Paper sx={{ padding: 2 }}>
                 <Stack spacing={2}>
-                  <CustomTextField
+                  <TextField
                     label="Fecha de inicio"
                     fullWidth
                     type={dateType}
@@ -175,7 +216,7 @@ const EventForm = () => {
                     error={!!errors.date}
                     helperText={errors.date?.message}
                   />
-                  <CustomTextField
+                  <TextField
                     label="Hora inicio del evento"
                     fullWidth
                     type={timeType}
@@ -191,7 +232,7 @@ const EventForm = () => {
                     error={!!errors.time}
                     helperText={errors.time?.message}
                   />
-                  <CustomTextField
+                  <TextField
                     label="Duración (horas)"
                     fullWidth
                     type="number"
@@ -218,7 +259,7 @@ const EventForm = () => {
               </Paper>
               <Typography variant="h4">Cantidad de personas</Typography>
               <Paper sx={{ padding: 2 }}>
-                <CustomTextField
+                <TextField
                   label="Cupos"
                   fullWidth
                   type="number"
@@ -233,7 +274,7 @@ const EventForm = () => {
 
               <Typography variant="h4">Ubicación</Typography>
               <Paper sx={{ padding: 2 }}>
-                <CustomTextField
+                <TextField
                   label="Nombre del lugar"
                   fullWidth
                   {...register("location", {
@@ -247,18 +288,19 @@ const EventForm = () => {
               <Paper sx={{ padding: 2 }}>
                 <DropdownCategories
                   onChange={(categoryId) => setValue("categoryId", categoryId)}
+                  value={eventData?.category?.id || 0}
                 />
               </Paper>
               <Stack spacing={2} direction="row">
                 <Button
                   variant="text"
                   color="error"
-                  onClick={() => console.log("Cancel")}
+                  onClick={() => router.push("/events")}
                 >
                   Cancelar
                 </Button>
                 <Button type="submit" variant="contained" size="small">
-                  Guardar evento
+                  {eventId ? "Actualizar evento" : "Guardar evento"}
                 </Button>
               </Stack>
             </Stack>
@@ -268,12 +310,12 @@ const EventForm = () => {
 
       {eventData && (
         <Dialog open={openModal} onClose={handleCloseModal}>
-          <DialogTitle>Evento creado</DialogTitle>
+          <DialogTitle>Evento {eventId ? "actualizado" : "creado"}</DialogTitle>
           <DialogContent>
             <DialogContentText>
               El evento <b>{eventData.title}</b> que empezará a la hora{" "}
               <b>{eventData.time}</b> en el lugar <b>{eventData.location}</b> ha
-              sido creado.
+              sido {eventId ? "actualizado" : "creado"}.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
