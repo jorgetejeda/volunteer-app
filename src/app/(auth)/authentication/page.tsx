@@ -49,8 +49,7 @@ export default function Authentication() {
 
   const handleLogin = async () => {
     try {
-      login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
-      //signIn("azure-ad")
+      signIn("azure-ad")
     } catch (error) {
       console.log(error);
     }

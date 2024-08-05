@@ -9,13 +9,12 @@ export default class AuthService {
   static async login(data: UserCredentials): Promise<ApiResponse<User>> {
     const response = await axios.post<ApiResponse<User>>(
       "/api/authentication/",
-      data
     );
     return response.data;
   }
 
   static async alternativeLogin(
-    data: UserCredentials
+    data: UserCredentials,
   ): Promise<ApiResponse<User>> {
     const response = await httpImplementation.post<
       ApiResponse<User>,

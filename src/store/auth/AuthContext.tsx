@@ -25,7 +25,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const login = async (data: UserCredentials) => {
     try {
       setLoading(true);
-      const { data: user } = await AuthService.alternativeLogin(data);
+      const { data: user } = await AuthService.login(data);
 
       setUser(user);
       setIsAuthenticated(true);
