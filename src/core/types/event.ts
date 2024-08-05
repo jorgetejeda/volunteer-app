@@ -14,7 +14,7 @@ export type Event = {
   published: boolean;
   category: Category;
   usersQuantity: number;
-  isUserRegistered: boolean;
+  isUserEnrolled: boolean;
   images: Image[];
 };
 

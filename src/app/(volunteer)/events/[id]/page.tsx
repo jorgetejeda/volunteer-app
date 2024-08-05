@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
@@ -37,7 +36,7 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [isUserRegistered, setIsUserRegistered] = useState<boolean>(false);
+  const [isUserEnrolled, setIsUserEnrolled] = useState<boolean>(false);
   const [enrollMessage, setEnrollMessage] = useState<string>("");
 
   const getEvents = useCallback(async () => {
@@ -45,7 +44,7 @@ export default function Page({ params }: { params: { id: number } }) {
     if (!isSucceeded || !data) {
       console.log("Error");
     }
-    setIsUserRegistered(data.isUserRegistered);
+    setIsUserEnrolled(data.isUserEnrolled);
     setEvent(data);
     setLoading(false);
   }, [id]);
@@ -66,7 +65,9 @@ export default function Page({ params }: { params: { id: number } }) {
     setIsEnrolling(true);
     const { isSucceeded } = await EventService.enrollEvent(id);
     setIsEnrolling(false);
-    setEnrollMessage(isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.");
+    setEnrollMessage(
+      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
+    );
     setOpenDialog(false);
   };
 
@@ -124,11 +125,13 @@ export default function Page({ params }: { params: { id: number } }) {
               </Typography>
               <Box>
                 <Button
-                  variant={isUserRegistered ? "contained" : "outlined"}
+                  variant={isUserEnrolled ? "contained" : "outlined"}
                   onClick={handleOpenDialog}
-                  disabled={event.isUserRegistered}
+                  disabled={event.isUserEnrolled}
                 >
-                  {isUserRegistered ? "Quiero participar" : "No quiero participar"}
+                  {isUserEnrolled
+                    ? "Quiero participar"
+                    : "No quiero participar"}
                   {isEnrolling && (
                     <CircularProgress
                       size={24}
@@ -230,4 +233,3 @@ export default function Page({ params }: { params: { id: number } }) {
     </>
   );
 }
-

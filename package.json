@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "set NODE_ENV=production && next build",
-    "start": "set NODE_ENV=production && next start",
+    "dev": "cross-env NODE_ENV=development next dev",
+    "build": "cross-env NODE_ENV=production next build",
+    "start": "cross-env NODE_ENV=production next start",
     "lint": "next lint"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "@types/react-swipeable-views": "^0.13.5",
     "@types/react-swipeable-views-utils": "^0.13.7",
     "axios": "^1.7.2",
+    "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "dompurify": "^3.1.6",
     "mui-color-input": "^3.0.0",

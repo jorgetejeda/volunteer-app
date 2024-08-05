@@ -98,7 +98,7 @@ class EventService {
     console.log(typeof eventId);
     return httpImplementation.post<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/register-user`,
+      `${this.baseUrl}/enroll`,
       { eventId },
     );
   }
