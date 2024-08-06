@@ -46,6 +46,13 @@ const authOptions: NextAuthOptions = {
       cookies().set("idToken", session.idToken);
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Redirect to the home page after login
+      if (url.startsWith("/authentication")) {
+        return baseUrl;
+      }
+      return baseUrl;
+    }
   },
 };
 
