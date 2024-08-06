@@ -23,7 +23,11 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID as string,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET as string,
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
-      authorization: { params: { scope: "openid profile user.Read email" } },
+      authorization: {
+        params: {
+          scope: "openid profile user.Read email",
+        },
+      },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
