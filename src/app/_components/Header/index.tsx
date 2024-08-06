@@ -30,7 +30,7 @@ export const Header = () => {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false, callbackUrl: "/" });
+    await signOut({ redirect: true, callbackUrl: "/authentication" });
     router.push("/authentication");
     setAnchorEl(null);
   };

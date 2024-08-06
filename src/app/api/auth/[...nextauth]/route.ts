@@ -29,7 +29,7 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET as string,
   callbacks: {
     async jwt({ token, account }) {
-      console.log('User info', account)
+      console.log("JWT Callback", token, account);
       if (account) {
         token.idToken = account.id_token as string;
         token.accessToken = account.access_token as string;
