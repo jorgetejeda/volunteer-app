@@ -22,15 +22,6 @@ export const Header = () => {
   const open = Boolean(anchorEl);
   const router = useRouter()
 
-  React.useEffect(()=>{
-    console.log('Session', session)
-  },[status])
-
-  useLayoutEffect(() => {
-    if (session && session.user?.token && !sessionStorage.getItem("token"))
-      sessionStorage.setItem("token", session?.user?.token);
-  }, [session]);
-
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };

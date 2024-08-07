@@ -66,8 +66,9 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if(status === 'authenticated')
     getEvents();
-  }, []);
+  }, [status]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
