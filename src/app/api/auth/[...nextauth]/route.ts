@@ -2,6 +2,7 @@ import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { cookies } from "next/headers";
+import axiosInstance from "@/core-libraries/http/axiosWithProxy";
 
 declare module "next-auth" {
   interface Session {
@@ -30,12 +31,11 @@ declare module "next-auth/jwt" {
   }
 }
 
-// Función para manejar la solicitud a la API de backend
 const handleBackEnd = async (token: any) => {
   try {
-    console.log('Calling endpoint', `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`)
+    console.log('Calling endpoint', `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`);
     const authToken = process.env.NEXTAUTH_SECRET;
-    const { data } = await axios.post(
+    const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
@@ -62,7 +62,6 @@ const handleBackEnd = async (token: any) => {
   }
 };
 
-// Configuración de NextAuth
 const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
@@ -81,13 +80,13 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET as string,
   logger: {
     error(code, ...message) {
-      console.error('ERROR - Next', code, message)
+      console.error('ERROR - Next', code, message);
     },
     warn(code, ...message) {
-      console.warn('WARN - Next', code, message)
+      console.warn('WARN - Next', code, message);
     },
     debug(code, ...message) {
-      console.debug('DEBUG Next', code, message)
+      console.debug('DEBUG Next', code, message);
     }
   },
   pages: {
@@ -122,8 +121,8 @@ const authOptions: NextAuthOptions = {
         role: token.user?.role,
         isAdmin: token.user?.role === "Admin",
       };
-      cookies().set("idToken", session.idToken)
-      cookies().set("isAdmin", JSON.stringify(session.user))
+      cookies().set("idToken", session.idToken);
+      cookies().set("isAdmin", JSON.stringify(session.user));
       return session;
     },
     async redirect({ url, baseUrl }) {
