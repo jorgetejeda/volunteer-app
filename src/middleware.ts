@@ -8,15 +8,27 @@ const protectedRoutes = ["/", "/events", "/panel/"];
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // Verificar si la ruta actual es una de las protegidas.
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
     const token = await getToken({ req: request });
+
     
-    // Redirigir a /authentication si no hay token.
+    // Redirigir a /login si no hay token.
     if (!token) {
-      console.error('Redirecting to /authentication')
-      const url = new URL("/authentication", request.url);
+      console.error('Redirecting to /login')
+      const url = new URL("/login", request.url);
       return NextResponse.redirect(url);
+    }
+
+    if (token && token.exp) {
+      const expirationDate = new Date(Number(token.exp) * 1000);
+      const currentDate = new Date();
+
+      if (currentDate > expirationDate) {
+        console.error('Token expired. Redirecting to /login');
+        
+        const url = new URL("/logout", request.url);
+        return NextResponse.redirect(url);
+      }
     }
   }
 

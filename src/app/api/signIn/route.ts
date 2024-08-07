@@ -6,13 +6,13 @@ import { ApiResponse } from "@/core-libraries/http/types/api-response";
 
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json() as UserCredentials;
-
-    const {data, isSucceeded} = await httpImplementation.post<ApiResponse<User>, UserCredentials>(
-      ServicesInstanceEnum.API_AUTH,
-      "login",
-      { email, password }
-    );
+    const { email, name } = (await req.json()) as UserCredentials;
+    console.log("User credentials:", email, name);
+    const authToken = process.env.NEXTAUTH_SECRET;
+    const { data, isSucceeded } = await httpImplementation.post<
+      ApiResponse<User>,
+      UserCredentials
+    >(ServicesInstanceEnum.API_AUTH, "login", { email, name, authToken });
 
     if (!isSucceeded) {
       return NextResponse.json(data, { status: 401 });
@@ -29,6 +29,9 @@ export async function POST(req: Request) {
     return response;
   } catch (error: any) {
     console.error("Error logging in:", error.message);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

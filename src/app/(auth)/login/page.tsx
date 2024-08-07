@@ -1,16 +1,14 @@
 "use client";
-import React, { useEffect } from "react";
-
-import { Container, Box, Button, Typography, Stack } from "@mui/material";
-import Image from "next/image";
-
-import styled from "@emotion/styled";
-import httpImplementation from "@/core-libraries/http/http.implementation";
-import { User, UserCredentials } from "@/core/types/user";
-import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
-import { useRouter } from "next/navigation";
-
+import React, { useEffect, useState } from "react";
+//@Styles
 import theme from "@/theme";
+import styled from "@emotion/styled";
+//Components
+import { Container, Box, Button, Typography, Stack, CircularProgress } from "@mui/material";
+import Image from "next/image";
+//@Navigation
+import { useRouter } from "next/navigation";
+//@Providers
 import { useAuthContext } from "@/store/auth/AuthContext";
 import { signIn } from "next-auth/react";
 
@@ -37,9 +35,10 @@ const MicrosoftButton = styled(Button)({
   },
 });
 
-export default function Authentication() {
+export default function LogIn() {
   const router = useRouter();
-  const { login, isAuthenticated } = useAuthContext();
+  const {login, isAuthenticated } = useAuthContext();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -49,10 +48,12 @@ export default function Authentication() {
 
   const handleLogin = async () => {
     try {
-      signIn("azure-ad")
+      setLoading(true);
+      // login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
+      await signIn("azure-ad");
     } catch (error) {
       console.log(error);
-    }
+    } 
   };
 
   return (
@@ -67,8 +68,8 @@ export default function Authentication() {
         />
         <Box marginTop={8}>
           <Stack spacing={2}>
-            <MicrosoftButton onClick={handleLogin} variant="contained">
-              Iniciar Sesión
+            <MicrosoftButton onClick={handleLogin} variant="contained" disabled={loading}>
+              {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
             </MicrosoftButton>
 
             <Stack spacing={1} direction="row">

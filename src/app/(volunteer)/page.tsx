@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   Grid,
@@ -12,14 +12,13 @@ import {
 } from "@mui/material";
 import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useAuthContext } from "@/store/auth/AuthContext";
+import { useSession } from "next-auth/react";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import MobileStepper from "@mui/material/MobileStepper";
 import { CardEvent, DataNotFound } from "@components/index";
 import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import theme from "@/theme";
 import { lightOrDarkColor } from "@/utils";
 
@@ -44,11 +43,15 @@ const images = [
 ];
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuthContext();
+  const { data: session, status } = useSession();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
   const maxSteps = images.length;
+
+  useEffect(() => {
+    console.log("session", session);
+  }, [session]);
 
   const getEvents = async () => {
     setLoading(true);
@@ -82,22 +85,40 @@ export default function Home() {
     setActiveStep(step);
   };
 
+  if(status === "loading") return <Backdrop open={true}><CircularProgress /></Backdrop>
+
   return (
     <>
       {loading && (
-        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+        >
           <CircularProgress color="inherit" />
         </Backdrop>
       )}
       {!loading && (
         <Grid container spacing={2} id="container">
-          <Grid item md={9} sm={12} display="flex" flexDirection="column" gap={2}>
+          <Grid
+            item
+            md={9}
+            sm={12}
+            display="flex"
+            flexDirection="column"
+            gap={2}
+          >
             <Box>
-              <Typography variant="h3">Bienvenido, {isAuthenticated && user?.userName}</Typography>
+              <Typography variant="h3">
+                Bienvenido, {session && session.user?.name}
+              </Typography>
             </Box>
             <Box>
               <Typography variant="body1">
-                En Crecer, creemos firmemente en la responsabilidad social y en el poder de la colaboración para generar cambios significativos. Nuestro programa de voluntariado corporativo nace de la convicción de que cada acción cuenta y de que juntos podemos contribuir para forjar un mundo mejor.
+                En Crecer, creemos firmemente en la responsabilidad social y en
+                el poder de la colaboración para generar cambios significativos.
+                Nuestro programa de voluntariado corporativo nace de la
+                convicción de que cada acción cuenta y de que juntos podemos
+                contribuir para forjar un mundo mejor.
               </Typography>
             </Box>
 
@@ -139,7 +160,7 @@ export default function Home() {
                         </Box>
                       ))
                     ) : (
-                     <DataNotFound /> 
+                      <DataNotFound />
                     )}
                   </Box>
                 </Paper>
@@ -148,7 +169,10 @@ export default function Home() {
                 <Stack spacing={2}>
                   <Paper sx={{ padding: 2 }}>
                     <Box display="flex" flexDirection="column" gap={1}>
-                      <Typography variant="body1" color={theme.palette.grey[200]}>
+                      <Typography
+                        variant="body1"
+                        color={theme.palette.grey[200]}
+                      >
                         Horas Acumuladas
                       </Typography>
                       <Typography variant="h1" color="primary.main">
