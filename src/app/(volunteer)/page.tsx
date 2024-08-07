@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Grid,
   Paper,
@@ -49,8 +49,9 @@ export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const maxSteps = images.length;
 
-  useEffect(() => {
-    console.log("session", session);
+  useLayoutEffect(() => {
+    if (session && session.user?.token && !localStorage.getItem("token"))
+      localStorage.setItem("token", session?.user?.token)
   }, [session]);
 
   const getEvents = async () => {

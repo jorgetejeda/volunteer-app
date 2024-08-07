@@ -8,16 +8,21 @@ export default function LogOut() {
   const router = useRouter();
 
   useEffect(() => {
-    // Trigger sign-out
-    signOut({ redirect: false }).then(() => {
-      // Redirect to home or a specific page after sign-out
-      router.push("/");
-    });
+    console.log("Removing token from sessionStorage");
+    sessionStorage.removeItem('token');
+
+    // Adding a small delay before redirecting
+    setTimeout(() => {
+      signOut({ redirect: false }).then(() => {
+        console.log("Redirecting to homepage");
+        router.push("/");
+      });
+    }, 1000); // Adjust delay as needed
   }, [router]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", textAlign: "center" }}>
-      <Typography variant="h4">loging out...</Typography>
+      <Typography variant="h4">Logging out...</Typography>
       <CircularProgress sx={{ marginTop: 2 }} />
     </Box>
   );
