@@ -24,7 +24,7 @@ export const Header = () => {
 
   React.useEffect(()=>{
     console.log('Session', session)
-  },[])
+  },[status])
 
   useLayoutEffect(() => {
     if (session && session.user?.token && !sessionStorage.getItem("token"))
