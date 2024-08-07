@@ -13,6 +13,7 @@ declare module "next-auth" {
       name: string;
       token?: string; 
       role: string;
+      isAdmin: boolean;
     };
   }
 }
@@ -105,7 +106,10 @@ const authOptions: NextAuthOptions = {
         name: token.name as string,
         token: token.user?.token,
         role: token.user?.role,
+        isAdmin: token.user?.role === "Admin",
       };
+      cookies().set("idToken", session.idToken)
+      cookies().set("isAdmin", JSON.stringify(session.user))
       return session;
     },
     async redirect({ url, baseUrl }) {

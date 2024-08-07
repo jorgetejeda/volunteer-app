@@ -49,11 +49,6 @@ export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
   const maxSteps = images.length;
 
-  useLayoutEffect(() => {
-    if (session && session.user?.token && !localStorage.getItem("token"))
-      localStorage.setItem("token", session?.user?.token)
-  }, [session]);
-
   const getEvents = async () => {
     setLoading(true);
     try {

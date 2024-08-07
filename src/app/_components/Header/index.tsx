@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useLayoutEffect } from "react";
 import Image from "next/image";
 import {
   Container,
@@ -13,11 +13,17 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export const Header = () => {
+  const { data: session, status } = useSession();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  useLayoutEffect(() => {
+    if (session && session.user?.token && !sessionStorage.getItem("token"))
+      sessionStorage.setItem("token", session?.user?.token);
+  }, [session]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -75,13 +81,16 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <Link
-                  href="/panel/create"
-                  passHref
-                  style={{ textDecoration: "none" }}
-                >
-                  <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
-                </Link>
+                {session?.user?.isAdmin && (
+                  <Link
+                    href="/panel/create"
+                    passHref
+                    style={{ textDecoration: "none" }}
+                  >
+                    <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
+                  </Link>
+                )}
+
                 <Link
                   href="/events"
                   passHref
