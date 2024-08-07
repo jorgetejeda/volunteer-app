@@ -11,7 +11,7 @@ declare module "next-auth" {
     user?: {
       email: string;
       name: string;
-      token?: string; 
+      token?: string;
       role: string;
       isAdmin: boolean;
     };
@@ -33,6 +33,7 @@ declare module "next-auth/jwt" {
 // Función para manejar la solicitud a la API de backend
 const handleBackEnd = async (token: any) => {
   try {
+    console.log('Calling endpoint', `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`)
     const authToken = process.env.NEXTAUTH_SECRET;
     const { data } = await axios.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`,
@@ -75,7 +76,20 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  debug: true,
+
   secret: process.env.NEXTAUTH_SECRET as string,
+  logger: {
+    error(code, ...message) {
+      console.error('ERROR - Next', code, message)
+    },
+    warn(code, ...message) {
+      console.warn('WARN - Next', code, message)
+    },
+    debug(code, ...message) {
+      console.debug('DEBUG Next', code, message)
+    }
+  },
   pages: {
     signIn: "/login",
     signOut: "/logout",

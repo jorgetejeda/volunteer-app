@@ -60,7 +60,8 @@ export const Header = () => {
                 priority
               />
             </Link>
-            <Box display="flex">
+
+            {session && session.user?.token && <Box display="flex">
               <Box
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
@@ -106,7 +107,8 @@ export const Header = () => {
               <NotificationsNoneIcon
                 sx={{ color: theme.palette.primary.main }}
               />
-            </Box>
+            </Box>}
+
           </Box>
         </Paper>
       </Box>
