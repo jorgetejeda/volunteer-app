@@ -11,7 +11,7 @@ declare module "next-auth" {
     // user?: {
     //   email: string;
     //   name: string;
-    //   token?: string; 
+    //   token?: string;
     //   role: string;
     //   isAdmin: boolean;
     // };
@@ -81,6 +81,18 @@ const authOptions: NextAuthOptions = {
     signOut: "/logout",
     error: "/auth-error",
   },
+  debug: true,
+  logger: {
+    error(code, ...message) {
+      console.error(code, message);
+    },
+    warn(code, ...message) {
+      console.warn(code, message);
+    },
+    debug(code, ...message) {
+      console.debug(code, message);
+    },
+  },
   callbacks: {
     async jwt({ token, account }) {
       console.log("JWT Callback", token, account);
@@ -109,7 +121,7 @@ const authOptions: NextAuthOptions = {
       //   role: token.user?.role,
       //   isAdmin: token.user?.role === "Admin",
       // };
-      cookies().set("idToken", session.idToken)
+      cookies().set("idToken", session.idToken);
       // cookies().set("isAdmin", JSON.stringify(session.user))
       return session;
     },
