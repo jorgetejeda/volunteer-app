@@ -31,6 +31,18 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
+  debug: true,
+  logger: {
+    error(code, ...message) {
+      console.error('ERROR VOLUNTARIADO-CODE', code, message);
+    },
+    warn(code, ...message) {
+      console.warn('WARN VOLUNTARIADO-CODE',code, message);
+    },
+    debug(code, ...message) {
+      console.debug('DEBUG VOLUNTARIADO-CODE',code, message);
+    },
+  },
   callbacks: {
     async jwt({ token, account }) {
       console.log("JWT Callback", token, account);
