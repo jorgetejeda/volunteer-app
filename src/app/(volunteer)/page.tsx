@@ -43,7 +43,7 @@ const images = [
 ];
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
@@ -81,7 +81,7 @@ export default function Home() {
     setActiveStep(step);
   };
 
-  if(status === "loading") return <Backdrop open={true}><CircularProgress /></Backdrop>
+  // if(status === "loading") return <Backdrop open={true}><CircularProgress /></Backdrop>
 
   return (
     <>
@@ -105,7 +105,7 @@ export default function Home() {
           >
             <Box>
               <Typography variant="h3">
-                Bienvenido, {session && session.user?.name}
+                Bienvenido,
               </Typography>
             </Box>
             <Box>

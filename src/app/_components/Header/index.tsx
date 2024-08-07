@@ -20,10 +20,10 @@ export const Header = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  useLayoutEffect(() => {
-    if (session && session.user?.token && !sessionStorage.getItem("token"))
-      sessionStorage.setItem("token", session?.user?.token);
-  }, [session]);
+  // useLayoutEffect(() => {
+  //   if (session && session.user?.token && !sessionStorage.getItem("token"))
+  //     sessionStorage.setItem("token", session?.user?.token);
+  // }, [session]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -81,7 +81,7 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                {session?.user?.isAdmin && (
+                {/* {session?.user?.isAdmin && ( */}
                   <Link
                     href="/panel/create"
                     passHref
@@ -89,7 +89,7 @@ export const Header = () => {
                   >
                     <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
                   </Link>
-                )}
+                {/* )} */}
 
                 <Link
                   href="/events"

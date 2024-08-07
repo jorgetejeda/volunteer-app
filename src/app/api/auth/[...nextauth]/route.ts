@@ -8,13 +8,13 @@ declare module "next-auth" {
     accessToken?: string;
     idToken?: string;
     expires?: string;
-    user?: {
-      email: string;
-      name: string;
-      token?: string; 
-      role: string;
-      isAdmin: boolean;
-    };
+    // user?: {
+    //   email: string;
+    //   name: string;
+    //   token?: string; 
+    //   role: string;
+    //   isAdmin: boolean;
+    // };
   }
 }
 
@@ -23,10 +23,10 @@ declare module "next-auth/jwt" {
     provider?: string;
     accessToken?: string;
     idToken?: string;
-    user: {
-      token: string;
-      role: string;
-    }
+    // user: {
+    //   token: string;
+    //   role: string;
+    // }
   }
 }
 
@@ -83,6 +83,7 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account }) {
+      console.log("JWT Callback", token, account);
       if (account) {
         token.idToken = account.id_token as string;
         token.accessToken = account.access_token as string;
