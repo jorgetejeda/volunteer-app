@@ -126,9 +126,11 @@ const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/login")) {
-        return baseUrl;
+      // If there is an error in the OAuth callback, redirect to the error page
+      if (url.includes('error=OAuthCallback')) {
+        return `${baseUrl}/auth-error`;
       }
+      // Redirect to the homepage after successful login
       return baseUrl;
     },
   },

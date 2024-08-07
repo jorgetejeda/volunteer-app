@@ -8,10 +8,12 @@ const protectedRoutes = ["/", "/events", "/panel/"];
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  console.log('Middleware path:', pathname);
+
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
     const token = await getToken({ req: request });
+    console.log('Middleware token:', token);
 
-    // Redirigir a /login si no hay token
     if (!token) {
       console.error('Redirecting to /login');
       const url = new URL("/login", request.url);
@@ -29,11 +31,9 @@ export default async function middleware(request: NextRequest) {
       }
     }
 
-    // Verificar acceso a rutas de administración
     if (pathname.startsWith("/panel")) {
       const userRole = token.user?.role;
 
-      // Redirigir a / si el usuario no es admin
       if (userRole !== "Admin") {
         console.error('User not authorized. Redirecting to /');
         const url = new URL("/", request.url);
@@ -45,6 +45,7 @@ export default async function middleware(request: NextRequest) {
   console.log('Continuing with request');
   return NextResponse.next();
 }
+
 
 // Especificar las rutas que el middleware debe aplicar
 export const config = {
