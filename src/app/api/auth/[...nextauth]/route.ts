@@ -86,30 +86,30 @@ const authOptions: NextAuthOptions = {
       if (account) {
         token.idToken = account.id_token as string;
         token.accessToken = account.access_token as string;
-        try {
-          const data = await handleBackEnd(token);
-          token.user = {
-            token: data.userToken,
-            role: data.userRole,
-          };
-        } catch (error) {
-          console.error("Error in JWT callback:", error);
-        }
+        // try {
+        //   const data = await handleBackEnd(token);
+        //   token.user = {
+        //     token: data.userToken,
+        //     role: data.userRole,
+        //   };
+        // } catch (error) {
+        //   console.error("Error in JWT callback:", error);
+        // }
       }
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
       session.idToken = token.idToken as string;
-      session.user = {
-        email: token.email as string,
-        name: token.name as string,
-        token: token.user?.token,
-        role: token.user?.role,
-        isAdmin: token.user?.role === "Admin",
-      };
+      // session.user = {
+      //   email: token.email as string,
+      //   name: token.name as string,
+      //   token: token.user?.token,
+      //   role: token.user?.role,
+      //   isAdmin: token.user?.role === "Admin",
+      // };
       cookies().set("idToken", session.idToken)
-      cookies().set("isAdmin", JSON.stringify(session.user))
+      // cookies().set("isAdmin", JSON.stringify(session.user))
       return session;
     },
     async redirect({ url, baseUrl }) {

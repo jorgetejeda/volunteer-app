@@ -8,39 +8,41 @@ const protectedRoutes = ["/", "/events", "/panel/"];
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  if (protectedRoutes.some((path) => pathname.startsWith(path))) {
-    const token = await getToken({ req: request });
+  console.log('Checking request');
 
-    // Redirigir a /login si no hay token
-    if (!token) {
-      console.error('Redirecting to /login');
-      const url = new URL("/login", request.url);
-      return NextResponse.redirect(url);
-    }
+  // if (protectedRoutes.some((path) => pathname.startsWith(path))) {
+  //   const token = await getToken({ req: request });
 
-    if (token && token.exp) {
-      const expirationDate = new Date(Number(token.exp) * 1000);
-      const currentDate = new Date();
+  //   // Redirigir a /login si no hay token
+  //   if (!token) {
+  //     console.error('Redirecting to /login');
+  //     const url = new URL("/login", request.url);
+  //     return NextResponse.redirect(url);
+  //   }
 
-      if (currentDate > expirationDate) {
-        console.error('Token expired. Redirecting to /logout');
-        const url = new URL("/logout", request.url);
-        return NextResponse.redirect(url);
-      }
-    }
+  //   if (token && token.exp) {
+  //     const expirationDate = new Date(Number(token.exp) * 1000);
+  //     const currentDate = new Date();
 
-    // Verificar acceso a rutas de administración
-    if (pathname.startsWith("/panel")) {
-      const userRole = token.user?.role;
+  //     if (currentDate > expirationDate) {
+  //       console.error('Token expired. Redirecting to /logout');
+  //       const url = new URL("/logout", request.url);
+  //       return NextResponse.redirect(url);
+  //     }
+  //   }
 
-      // Redirigir a / si el usuario no es admin
-      if (userRole !== "Admin") {
-        console.error('User not authorized. Redirecting to /');
-        const url = new URL("/", request.url);
-        return NextResponse.redirect(url);
-      }
-    }
-  }
+  //   // Verificar acceso a rutas de administración
+  //   if (pathname.startsWith("/panel")) {
+  //     const userRole = token.user?.role;
+
+  //     // Redirigir a / si el usuario no es admin
+  //     if (userRole !== "Admin") {
+  //       console.error('User not authorized. Redirecting to /');
+  //       const url = new URL("/", request.url);
+  //       return NextResponse.redirect(url);
+  //     }
+  //   }
+  // }
 
   console.log('Continuing with request');
   return NextResponse.next();
