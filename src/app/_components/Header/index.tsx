@@ -14,11 +14,17 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const { data: session, status } = useSession();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const router = useRouter()
+
+  React.useEffect(()=>{
+    console.log('Session', session)
+  },[])
 
   useLayoutEffect(() => {
     if (session && session.user?.token && !sessionStorage.getItem("token"))
@@ -34,8 +40,7 @@ export const Header = () => {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: "/login" });
-    setAnchorEl(null);
+    router.push('/logout')
   };
 
   return (

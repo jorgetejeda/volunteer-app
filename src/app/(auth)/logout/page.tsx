@@ -7,18 +7,14 @@ import { Box, Typography, CircularProgress } from "@mui/material";
 export default function LogOut() {
   const router = useRouter();
 
-  useEffect(() => {
-    console.log("Removing token from sessionStorage");
+  const handleLogout = async () => {
     sessionStorage.removeItem('token');
+    await signOut({ redirect: true, callbackUrl: "/login" });
+  }
 
-    // Adding a small delay before redirecting
-    setTimeout(() => {
-      signOut({ redirect: false }).then(() => {
-        console.log("Redirecting to homepage");
-        router.push("/");
-      });
-    }, 1000); // Adjust delay as needed
-  }, [router]);
+  useEffect(() => {
+    handleLogout()
+  }, []);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", textAlign: "center" }}>
