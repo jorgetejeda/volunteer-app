@@ -53,7 +53,7 @@ export default function Home() {
   const getEvents = async () => {
     setLoading(true);
     try {
-      const { data, isSucceeded } = await EventService.getEvents({
+      const { data } = await EventService.getEvents({
         limit: 10,
         offset: 0,
       });
