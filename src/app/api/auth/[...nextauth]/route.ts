@@ -31,7 +31,7 @@ const handleBackEnd = async (token: any) => {
   try {
     const authToken = process.env.NEXTAUTH_SECRET;
     const { data } = await axiosInstance.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
         name: token.name,
