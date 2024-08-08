@@ -36,7 +36,6 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [isUserEnrolled, setIsUserEnrolled] = useState<boolean>(false);
   const [enrollMessage, setEnrollMessage] = useState<string>("");
 
   const getEvents = useCallback(async () => {
@@ -44,7 +43,6 @@ export default function Page({ params }: { params: { id: number } }) {
     if (!isSucceeded || !data) {
       console.log("Error");
     }
-    setIsUserEnrolled(data.isUserEnrolled);
     setEvent(data);
     setLoading(false);
   }, [id]);
@@ -66,9 +64,25 @@ export default function Page({ params }: { params: { id: number } }) {
     const { isSucceeded } = await EventService.enrollEvent(id);
     setIsEnrolling(false);
     setEnrollMessage(
-      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
+      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse."
     );
     setOpenDialog(false);
+    if (isSucceeded) {
+      setEvent((prev) => ({ ...prev, isUserEnrolled: true }));
+    }
+  };
+
+  const handleUnEnroll = async () => {
+    setIsEnrolling(true);
+    const { isSucceeded } = await EventService.unEnrollEvent(id);
+    setIsEnrolling(false);
+    setEnrollMessage(
+      isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción."
+    );
+    setOpenDialog(false);
+    if (isSucceeded) {
+      setEvent((prev) => ({ ...prev, isUserEnrolled: false }));
+    }
   };
 
   if (loading) {
@@ -125,13 +139,12 @@ export default function Page({ params }: { params: { id: number } }) {
               </Typography>
               <Box>
                 <Button
-                  variant={isUserEnrolled ? "contained" : "outlined"}
+                  variant={event.isUserEnrolled ? "outlined" : "contained"}
                   onClick={handleOpenDialog}
-                  disabled={event.isUserEnrolled}
                 >
-                  {isUserEnrolled
-                    ? "Quiero participar"
-                    : "No quiero participar"}
+                  {event.isUserEnrolled
+                    ? "No quiero participar"
+                    : "Quiero participar"}
                   {isEnrolling && (
                     <CircularProgress
                       size={24}
@@ -193,10 +206,14 @@ export default function Page({ params }: { params: { id: number } }) {
       </Grid>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Confirmar Inscripción</DialogTitle>
+        <DialogTitle>
+          {event.isUserEnrolled ? "Cancelar Inscripción" : "Confirmar Inscripción"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro que deseas inscribirte en el evento `${event.title}`?
+            {event.isUserEnrolled
+              ? `¿Estás seguro que deseas cancelar tu inscripción en el evento '${event.title}'?`
+              : `¿Estás seguro que deseas inscribirte en el evento '${event.title}'?`}
             <br />
             <strong>Fecha:</strong> {event.date}
             <br />
@@ -208,12 +225,12 @@ export default function Page({ params }: { params: { id: number } }) {
             Cancelar
           </Button>
           <Button
-            onClick={handleEnroll}
+            onClick={event.isUserEnrolled ? handleUnEnroll : handleEnroll}
             color="primary"
             disabled={isEnrolling}
             startIcon={isEnrolling && <CircularProgress size={20} />}
           >
-            Inscribirme
+            {event.isUserEnrolled ? "Cancelar Inscripción" : "Inscribirme"}
           </Button>
         </DialogActions>
       </Dialog>

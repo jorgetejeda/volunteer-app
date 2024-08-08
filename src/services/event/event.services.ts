@@ -100,6 +100,14 @@ class EventService {
       { eventId },
     );
   }
+
+  async unEnrollEvent(eventId: number): Promise<ApiResponse<void>> {
+    return httpImplementation.patch<ApiResponse<void>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/enroll/${eventId}`,
+    );
+  }
+
   async userTotalHours(): Promise<ApiResponse<void>> {
     return httpImplementation.get<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
