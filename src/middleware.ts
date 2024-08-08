@@ -8,11 +8,8 @@ const protectedRoutes = ["/", "/events", "/panel/"];
 export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  console.log('Middleware path:', pathname);
-
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
     const token = await getToken({ req: request });
-    console.log('Middleware token:', token);
 
     if (!token) {
       console.error('Redirecting to /login');
@@ -32,7 +29,7 @@ export default async function middleware(request: NextRequest) {
     }
 
     if (pathname.startsWith("/panel")) {
-      const userRole = token.user?.role;
+      const userRole = token.user.role;
 
       if (userRole !== "Admin") {
         console.error('User not authorized. Redirecting to /');

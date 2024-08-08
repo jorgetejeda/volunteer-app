@@ -110,14 +110,12 @@ const authOptions: NextAuthOptions = {
     async session({ session, token }): Promise<any> {
       //session.accessToken = token.accessToken as string;
       //session.idToken = token.idToken as string;
-      const newSession = {
-        email: token.email as string,
-        name: token.name as string,
-        token: token.user?.token,
-        role: token.user?.role,
-        isAdmin: token.user?.role === "Admin",
-      };
-      return newSession;
+      session.email = token.email as string;
+      session.name = token.name as string;
+      session.token = token.user?.token;
+      session.role = token.user?.role;
+      session.isAdmin = token.user?.role === "Admin";
+      return session;
     },
     async redirect({ url, baseUrl }) {
       // If there is an error in the OAuth callback, redirect to the error page
