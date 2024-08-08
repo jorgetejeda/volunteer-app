@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Grid,
@@ -45,7 +45,7 @@ const images = [
 export default function Home() {
   const { data: session, status } = useSession();
   const [activeStep, setActiveStep] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [hours, setHours] = useState(0);
   const maxSteps = images.length;
@@ -80,8 +80,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (status === "authenticated") getEvents();
-    getHours();
+    if (status === "authenticated") {
+      getEvents();
+      getHours();
+    }
   }, [status]);
 
   const handleNext = () => {
@@ -96,16 +98,9 @@ export default function Home() {
     setActiveStep(step);
   };
 
-  if (status === "loading")
-    return (
-      <Backdrop open={true}>
-        <CircularProgress />
-      </Backdrop>
-    );
-
   return (
     <>
-      {loading && (
+      {(status === "loading" || loading) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
