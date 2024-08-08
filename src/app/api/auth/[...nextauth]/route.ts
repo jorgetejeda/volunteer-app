@@ -1,4 +1,3 @@
-import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import { cookies } from "next/headers";
@@ -9,13 +8,11 @@ declare module "next-auth" {
     accessToken?: string;
     idToken?: string;
     expires?: string;
-    user?: {
-      email: string;
-      name: string;
-      token?: string;
-      role: string;
-      isAdmin: boolean;
-    };
+    email: string;
+    name: string;
+    token?: string;
+    role: string;
+    isAdmin: boolean;
   }
 }
 
@@ -75,8 +72,7 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  debug: true,
-
+  debug: false,
   secret: process.env.NEXTAUTH_SECRET as string,
   logger: {
     error(code, ...message) {
@@ -97,8 +93,8 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
-        token.idToken = account.id_token as string;
-        token.accessToken = account.access_token as string;
+        //token.idToken = account.id_token as string;
+        //token.accessToken = account.access_token as string;
         try {
           const data = await handleBackEnd(token);
           token.user = {
@@ -111,19 +107,17 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
-      session.idToken = token.idToken as string;
-      session.user = {
+    async session({ session, token }): Promise<any> {
+      //session.accessToken = token.accessToken as string;
+      //session.idToken = token.idToken as string;
+      const newSession = {
         email: token.email as string,
         name: token.name as string,
         token: token.user?.token,
         role: token.user?.role,
         isAdmin: token.user?.role === "Admin",
       };
-      cookies().set("idToken", session.idToken);
-      cookies().set("isAdmin", JSON.stringify(session.user));
-      return session;
+      return newSession;
     },
     async redirect({ url, baseUrl }) {
       // If there is an error in the OAuth callback, redirect to the error page

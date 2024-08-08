@@ -10,7 +10,6 @@ class EventService {
 
   async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
     const formData = new FormData();
-    console.log(data);
     const defaultHeaders: AxiosHeaders = {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
@@ -95,11 +94,16 @@ class EventService {
   }
 
   async enrollEvent(eventId: number): Promise<ApiResponse<void>> {
-    console.log(typeof eventId);
     return httpImplementation.post<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/enroll`,
       { eventId },
+    );
+  }
+  async userTotalHours(): Promise<ApiResponse<void>> {
+    return httpImplementation.get<ApiResponse<void>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/total-hours`,
     );
   }
 }

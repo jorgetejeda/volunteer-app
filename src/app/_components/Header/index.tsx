@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect } from "react";
+import React, { useCallback, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import {
   Container,
@@ -57,7 +57,7 @@ export const Header = () => {
               />
             </Link>
 
-            {session && session.user?.token && <Box display="flex">
+            {session && session?.token && <Box display="flex">
               <Box
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
@@ -78,7 +78,7 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                {session?.user?.isAdmin && (
+                {session?.isAdmin && (
                   <Link
                     href="/panel/create"
                     passHref

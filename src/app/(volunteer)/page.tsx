@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Grid,
@@ -47,6 +47,7 @@ export default function Home() {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState<Event[]>([]);
+  const [hours, setHours] = useState(0);
   const maxSteps = images.length;
 
   const getEvents = async () => {
@@ -65,9 +66,22 @@ export default function Home() {
     }
   };
 
+  const getHours = async () => {
+    setLoading(true);
+    try {
+      const { data, isSucceeded } = await EventService.userTotalHours();
+      console.log("Hours", typeof data);
+      setHours(+data);
+    } catch (error: any) {
+      console.error("Error getting hours", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if(status === 'authenticated')
-    getEvents();
+    if (status === "authenticated") getEvents();
+    getHours();
   }, [status]);
 
   const handleNext = () => {
@@ -82,7 +96,12 @@ export default function Home() {
     setActiveStep(step);
   };
 
-  if(status === "loading") return <Backdrop open={true}><CircularProgress /></Backdrop>
+  if (status === "loading")
+    return (
+      <Backdrop open={true}>
+        <CircularProgress />
+      </Backdrop>
+    );
 
   return (
     <>
@@ -173,7 +192,7 @@ export default function Home() {
                         Horas Acumuladas
                       </Typography>
                       <Typography variant="h1" color="primary.main">
-                        120
+                        {hours}
                       </Typography>
                     </Box>
                   </Paper>
