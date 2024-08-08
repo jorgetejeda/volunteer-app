@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
-import { cookies } from "next/headers";
 import axiosInstance from "@/core-libraries/http/axiosWithProxy";
 
 declare module "next-auth" {
@@ -71,7 +70,7 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  debug: false,
+  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET as string,
   logger: {
     error(code, ...message) {
@@ -101,6 +100,7 @@ const authOptions: NextAuthOptions = {
             role: data.userRole,
           };
         } catch (error) {
+          // redirect to logout page
           console.error("Error in JWT callback:", error);
         }
       }

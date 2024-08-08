@@ -129,7 +129,7 @@ export default function Home() {
               </Typography>
             </Box>
             <Box>
-              <Typography variant="body1">
+              <Typography variant="body1" textAlign="justify">
                 En Crecer, creemos firmemente en la responsabilidad social y en
                 el poder de la colaboración para generar cambios significativos.
                 Nuestro programa de voluntariado corporativo nace de la
@@ -139,7 +139,7 @@ export default function Home() {
             </Box>
 
             <Grid container spacing={2}>
-              <Grid item md={7} sm={12}>
+              <Grid item md={7} sm={12} xs={12}>
                 <Paper sx={{ padding: 2 }}>
                   <Box
                     display="flex"
@@ -272,7 +272,7 @@ export default function Home() {
               </Grid>
             </Grid>
           </Grid>
-          <Grid item md={3} sm={12}>
+          <Grid item md={3} sm={12} xs={12}>
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h3">Calendario</Typography>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
