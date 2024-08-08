@@ -30,7 +30,6 @@ declare module "next-auth/jwt" {
 
 const handleBackEnd = async (token: any) => {
   try {
-    console.log('Calling endpoint', `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`);
     const authToken = process.env.NEXTAUTH_SECRET;
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}${process.env.NEXT_PUBLIC_AUTH_API}/login`,

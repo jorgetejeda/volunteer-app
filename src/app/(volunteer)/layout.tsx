@@ -11,7 +11,7 @@ export default function EventLayout(props: { children: React.ReactNode }) {
   React.useLayoutEffect(() => {
     if (session && session.token && !sessionStorage.getItem("token"))
       sessionStorage.setItem("token", session.token);
-  }, [status]);
+  }, [session, status]);
 
   return (
     <>

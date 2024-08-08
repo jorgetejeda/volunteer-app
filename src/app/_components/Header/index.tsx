@@ -100,9 +100,9 @@ export const Header = () => {
                   <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
                 </Box>
               </Menu>
-              <NotificationsNoneIcon
+              {/* <NotificationsNoneIcon
                 sx={{ color: theme.palette.primary.main }}
-              />
+              /> */}
             </Box>}
 
           </Box>

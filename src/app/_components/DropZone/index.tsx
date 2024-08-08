@@ -31,7 +31,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
     onDrop: (acceptedFiles: File[]) => {
       setError(null);
       clearErrors("images"); // clear form error on successful drop
-      console.log(acceptedFiles);
+
 
       if (files.length + acceptedFiles.length > maxFiles) {
         setError(`Only ${maxFiles} images are allowed`);

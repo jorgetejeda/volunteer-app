@@ -37,7 +37,7 @@ const MicrosoftButton = styled(Button)({
 
 export default function LogIn() {
   const router = useRouter();
-  const {login, isAuthenticated } = useAuthContext();
+  const {isAuthenticated } = useAuthContext();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -49,7 +49,6 @@ export default function LogIn() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      // login({ email: "jorgetejeda0804@gmail.com", password: "Teje3000" });
       await signIn("azure-ad");
     } catch (error) {
       console.log(error);

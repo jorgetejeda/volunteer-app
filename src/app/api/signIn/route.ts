@@ -7,7 +7,6 @@ import { ApiResponse } from "@/core-libraries/http/types/api-response";
 export async function POST(req: Request) {
   try {
     const { email, name } = (await req.json()) as UserCredentials;
-    console.log("User credentials:", email, name);
     const authToken = process.env.NEXTAUTH_SECRET;
     const { data, isSucceeded } = await httpImplementation.post<
       ApiResponse<User>,

@@ -70,7 +70,7 @@ export default function Home() {
     setLoading(true);
     try {
       const { data, isSucceeded } = await EventService.userTotalHours();
-      console.log("Hours", typeof data);
+
       setHours(+data);
     } catch (error: any) {
       console.error("Error getting hours", error.message);

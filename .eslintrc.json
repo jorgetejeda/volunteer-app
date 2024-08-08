@@ -1,6 +1,6 @@
 {
   "extends": "next/core-web-vitals",
   "rules": {
-    "react/require-default-props": "off",
+    "react/require-default-props": "off"
   }
 }
