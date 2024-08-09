@@ -47,12 +47,12 @@ export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [currentEvent, setCurrentEvent] = useState<number | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
-    "all"
+    "all",
   );
   const router = useRouter();
   const isAdmin = true;
@@ -79,10 +79,11 @@ export default function EventPage() {
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    index: number
+    eventId: number,
   ) => {
     setAnchorEl(event.currentTarget);
-    setCurrentEvent(index);
+    const selectedEvent = events.find((e) => e.id === eventId);
+    setCurrentEvent(selectedEvent || null);
   };
 
   const handleMenuClose = () => {
@@ -91,36 +92,48 @@ export default function EventPage() {
   };
 
   const handlePublish = () => {
-    setActionLoading(true);
-    setTimeout(() => {
-      setEvents(
-        events.map((event, index) =>
-          index === currentEvent
-            ? { ...event, published: !event.published }
-            : event
-        )
-      );
-      setActionLoading(false);
-      handleMenuClose();
-    }, 2000); // Simulación de tiempo de carga
+    if (currentEvent) {
+      setActionLoading(true);
+      setTimeout(() => {
+        setEvents(
+          events.map((event) =>
+            event.id === currentEvent.id
+              ? { ...event, published: !event.published }
+              : event,
+          ),
+        );
+        setActionLoading(false);
+        handleMenuClose();
+      }, 2000);
+    }
   };
 
   const handleEdit = () => {
-    router.push("/events/create");
+    if (currentEvent) {
+      router.push(`/events/edit/${currentEvent.id}`);
+    }
   };
 
   const handleDelete = () => {
     setDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    setActionLoading(true);
-    setTimeout(() => {
-      setEvents(events.filter((_, index) => index !== currentEvent));
-      setActionLoading(false);
-      setDialogOpen(false);
-      handleMenuClose();
-    }, 2000);
+  const confirmDelete = async () => {
+    if (currentEvent) {
+      try {
+        setLoading(true);
+        const { isSucceeded } = await EventService.deleteEvent(currentEvent.id);
+        if (isSucceeded) {
+          setEvents(events.filter((event) => event.id !== currentEvent.id));
+          setDialogOpen(false);
+          handleMenuClose();
+        }
+      } catch (error: any) {
+        console.error("Error deleting event", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const cancelDelete = () => {
@@ -140,6 +153,7 @@ export default function EventPage() {
       return matchesSearch && matchesFilter;
     });
   }, [events, searchTerm, filter]);
+
   return (
     <>
       {actionLoading && (
@@ -215,9 +229,9 @@ export default function EventPage() {
           ))}
         {!loading &&
           filteredEvents.length > 0 &&
-          filteredEvents.map((event, index) => {
+          filteredEvents.map((event) => {
             return (
-              <Paper key={index}>
+              <Paper key={event.id}>
                 <Card
                   elevation={0}
                   sx={{
@@ -271,7 +285,7 @@ export default function EventPage() {
                           aria-label="more"
                           aria-controls="long-menu"
                           aria-haspopup="true"
-                          onClick={(e) => handleMenuOpen(e, index)}
+                          onClick={(e) => handleMenuOpen(e, event.id)}
                           sx={{
                             color: "white",
                             backgroundColor: "rgba(255, 255, 255, 0.3)",
@@ -282,20 +296,21 @@ export default function EventPage() {
                         </IconButton>
                         <Menu
                           anchorEl={anchorEl}
-                          open={Boolean(anchorEl) && currentEvent === index}
+                          open={Boolean(anchorEl)}
                           onClose={handleMenuClose}
                         >
                           <MenuItem onClick={handlePublish}>
-                            {event.published ? "Despublicar" : "Publicar"}
+                            {currentEvent?.published
+                              ? "Despublicar"
+                              : "Publicar"}
                           </MenuItem>
-                          <Divider />
                           <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                          <Divider />
                           <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
                         </Menu>
                       </Box>
                     )}
                   </Box>
-
                   <CardContent
                     sx={{
                       display: "flex",
@@ -330,11 +345,12 @@ export default function EventPage() {
                       color={theme.palette.grey[200]}
                     />
                   </CardContent>
-                  <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
+
+                   <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
                     <Button
                       component="a"
                       variant="contained"
-                      href={`/events/${index + 1}`}
+                      href={`/events/${event.id}`}
                     >
                       Ver Detalle
                     </Button>
@@ -345,20 +361,31 @@ export default function EventPage() {
           })}
       </Masonry>
 
-      <Dialog open={dialogOpen} onClose={cancelDelete}>
-        <DialogTitle>Eliminar Evento</DialogTitle>
+      <Dialog
+        open={dialogOpen}
+        onClose={cancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"¿Estás seguro de que deseas eliminar este evento?"}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro que deseas eliminar el evento{" "}
-            {currentEvent !== null && events[currentEvent].title}?
+          <DialogContentText id="alert-dialog-description">
+            Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="primary" autoFocus>
-            Eliminar
+          <Button
+            onClick={confirmDelete}
+            color="secondary"
+            autoFocus
+            disabled={actionLoading}
+          >
+            {actionLoading ? <CircularProgress size={24} /> : "Eliminar"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -131,7 +131,7 @@ export default function Home() {
           >
             <Box>
               <Typography variant="h3">
-                Bienvenido, {session && validateName(session.user?.name)}
+                Bienvenido/a, {session && validateName(session.user?.name)}
               </Typography>
             </Box>
             <Box>

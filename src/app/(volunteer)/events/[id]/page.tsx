@@ -36,6 +36,7 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
   const [enrollMessage, setEnrollMessage] = useState<string>("");
 
   const getEvents = useCallback(async () => {
@@ -59,6 +60,10 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenDialog(false);
   };
 
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+  };
+
   const handleEnroll = async () => {
     setIsEnrolling(true);
     const { isSucceeded } = await EventService.enrollEvent(id);
@@ -69,6 +74,7 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenDialog(false);
     if (isSucceeded) {
       setEvent((prev) => ({ ...prev, isUserEnrolled: true }));
+      setOpenSuccessDialog(true); // Abrir el modal de éxito
     }
   };
 
@@ -221,16 +227,38 @@ export default function Page({ params }: { params: { id: number } }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button variant="outlined" onClick={handleCloseDialog} color="primary">
             Cancelar
           </Button>
           <Button
             onClick={event.isUserEnrolled ? handleUnEnroll : handleEnroll}
             color="primary"
+            variant="contained"
             disabled={isEnrolling}
             startIcon={isEnrolling && <CircularProgress size={20} />}
           >
             {event.isUserEnrolled ? "Cancelar Inscripción" : "Inscribirme"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openSuccessDialog}
+        onClose={handleCloseSuccessDialog}
+        aria-labelledby="success-dialog-title"
+        aria-describedby="success-dialog-description"
+      >
+        <DialogTitle id="success-dialog-title">
+          Inscripción exitosa
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="success-dialog-description">
+            ¡Te has inscrito con éxito en el evento!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={handleCloseSuccessDialog} color="primary">
+            Gracias
           </Button>
         </DialogActions>
       </Dialog>

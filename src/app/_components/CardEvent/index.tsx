@@ -9,6 +9,7 @@ import { CardEventProps } from "./types";
 import theme from "@/theme";
 import { InformationLabel } from "../InformationLabel";
 import CategoryLabel from "../CategoryLabel";
+import { cleanHtml } from "@/utils";
 
 export const CardEvent = ({
   image,
@@ -94,7 +95,7 @@ export const CardEvent = ({
                     elipsis: "ellipsis",
                   }}
                 >
-                  {elisisDescription}
+                  {cleanHtml(elisisDescription || "")}
                 </Typography>
               </Box>
             )}

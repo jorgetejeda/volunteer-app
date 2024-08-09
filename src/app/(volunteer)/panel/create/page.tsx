@@ -368,7 +368,7 @@ const EventForm = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseModal} color="primary">
+            <Button variant="contained" onClick={handleCloseModal} color="primary">
               OK
             </Button>
           </DialogActions>
