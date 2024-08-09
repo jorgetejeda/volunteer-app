@@ -180,10 +180,12 @@ const EventForm = () => {
                 }
               />
               <Typography variant="h4">Imagen del evento</Typography>
+
               <Paper sx={{ padding: 2 }}>
                 <DropZone
                   accept={{ "image/jpg": [".jpg", ".jpeg"] }}
-                  label="Arrastra una imagen aquí"
+                  label="Haz click para seleccionar las imágenes"
+                  hint="Solo se permiten archivos .jpg"
                   setValue={setValue as any}
                   error={errors.mainImage}
                   clearErrors={() => clearErrors()}
@@ -198,6 +200,7 @@ const EventForm = () => {
           <Grid item xs={12} md={4}>
             <Stack spacing={2}>
               <Typography variant="h4">Datos del evento</Typography>
+
               <Paper sx={{ padding: 2 }}>
                 <Stack spacing={2}>
                   <TextField
@@ -216,6 +219,7 @@ const EventForm = () => {
                     error={!!errors.date}
                     helperText={errors.date?.message}
                   />
+
                   <TextField
                     label="Hora inicio del evento"
                     fullWidth
@@ -235,16 +239,37 @@ const EventForm = () => {
                   <TextField
                     label="Duración (horas)"
                     fullWidth
-                    type="number"
+                    type="text"
                     disabled={isAllDay}
                     {...register("duration", {
                       required: !isAllDay
                         ? "La duración es obligatoria"
                         : false,
                       valueAsNumber: true,
+                      validate: (value) =>
+                        value >= 0 || "La cantidad debe ser mayor o igual a 0",
                     })}
                     error={!!errors.duration}
                     helperText={errors.duration?.message}
+                    inputProps={{
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                    }}
+                    onKeyDown={(event) => {
+                      if (
+                        [
+                          "Backspace",
+                          "ArrowLeft",
+                          "ArrowRight",
+                          "Tab",
+                        ].includes(event.key)
+                      )
+                        return;
+
+                      if (!/^[0-9]$/.test(event.key)) {
+                        event.preventDefault();
+                      }
+                    }}
                   />
                   <FormControlLabel
                     control={
@@ -257,22 +282,43 @@ const EventForm = () => {
                   />
                 </Stack>
               </Paper>
+
               <Typography variant="h4">Cantidad de personas</Typography>
+
               <Paper sx={{ padding: 2 }}>
                 <TextField
                   label="Cupos"
                   fullWidth
-                  type="number"
+                  type="text"
                   {...register("quota", {
                     required: "La cantidad de personas es obligatoria",
                     valueAsNumber: true,
+                    validate: (value) =>
+                      value >= 0 || "La cantidad debe ser mayor o igual a 0",
                   })}
                   error={!!errors.quota}
                   helperText={errors.quota?.message}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                  }}
+                  onKeyDown={(event) => {
+                    if (
+                      ["Backspace", "ArrowLeft", "ArrowRight", "Tab"].includes(
+                        event.key,
+                      )
+                    )
+                      return;
+
+                    if (!/^[0-9]$/.test(event.key)) {
+                      event.preventDefault();
+                    }
+                  }}
                 />
               </Paper>
 
               <Typography variant="h4">Ubicación</Typography>
+
               <Paper sx={{ padding: 2 }}>
                 <TextField
                   label="Nombre del lugar"
@@ -284,13 +330,16 @@ const EventForm = () => {
                   helperText={errors.location?.message}
                 />
               </Paper>
+
               <Typography variant="h4">Categoría</Typography>
+
               <Paper sx={{ padding: 2 }}>
                 <DropdownCategories
                   onChange={(categoryId) => setValue("categoryId", categoryId)}
                   value={eventData?.category?.id || 0}
                 />
               </Paper>
+
               <Stack spacing={2} direction="row">
                 <Button
                   variant="text"

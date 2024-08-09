@@ -8,6 +8,7 @@ import { FieldError } from "react-hook-form";
 interface DropZoneProps {
   accept: Accept;
   label?: string;
+  hint?: string;
   maxFiles?: number;
   error?: FieldError;
   setValue: (name: string, value: File[] | string) => void;
@@ -17,6 +18,7 @@ interface DropZoneProps {
 export const DropZone: React.FC<DropZoneProps> = ({
   accept,
   label = "Drop image here",
+  hint,
   maxFiles = 5,
   error: mainImageError,
   setValue,
@@ -31,7 +33,6 @@ export const DropZone: React.FC<DropZoneProps> = ({
     onDrop: (acceptedFiles: File[]) => {
       setError(null);
       clearErrors("images"); // clear form error on successful drop
-
 
       if (files.length + acceptedFiles.length > maxFiles) {
         setError(`Only ${maxFiles} images are allowed`);
@@ -154,9 +155,9 @@ export const DropZone: React.FC<DropZoneProps> = ({
       <Box {...getRootProps()}>
         <Typography variant="h5">{label}</Typography>
         <input {...getInputProps({ className: "dropzone" })} />
-        <Typography variant="body2">
-          o haz click para seleccionar las imágenes
-        </Typography>
+        {hint && <Typography variant="body2">
+          {hint} (máximo {maxFiles})
+        </Typography>}
       </Box>
       {error && (
         <Typography variant="body2" color="error" sx={{ marginTop: 1 }}>

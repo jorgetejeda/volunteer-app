@@ -4,35 +4,54 @@ import { Event, EventDto } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
 import { QueryParams } from "@/core-libraries/http/types/query-params";
+import { compressImages } from "@/utils";
 
 class EventService {
   private readonly baseUrl = "events";
 
   async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
-    const formData = new FormData();
-    const defaultHeaders: AxiosHeaders = {
-      Accept: "application/json",
-      "Content-Type": "multipart/form-data",
-    } as unknown as AxiosHeaders;
+    try {
+      const formData = new FormData();
+      const defaultHeaders: AxiosHeaders = {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
+      } as unknown as AxiosHeaders;
 
-    // Add simple fields
-    Object.keys(data).forEach((key) => {
-      if (key === "images") {
-        for (let i = 0; i < data.images.length; i++) {
-          formData.append("images", data.images[i]);
-        }
-      } else {
-        formData.append(key, String(data[key as keyof EventDto]));
+      // Opciones para la compresión de imágenes
+      const options: Record<string, number | boolean> = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      };
+
+      // Comprimir imágenes si existen
+      let compressedImages: File[] = [];
+      if (data.images && data.images.length > 0) {
+        compressedImages = await compressImages(data.images, options);
       }
-    });
 
-    return httpImplementation.post<ApiResponse<Event>, FormData>(
-      ServicesInstanceEnum.API_INSTANCE,
-      this.baseUrl,
-      formData,
-      "json",
-      defaultHeaders,
-    );
+      // Agregar campos simples y las imágenes comprimidas al FormData
+      Object.keys(data).forEach((key) => {
+        if (key === "images" && compressedImages.length > 0) {
+          for (let i = 0; i < compressedImages.length; i++) {
+            formData.append("images", compressedImages[i]);
+          }
+        } else {
+          formData.append(key, String(data[key as keyof EventDto]));
+        }
+      });
+
+      return await httpImplementation.post<ApiResponse<Event>, FormData>(
+        ServicesInstanceEnum.API_INSTANCE,
+        this.baseUrl,
+        formData,
+        "json",
+        defaultHeaders,
+      );
+    } catch (error) {
+      console.error("Error al guardar el evento:", error);
+      throw error;
+    }
   }
 
   async getEvents(query?: QueryParams): Promise<ApiResponse<Event[]>> {
