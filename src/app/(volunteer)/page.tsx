@@ -98,6 +98,17 @@ export default function Home() {
     setActiveStep(step);
   };
 
+  const validateName = (name: string | undefined | null): string | null => {
+    if (!name) return "";
+
+    const split = name.split(",");
+    if (split.length >= 2) {
+      return `${split[1]} ${split[0]}`;
+    }
+
+    return name;
+  };
+
   return (
     <>
       {(status === "loading" || loading) && (
@@ -120,7 +131,7 @@ export default function Home() {
           >
             <Box>
               <Typography variant="h3">
-                Bienvenido, {session && session.user?.name}
+                Bienvenido, {session && validateName(session.user?.name)}
               </Typography>
             </Box>
             <Box>
