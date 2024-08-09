@@ -21,6 +21,7 @@
     "@types/react-swipeable-views": "^0.13.5",
     "@types/react-swipeable-views-utils": "^0.13.7",
     "axios": "^1.7.2",
+    "browser-image-compression": "^2.0.2",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.11",
     "dompurify": "^3.1.6",
