@@ -28,6 +28,9 @@ import { Event } from "@/core/types";
 import EventService from "@/services/event/event.services";
 //@Utils
 import { cleanHtml, lightOrDarkColor } from "@/utils";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+
+import { Carousel } from "react-responsive-carousel";
 
 export default function Page({ params }: { params: { id: number } }) {
   const id = +params.id;
@@ -69,7 +72,7 @@ export default function Page({ params }: { params: { id: number } }) {
     const { isSucceeded } = await EventService.enrollEvent(id);
     setIsEnrolling(false);
     setEnrollMessage(
-      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse."
+      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
     );
     setOpenDialog(false);
     if (isSucceeded) {
@@ -83,7 +86,7 @@ export default function Page({ params }: { params: { id: number } }) {
     const { isSucceeded } = await EventService.unEnrollEvent(id);
     setIsEnrolling(false);
     setEnrollMessage(
-      isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción."
+      isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción.",
     );
     setOpenDialog(false);
     if (isSucceeded) {
@@ -118,11 +121,21 @@ export default function Page({ params }: { params: { id: number } }) {
         borderRadius={3}
         overflow="hidden"
       >
-        <Image
-          src={`https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60`}
-          alt="test image"
-          fill
-        />
+        <Carousel infiniteLoop autoPlay showArrows={true} showStatus={false} showThumbs={false}>
+          {event.images.map((image, index) => (
+            <div
+              key={index}
+              style={{ position: "relative", width: "100%", height: "250px" }}
+            >
+              <Image
+                src={image.documentUrl}
+                alt={image.documentName}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          ))}
+        </Carousel>{" "}
       </Box>
 
       <Box marginTop={3} marginBottom={2}>
@@ -213,7 +226,9 @@ export default function Page({ params }: { params: { id: number } }) {
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
-          {event.isUserEnrolled ? "Cancelar Inscripción" : "Confirmar Inscripción"}
+          {event.isUserEnrolled
+            ? "Cancelar Inscripción"
+            : "Confirmar Inscripción"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -227,7 +242,11 @@ export default function Page({ params }: { params: { id: number } }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleCloseDialog} color="primary">
+          <Button
+            variant="outlined"
+            onClick={handleCloseDialog}
+            color="primary"
+          >
             Cancelar
           </Button>
           <Button
@@ -248,16 +267,18 @@ export default function Page({ params }: { params: { id: number } }) {
         aria-labelledby="success-dialog-title"
         aria-describedby="success-dialog-description"
       >
-        <DialogTitle id="success-dialog-title">
-          Inscripción exitosa
-        </DialogTitle>
+        <DialogTitle id="success-dialog-title">Inscripción exitosa</DialogTitle>
         <DialogContent>
           <DialogContentText id="success-dialog-description">
             ¡Te has inscrito con éxito en el evento!
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleCloseSuccessDialog} color="primary">
+          <Button
+            variant="contained"
+            onClick={handleCloseSuccessDialog}
+            color="primary"
+          >
             Gracias
           </Button>
         </DialogActions>

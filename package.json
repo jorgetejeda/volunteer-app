@@ -34,6 +34,7 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.52.1",
     "react-render-html": "^0.6.0",
+    "react-responsive-carousel": "^3.2.23",
     "react-simple-wysiwyg": "^3.1.1",
     "react-swipeable-views": "^0.14.0"
   },
