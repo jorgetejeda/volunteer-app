@@ -5,13 +5,23 @@ dayjs.locale("es");
 const formatDate = (date: string) =>
   dayjs(date).format("D [de] MMMM [del] YYYY");
 
-const formatTime = (time: string) => dayjs(time).format("HH:mm");
+const formatTimeTo12Hour = (time: string) => {
+  const [hours, minutes] = time.split(":");
 
+  const date = new Date();
+  date.setHours(+hours, +minutes);
+
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
 const combineDateAndTime = ({ date, time }: { date: string; time: string }) => {
   const d = formatDate(date);
-  const t = formatTime(time);
+  const t = formatTimeTo12Hour(time);
 
   return `${d} a las ${t}`;
 };
 
-export { formatDate, formatTime, combineDateAndTime };
+export { formatDate, combineDateAndTime };

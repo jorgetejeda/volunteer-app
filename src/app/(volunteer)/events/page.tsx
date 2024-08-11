@@ -38,7 +38,12 @@ import {
 //@Hooks
 import { useRouter } from "next/navigation";
 //@Utils
-import { cleanHtml, combineDateAndTime, elipsisText, lightOrDarkColor } from "@utils/index";
+import {
+  cleanHtml,
+  combineDateAndTime,
+  elipsisText,
+  lightOrDarkColor,
+} from "@utils/index";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Types
@@ -52,7 +57,9 @@ export default function EventPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<"all" | "published" | "unpublished">("all");
+  const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
+    "all",
+  );
   const router = useRouter();
   const isAdmin = true;
 
@@ -77,7 +84,10 @@ export default function EventPage() {
     getEvents();
   }, []);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, eventId: number) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLElement>,
+    eventId: number,
+  ) => {
     setAnchorEl(event.currentTarget);
     const selectedEvent = events.find((e) => e.id === eventId);
     setCurrentEvent(selectedEvent || null);
@@ -96,8 +106,8 @@ export default function EventPage() {
           events.map((event) =>
             event.id === currentEvent.id
               ? { ...event, published: !event.published }
-              : event
-          )
+              : event,
+          ),
         );
         setActionLoading(false);
         handleMenuClose();
@@ -318,15 +328,29 @@ export default function EventPage() {
                   )}
                 </Box>
                 <CardContent>
-                  <Typography variant="h6">{event.title}</Typography>
-                  <Typography variant="body2" color={theme.palette.text.secondary} sx={{ mt: 1 }}>
-                    {cleanHtml(elipsisText({ value: event.description }))}
-                  </Typography>
-                  <InformationLabel
-                    icon={{ component: LocationOnOutlined }}
-                    label={event.location}
-                    color={theme.palette.grey[200]}
-                  />
+                  <Stack direction="column" spacing={1}>
+                    <InformationLabel
+                      icon={{ component: CalendarMonthOutlined }}
+                      label={combineDateAndTime({
+                        date: event.date,
+                        time: event.time,
+                      })}
+                      color={theme.palette.grey[200]}
+                    />
+                    <Typography variant="h6">{event.title}</Typography>
+                    <Typography
+                      variant="body2"
+                      color={theme.palette.text.secondary}
+                      sx={{ mt: 1 }}
+                    >
+                      {cleanHtml(elipsisText({ value: event.description }))}
+                    </Typography>
+                    <InformationLabel
+                      icon={{ component: LocationOnOutlined }}
+                      label={event.location}
+                      color={theme.palette.grey[200]}
+                    />
+                  </Stack>
                 </CardContent>
                 <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
                   <Button

@@ -198,7 +198,7 @@ export default function Page({ params }: { params: { id: number } }) {
                 }}
                 label={combineDateAndTime({
                   date: event.date,
-                  time: '00:00',
+                  time: event.time,
                 })}
               />
 
