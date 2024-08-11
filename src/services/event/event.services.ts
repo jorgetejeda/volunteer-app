@@ -112,15 +112,7 @@ class EventService {
     );
   }
 
-  async enrollEvent(eventId: number): Promise<ApiResponse<void>> {
-    return httpImplementation.post<ApiResponse<void>, { eventId: number }>(
-      ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/enroll`,
-      { eventId },
-    );
-  }
-
-  async unEnrollEvent(eventId: number): Promise<ApiResponse<void>> {
+  async toggleEnrollUnenrollEvent(eventId: number): Promise<ApiResponse<void>> {
     return httpImplementation.patch<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/enroll/${eventId}`,

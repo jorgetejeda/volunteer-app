@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
   const handleEnroll = async () => {
     setIsEnrolling(true);
-    const { isSucceeded } = await EventService.enrollEvent(id);
+    const { isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id);
     setIsEnrolling(false);
     setEnrollMessage({
       title: isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
@@ -81,13 +81,13 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenDialog(false);
     if (isSucceeded) {
       setEvent((prev) => ({ ...prev, isUserEnrolled: true }));
-      setOpenSuccessDialog(true); // Abrir el modal de éxito
+      setOpenSuccessDialog(true); 
     }
   };
 
   const handleUnEnroll = async () => {
     setIsEnrolling(true);
-    const { isSucceeded } = await EventService.unEnrollEvent(id);
+    const { isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id);
     setIsEnrolling(false);
     setEnrollMessage({
       title: isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción.",
@@ -96,6 +96,7 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenDialog(false);
     if (isSucceeded) {
       setEvent((prev) => ({ ...prev, isUserEnrolled: false }));
+      setOpenSuccessDialog(true)
     }
   };
 
