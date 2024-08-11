@@ -156,10 +156,10 @@ const EventForm = () => {
                 redo
                 bold
                 italic
+                clearFormatting
                 onChange={(value) => setValue("description", value)}
-                defaultValue={
-                  eventData?.description || "Agrega la descripción del evento"
-                }
+                placeholder="Agrega la descripción del evento"
+                defaultValue={eventData?.description}
               />
               <Typography variant="h4">Instrucciones del evento</Typography>
               <EditorView
@@ -174,10 +174,8 @@ const EventForm = () => {
                 clearFormatting
                 styles
                 onChange={(value) => setValue("instructions", value)}
-                defaultValue={
-                  eventData?.instructions ||
-                  "Agrega las instrucciones del evento"
-                }
+                placeholder="Agrega las instrucciones del evento"
+                defaultValue={eventData?.instructions}
               />
               <Typography variant="h4">Imagen del evento</Typography>
 
@@ -368,7 +366,11 @@ const EventForm = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button variant="contained" onClick={handleCloseModal} color="primary">
+            <Button
+              variant="contained"
+              onClick={handleCloseModal}
+              color="primary"
+            >
               OK
             </Button>
           </DialogActions>
