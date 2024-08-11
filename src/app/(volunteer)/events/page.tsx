@@ -22,6 +22,7 @@ import {
   CardMedia,
   CardContent,
   CardActions,
+  Stack,
 } from "@mui/material";
 import {
   CalendarMonthOutlined,
@@ -37,7 +38,7 @@ import {
 //@Hooks
 import { useRouter } from "next/navigation";
 //@Utils
-import { cleanHtml, lightOrDarkColor } from "@utils/index";
+import { cleanHtml, combineDateAndTime, elipsisText, lightOrDarkColor } from "@utils/index";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Types
@@ -110,7 +111,7 @@ export default function EventPage() {
 
   const handleEdit = () => {
     if (currentEvent) {
-      router.push(`/events/edit/${currentEvent.id}`);
+      router.push(`panel/event/edit/${currentEvent.id}`);
     }
   };
 
@@ -184,25 +185,30 @@ export default function EventPage() {
         />
       </Box>
       {isAdmin && (
-        <Box mb={3} display="flex" gap={2}>
-          <Button
-            variant={filter === "all" ? "contained" : "outlined"}
-            onClick={() => setFilter("all")}
-          >
-            Todos
-          </Button>
-          <Button
-            variant={filter === "published" ? "contained" : "outlined"}
-            onClick={() => setFilter("published")}
-          >
-            Publicados
-          </Button>
-          <Button
-            variant={filter === "unpublished" ? "contained" : "outlined"}
-            onClick={() => setFilter("unpublished")}
-          >
-            Sin Publicar
-          </Button>
+        <Box mb={3}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant={filter === "all" ? "contained" : "outlined"}
+              onClick={() => setFilter("all")}
+              size="small"
+            >
+              Todos
+            </Button>
+            <Button
+              variant={filter === "published" ? "contained" : "outlined"}
+              onClick={() => setFilter("published")}
+              size="small"
+            >
+              Publicados
+            </Button>
+            <Button
+              variant={filter === "unpublished" ? "contained" : "outlined"}
+              onClick={() => setFilter("unpublished")}
+              size="small"
+            >
+              Sin Publicar
+            </Button>
+          </Stack>
         </Box>
       )}
       {!loading && filteredEvents.length === 0 && events.length !== 0 && (
@@ -212,154 +218,164 @@ export default function EventPage() {
       {!loading && events.length === 0 && (
         <DataNotFound message="No hay eventos disponibles" />
       )}
-      <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3} sx={{ margin: 0 }}>
-        {loading &&
-          Array.from({ length: 6 }).map((_, index) => (
-            <Paper key={index}>
-              <Skeleton variant="rectangular" width="100%" height={150} />
-              <Box sx={{ padding: 2 }}>
-                <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-              </Box>
-              <Box sx={{ padding: 2 }}>
-                <Skeleton variant="rectangular" width={100} height={30} />
-              </Box>
-            </Paper>
-          ))}
-        {!loading &&
-          filteredEvents.length > 0 &&
-          filteredEvents.map((event) => {
-            return (
-              <Paper key={event.id}>
-                <Card
-                  elevation={0}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    position: "relative",
-                  }}
-                >
-                  <Box sx={{ position: "relative" }}>
-                    <CardMedia
-                      component="img"
-                      height="150"
-                      image={event.images[0].documentUrl}
-                      alt="Event"
-                      sx={{
-                        width: "100%",
-                        height: "150px",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: "100%",
-                        background:
-                          "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))",
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      right: 0,
-                      padding: 1,
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <CategoryLabel
-                      label={event.category.title}
-                      textColor={lightOrDarkColor(event.category.color)}
-                      backgroundColor={event.category.color}
-                    />
-                    {isAdmin && (
-                      <Box>
-                        <IconButton
-                          aria-label="more"
-                          aria-controls="long-menu"
-                          aria-haspopup="true"
-                          onClick={(e) => handleMenuOpen(e, event.id)}
-                          sx={{
-                            color: "white",
-                            backgroundColor: "rgba(255, 255, 255, 0.3)",
-                            marginLeft: 1,
-                          }}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={anchorEl}
-                          open={Boolean(anchorEl)}
-                          onClose={handleMenuClose}
-                        >
-                          <MenuItem onClick={handlePublish}>
-                            {currentEvent?.published
-                              ? "Despublicar"
-                              : "Publicar"}
-                          </MenuItem>
-                          <MenuItem onClick={handleEdit}>Editar</MenuItem>
-                          <Divider />
-                          <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
-                        </Menu>
-                      </Box>
-                    )}
-                  </Box>
-                  <CardContent
+      {!loading && events.length > 0 && (
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={3}
+          sx={{ margin: 0 }}
+        >
+          {loading &&
+            Array.from({ length: 6 }).map((_, index) => (
+              <Paper key={index}>
+                <Skeleton variant="rectangular" width="100%" height={150} />
+                <Box sx={{ padding: 2 }}>
+                  <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
+                  <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
+                  <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
+                </Box>
+                <Box sx={{ padding: 2 }}>
+                  <Skeleton variant="rectangular" width={100} height={30} />
+                </Box>
+              </Paper>
+            ))}
+          {!loading &&
+            filteredEvents.length > 0 &&
+            filteredEvents.map((event) => {
+              return (
+                <Paper key={event.id}>
+                  <Card
+                    elevation={0}
                     sx={{
                       display: "flex",
                       flexDirection: "column",
-                      flexGrow: 1,
-                      gap: 1,
+                      height: "100%",
+                      position: "relative",
                     }}
                   >
-                    <InformationLabel
-                      icon={{
-                        component: CalendarMonthOutlined,
+                    <Box sx={{ position: "relative" }}>
+                      <CardMedia
+                        component="img"
+                        height="150"
+                        image={event.images[0].documentUrl}
+                        alt="Event"
+                        sx={{
+                          width: "100%",
+                          height: "150px",
+                          objectFit: "cover",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: "100%",
+                          background:
+                            "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))",
+                        }}
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        right: 0,
+                        padding: 1,
+                        display: "flex",
+                        alignItems: "center",
                       }}
-                      label={event.date.toString()}
-                      color={theme.palette.grey[200]}
-                    />
-
-                    <Typography variant="h4">{event.title}</Typography>
-
-                    <Typography
-                      variant="body1"
-                      color={theme.palette.text.secondary}
-                      sx={{ mt: 1 }}
                     >
-                      {cleanHtml(event.description)}
-                    </Typography>
-
-                    <InformationLabel
-                      icon={{
-                        component: LocationOnOutlined,
+                      <CategoryLabel
+                        label={event.category.title}
+                        textColor={lightOrDarkColor(event.category.color)}
+                        backgroundColor={event.category.color}
+                      />
+                      {isAdmin && (
+                        <Box>
+                          <IconButton
+                            aria-label="more"
+                            aria-controls="long-menu"
+                            aria-haspopup="true"
+                            onClick={(e) => handleMenuOpen(e, event.id)}
+                            sx={{
+                              color: "white",
+                              backgroundColor: "rgba(255, 255, 255, 0.3)",
+                              marginLeft: 1,
+                            }}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleMenuClose}
+                            elevation={1}
+                          >
+                            <MenuItem onClick={handlePublish}>
+                              {currentEvent?.published
+                                ? "Despublicar"
+                                : "Publicar"}
+                            </MenuItem>
+                            <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                            <Divider />
+                            <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
+                          </Menu>
+                        </Box>
+                      )}
+                    </Box>
+                    <CardContent
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flexGrow: 1,
+                        gap: 1,
                       }}
-                      label={event.location}
-                      color={theme.palette.grey[200]}
-                    />
-                  </CardContent>
-
-                   <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
-                    <Button
-                      component="a"
-                      variant="contained"
-                      href={`/events/${event.id}`}
                     >
-                      Ver Detalle
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Paper>
-            );
-          })}
-      </Masonry>
+                      <InformationLabel
+                        icon={{
+                          component: CalendarMonthOutlined,
+                        }}
+                        label={combineDateAndTime({
+                          date: event.date,
+                          time: event.time,
+                        })}
+                        color={theme.palette.grey[200]}
+                      />
+
+                      <Typography variant="h4">{event.title}</Typography>
+
+                      <Typography
+                        variant="body1"
+                        color={theme.palette.text.secondary}
+                        sx={{ mt: 1 }}
+                      >
+                        {cleanHtml(elipsisText({ value: event.description }))}
+                      </Typography>
+
+                      <InformationLabel
+                        icon={{
+                          component: LocationOnOutlined,
+                        }}
+                        label={event.location}
+                        color={theme.palette.grey[200]}
+                      />
+                    </CardContent>
+
+                    <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
+                      <Button
+                        component="a"
+                        variant="contained"
+                        href={`/events/${event.id}`}
+                      >
+                        Ver Detalle
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Paper>
+              );
+            })}
+        </Masonry>
+      )}
 
       <Dialog
         open={dialogOpen}

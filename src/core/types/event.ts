@@ -7,6 +7,7 @@ export type Event = {
   description: string;
   instructions: string;
   date: string;
+  time: string;
   quota: number;
   location: string;
   duration: string;

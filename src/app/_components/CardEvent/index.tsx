@@ -9,7 +9,7 @@ import { CardEventProps } from "./types";
 import theme from "@/theme";
 import { InformationLabel } from "../InformationLabel";
 import CategoryLabel from "../CategoryLabel";
-import { cleanHtml } from "@/utils";
+import { cleanHtml, elipsisText } from "@/utils";
 
 export const CardEvent = ({
   image,
@@ -20,9 +20,6 @@ export const CardEvent = ({
   redirect,
   chip,
 }: CardEventProps) => {
-  const elisisDescription =
-    description && description?.length > 70 ? `${description.slice(0, 100)}...` : description;
-
   const EventDate = () => (
     <InformationLabel
       icon={{
@@ -95,7 +92,7 @@ export const CardEvent = ({
                     elipsis: "ellipsis",
                   }}
                 >
-                  {cleanHtml(elisisDescription || "")}
+                  {cleanHtml(elipsisText({ value: description }))}
                 </Typography>
               </Box>
             )}

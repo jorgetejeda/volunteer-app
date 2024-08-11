@@ -13,7 +13,7 @@ export const Footer = () => {
     <Box component="footer" sx={{ mt: "auto" }}>
       <Box
         paddingY={2}
-        marginTop={2}
+        marginTop={8}
         sx={{ background: theme.palette.common.white }}
       >
         <Container maxWidth="lg">

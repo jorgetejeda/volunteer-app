@@ -20,7 +20,7 @@ import { CardEvent, DataNotFound } from "@components/index";
 import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
 import theme from "@/theme";
-import { lightOrDarkColor } from "@/utils";
+import { combineDateAndTime, lightOrDarkColor } from "@/utils";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -145,8 +145,20 @@ export default function Home() {
             </Box>
 
             <Grid container spacing={2}>
-              <Grid item md={7} sm={12} xs={12}>
-                <Paper sx={{ padding: 2 }}>
+              <Grid item md={12} sm={12} xs={12}>
+                <Paper sx={{ padding: 4 }}>
+                  <Box display="flex" flexDirection="column" gap={1}>
+                    <Typography variant="body1" color={theme.palette.grey[200]}>
+                      Horas Acumuladas
+                    </Typography>
+                    <Typography variant="h1" color="primary.main">
+                      {hours}
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Grid>
+              <Grid item md={12} sm={12} xs={12}>
+                <Paper sx={{ padding: 4 }}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -159,13 +171,16 @@ export default function Home() {
                     </Button>
                   </Box>
 
-                  <Box display="flex" gap={3} flexDirection="column">
+                  <Box display="flex" gap={5} flexDirection="column">
                     {!loading && events.length > 0 ? (
                       events.map((event) => (
                         <Box key={event.id}>
                           <CardEvent
                             name={event.title}
-                            date={event.date}
+                            date={combineDateAndTime({
+                              date: event.date,
+                              time: event.time,
+                            })}
                             description={event.description}
                             location={event.location}
                             chip={{
@@ -187,22 +202,8 @@ export default function Home() {
                   </Box>
                 </Paper>
               </Grid>
-              <Grid item md={5} sm={12}>
+              {/* <Grid item md={5} sm={12}>
                 <Stack spacing={2}>
-                  <Paper sx={{ padding: 2 }}>
-                    <Box display="flex" flexDirection="column" gap={1}>
-                      <Typography
-                        variant="body1"
-                        color={theme.palette.grey[200]}
-                      >
-                        Horas Acumuladas
-                      </Typography>
-                      <Typography variant="h1" color="primary.main">
-                        {hours}
-                      </Typography>
-                    </Box>
-                  </Paper>
-
                   <Paper sx={{ padding: 2 }}>
                     <Box
                       display="flex"
@@ -252,11 +253,6 @@ export default function Home() {
                           onClick={handleNext}
                           disabled={activeStep === maxSteps - 1}
                         >
-                          {/* {theme.direction === "rtl" ? (
-                            <KeyboardArrowLeft />
-                          ) : (
-                            <KeyboardArrowRight />
-                          )} */}
                         </Button>
                       }
                       backButton={
@@ -265,17 +261,12 @@ export default function Home() {
                           onClick={handleBack}
                           disabled={activeStep === 0}
                         >
-                          {/* {theme.direction === "rtl" ? (
-                            <KeyboardArrowRight />
-                          ) : (
-                            <KeyboardArrowLeft />
-                          )} */}
                         </Button>
                       }
                     />
                   </Paper>
                 </Stack>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
           <Grid item md={3} sm={12} xs={12}>

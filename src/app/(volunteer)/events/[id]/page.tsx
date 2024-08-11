@@ -27,8 +27,8 @@ import { Event } from "@/core/types";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Utils
-import { cleanHtml, lightOrDarkColor } from "@/utils";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { cleanHtml, combineDateAndTime, lightOrDarkColor } from "@/utils";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 
 import { Carousel } from "react-responsive-carousel";
 
@@ -182,7 +182,7 @@ export default function Page({ params }: { params: { id: number } }) {
             </Box>
           </Paper>
         </Grid>
-        <Grid item sm={12} md={5}>
+        <Grid item sm={12} xs={12} md={5}>
           <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={3}>
               <InformationLabel
@@ -190,7 +190,10 @@ export default function Page({ params }: { params: { id: number } }) {
                   component: CalendarMonthOutlined,
                   color: theme.palette.primary.main,
                 }}
-                label={event.date}
+                label={combineDateAndTime({
+                  date: event.date,
+                  time: '00:00',
+                })}
               />
 
               <InformationLabel

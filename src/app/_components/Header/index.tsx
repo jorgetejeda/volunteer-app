@@ -80,7 +80,7 @@ export const Header = () => {
               >
                 {session?.isAdmin && (
                   <Link
-                    href="/panel/create"
+                    href="/panel/event/create"
                     passHref
                     style={{ textDecoration: "none" }}
                   >
