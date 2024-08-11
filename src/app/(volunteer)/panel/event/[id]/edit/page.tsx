@@ -155,6 +155,7 @@ const EditEventForm = () => {
                 redo
                 bold
                 italic
+                clearFormatting
                 onChange={(value) => setValue("description", value)}
                 defaultValue={getValues("description")}
               />
