@@ -65,6 +65,7 @@ const authOptions: NextAuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
       authorization: {
         params: {
+          prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },
