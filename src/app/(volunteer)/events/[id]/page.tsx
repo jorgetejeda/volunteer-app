@@ -40,7 +40,10 @@ export default function Page({ params }: { params: { id: number } }) {
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
-  const [enrollMessage, setEnrollMessage] = useState<string>("");
+  const [enrollMessage, setEnrollMessage] = useState<{title: string, message: string}>({
+    title: "",
+    message: "",
+  });
 
   const getEvents = useCallback(async () => {
     const { data, isSucceeded } = await EventService.getEventById(id);
@@ -71,9 +74,10 @@ export default function Page({ params }: { params: { id: number } }) {
     setIsEnrolling(true);
     const { isSucceeded } = await EventService.enrollEvent(id);
     setIsEnrolling(false);
-    setEnrollMessage(
-      isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
-    );
+    setEnrollMessage({
+      title: isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
+      message: isSucceeded ? "Gracias por inscribirte en el evento." : "Por favor, intenta de nuevo.",
+    });
     setOpenDialog(false);
     if (isSucceeded) {
       setEvent((prev) => ({ ...prev, isUserEnrolled: true }));
@@ -85,9 +89,10 @@ export default function Page({ params }: { params: { id: number } }) {
     setIsEnrolling(true);
     const { isSucceeded } = await EventService.unEnrollEvent(id);
     setIsEnrolling(false);
-    setEnrollMessage(
-      isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción.",
-    );
+    setEnrollMessage({
+      title: isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción.",
+      message: isSucceeded ? "Tu inscripción ha sido cancelada." : "Por favor, intenta de nuevo.",
+    });
     setOpenDialog(false);
     if (isSucceeded) {
       setEvent((prev) => ({ ...prev, isUserEnrolled: false }));
@@ -270,10 +275,10 @@ export default function Page({ params }: { params: { id: number } }) {
         aria-labelledby="success-dialog-title"
         aria-describedby="success-dialog-description"
       >
-        <DialogTitle id="success-dialog-title">Inscripción exitosa</DialogTitle>
+        <DialogTitle id="success-dialog-title">{enrollMessage.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="success-dialog-description">
-            ¡Te has inscrito con éxito en el evento!
+            {enrollMessage.message}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -286,19 +291,6 @@ export default function Page({ params }: { params: { id: number } }) {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {enrollMessage && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          marginTop={3}
-        >
-          <Typography variant="h6" color="success">
-            {enrollMessage}
-          </Typography>
-        </Box>
-      )}
     </>
   );
 }
