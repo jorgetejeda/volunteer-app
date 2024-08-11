@@ -1,6 +1,6 @@
 import httpImplementation from "@/core-libraries/http/http.implementation";
 import { ApiResponse } from "@/core-libraries/http/types/api-response";
-import { Event, EventDto } from "@/core/types/event";
+import { Event, EventDto, UpdateEventDto } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
 import { QueryParams } from "@/core-libraries/http/types/query-params";
@@ -82,23 +82,23 @@ class EventService {
 
   async updateEvent(
     id: number,
-    data: Partial<EventDto>,
+    data: Partial<UpdateEventDto>,
   ): Promise<ApiResponse<Event>> {
     const formData = new FormData();
 
     Object.keys(data).forEach((key) => {
       if (key === "images") {
         data.images?.forEach((image, index) => {
-          formData.append(`images[${index}]`, image);
+          formData.append(`images[${index}]`, image as Blob);
         });
       } else {
-        if (data[key as keyof Partial<EventDto>] !== undefined) {
-          formData.append(key, data[key as keyof Partial<EventDto>] as string);
+        if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
+          formData.append(key, data[key as keyof Partial<UpdateEventDto>] as string);
         }
       }
     });
 
-    return httpImplementation.put<ApiResponse<Event>, FormData>(
+    return httpImplementation.patch<ApiResponse<Event>, FormData>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/${id}`,
       formData,

@@ -40,3 +40,19 @@ export interface EventDto {
   images: File[];
   category?: Category;
 }
+
+export interface UpdateEventDto {
+  title: string;
+  description: string;
+  instructions: string;
+  categoryId: number;
+  time: string;
+  date: string;
+  quota: number;
+  location: string;
+  duration: number;
+  allDay: boolean;
+  mainImage: string;
+  images: Image[] | File[];
+};
+

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BtnBold,
   BtnItalic,
@@ -58,6 +58,10 @@ export const EditorView = ({
     setHtml(cleanHtml);
     onChange && onChange(cleanHtml);
   };
+
+  useEffect(() => {
+    setHtml(defaultValue || "");
+  }, [defaultValue]);
 
   return (
     <EditorProvider>
