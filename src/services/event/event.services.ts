@@ -8,14 +8,18 @@ import { compressImages } from "@/utils";
 
 class EventService {
   private readonly baseUrl = "events";
+  private readonly defaultHeaders: AxiosHeaders;
+
+  constructor() {
+    this.defaultHeaders = {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    } as unknown as AxiosHeaders;
+  }
 
   async createEvent(data: EventDto): Promise<ApiResponse<Event>> {
     try {
       const formData = new FormData();
-      const defaultHeaders: AxiosHeaders = {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-      } as unknown as AxiosHeaders;
 
       // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
@@ -34,7 +38,11 @@ class EventService {
       Object.keys(data).forEach((key) => {
         if (key === "images" && compressedImages.length > 0) {
           for (let i = 0; i < compressedImages.length; i++) {
-            formData.append("images", compressedImages[i]);
+            formData.append(
+              "images",
+              compressedImages[i],
+              compressedImages[i].name
+            );
           }
         } else {
           formData.append(key, String(data[key as keyof EventDto]));
@@ -46,7 +54,7 @@ class EventService {
         this.baseUrl,
         formData,
         "json",
-        defaultHeaders,
+        this.defaultHeaders
       );
     } catch (error) {
       console.error("Error al guardar el evento:", error);
@@ -69,60 +77,92 @@ class EventService {
 
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      URL,
+      URL
     );
   }
 
   async getEventById(id: number): Promise<ApiResponse<Event>> {
     return httpImplementation.get<ApiResponse<Event>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${id}`,
+      `${this.baseUrl}/${id}`
     );
   }
 
   async updateEvent(
     id: number,
-    data: Partial<UpdateEventDto>,
+    data: Partial<UpdateEventDto>
   ): Promise<ApiResponse<Event>> {
-    const formData = new FormData();
+    try {
+      console.log(data);
+      const formData = new FormData();
 
-    Object.keys(data).forEach((key) => {
-      if (key === "images") {
-        data.images?.forEach((image, index) => {
-          formData.append(`images[${index}]`, image as Blob);
+      // Opciones para la compresión de imágenes
+      const options: Record<string, number | boolean> = {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 800,
+        useWebWorker: true,
+      };
+
+      // Si existen imágenes, comprimirlas antes de agregarlas al FormData
+      if (data.images && data.images.length > 0) {
+        const compressedImages = await compressImages(data.images, options);
+        compressedImages.forEach((image, index) => {
+          formData.append(`images`, image as File);
         });
-      } else {
-        if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
-          formData.append(key, data[key as keyof Partial<UpdateEventDto>] as string);
-        }
       }
-    });
 
-    return httpImplementation.patch<ApiResponse<Event>, FormData>(
-      ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${id}`,
-      formData,
-    );
+      // Agregar otros campos al FormData
+      Object.keys(data).forEach((key) => {
+        if (key !== "images") {
+          if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
+            if (key === "currentImages") {
+              if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
+                formData.append(
+                  `currentImages`,
+                  JSON.stringify(data[key as keyof Partial<UpdateEventDto>])
+                );
+              }
+            } else {
+              formData.append(
+                key,
+                String(data[key as keyof Partial<UpdateEventDto>])
+              );
+            }
+          }
+        }
+      });
+
+      return await httpImplementation.patch<ApiResponse<Event>, FormData>(
+        ServicesInstanceEnum.API_INSTANCE,
+        `${this.baseUrl}/${id}`,
+        formData,
+        "json",
+        this.defaultHeaders
+      );
+    } catch (error) {
+      console.error("Error al actualizar el evento:", error);
+      throw error;
+    }
   }
 
   async deleteEvent(id: number): Promise<ApiResponse<void>> {
     return httpImplementation.delete<ApiResponse<void>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${id}`,
+      `${this.baseUrl}/${id}`
     );
   }
 
   async toggleEnrollUnenrollEvent(eventId: number): Promise<ApiResponse<void>> {
     return httpImplementation.patch<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/enroll/${eventId}`,
+      `${this.baseUrl}/enroll/${eventId}`
     );
   }
 
   async userTotalHours(): Promise<ApiResponse<void>> {
     return httpImplementation.get<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/total-hours`,
+      `${this.baseUrl}/total-hours`
     );
   }
 }
