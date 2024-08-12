@@ -5,7 +5,8 @@ dayjs.locale("es");
 const formatDate = (date: string) =>
   dayjs(date).format("D [de] MMMM [del] YYYY");
 
-const formatTimeTo12Hour = (time: string) => {
+const formatTimeTo12Hour = (time: string | undefined) => {
+  if (!time) return "";
   const [hours, minutes] = time.split(":");
 
   const date = new Date();
@@ -19,9 +20,9 @@ const formatTimeTo12Hour = (time: string) => {
 };
 const combineDateAndTime = ({ date, time }: { date: string; time: string }) => {
   const d = formatDate(date);
-  const t = formatTimeTo12Hour(time);
+  // const t = formatTimeTo12Hour(time);
 
-  return `${d} a las ${t}`;
+  return `${d}`;
 };
 
 export { formatDate, combineDateAndTime };

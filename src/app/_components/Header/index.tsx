@@ -22,6 +22,17 @@ export const Header = () => {
   const open = Boolean(anchorEl);
   const router = useRouter()
 
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      const value = sessionStorage.getItem("role");
+      if (value === "Admin") {
+        setIsAuthenticated(true);
+      }
+    }
+  }, [status]);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -57,7 +68,7 @@ export const Header = () => {
               />
             </Link>
 
-            {session && session?.token && <Box display="flex">
+            {session && isAuthenticated && <Box display="flex">
               <Box
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
@@ -78,7 +89,7 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                {session?.isAdmin && (
+                {isAuthenticated && (
                   <Link
                     href="/panel/event/create"
                     passHref

@@ -27,35 +27,35 @@ declare module "next-auth/jwt" {
   }
 }
 
-const handleBackEnd = async (token: any) => {
-  try {
-    const authToken = process.env.NEXTAUTH_SECRET;
-    const { data } = await axiosInstance.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
-      {
-        email: token.email,
-        name: token.name,
-        authToken,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+// const handleBackEnd = async (token: any) => {
+//   try {
+//     const authToken = process.env.NEXTAUTH_SECRET;
+//     const { data } = await axiosInstance.post(
+//       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
+//       {
+//         email: token.email,
+//         name: token.name,
+//         authToken,
+//       },
+//       {
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
 
-    if (!data.isSucceeded) {
-      throw new Error("Error logging in");
-    }
+//     if (!data.isSucceeded) {
+//       throw new Error("Error logging in");
+//     }
 
-    return {
-      userToken: data.data.token,
-      userRole: data.data.userRoles[0].role.title,
-    };
-  } catch (error) {
-    throw error; // Re-throw to handle in callback
-  }
-};
+//     return {
+//       userToken: data.data.token,
+//       userRole: data.data.userRoles[0].role.title,
+//     };
+//   } catch (error) {
+//     throw error; // Re-throw to handle in callback
+//   }
+// };
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -94,16 +94,16 @@ const authOptions: NextAuthOptions = {
       if (account) {
         //token.idToken = account.id_token as string;
         //token.accessToken = account.access_token as string;
-        try {
-          const data = await handleBackEnd(token);
-          token.user = {
-            token: data.userToken,
-            role: data.userRole,
-          };
-        } catch (error) {
-          // redirect to logout page
-          console.error("Error in JWT callback:", error);
-        }
+        // try {
+        //   const data = await handleBackEnd(token);
+        //   token.user = {
+        //     token: data.userToken,
+        //     role: data.userRole,
+        //   };
+        // } catch (error) {
+        //   // redirect to logout page
+        //   console.error("Error in JWT callback:", error);
+        // }
       }
       return token;
     },
@@ -112,9 +112,9 @@ const authOptions: NextAuthOptions = {
       //session.idToken = token.idToken as string;
       session.email = token.email as string;
       session.name = token.name as string;
-      session.token = token.user?.token;
-      session.role = token.user?.role;
-      session.isAdmin = token.user?.role === "Admin";
+      // session.token = token.user?.token;
+      // session.role = token.user?.role;
+      // session.isAdmin = token.user?.role === "Admin";
       return session;
     },
     async redirect({ url, baseUrl }) {
