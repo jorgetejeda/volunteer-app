@@ -165,6 +165,13 @@ class EventService {
       `${this.baseUrl}/total-hours`
     );
   }
+
+  async togglePublishEvent(eventId: number): Promise<ApiResponse<boolean>> {
+    return httpImplementation.patch<ApiResponse<boolean>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/publish/${eventId}`,
+    );
+  }
 }
 
 const eventService = new EventService();

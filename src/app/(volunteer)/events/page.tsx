@@ -148,6 +148,25 @@ export default function EventPage() {
     handleMenuClose();
   };
 
+  const togglePublish = async (eventId: number) => {
+    try {
+      setActionLoading(true);
+      const { isSucceeded } = await EventService.togglePublishEvent(eventId);
+      if (isSucceeded) {
+        setEvents(
+          events.map((event) =>
+            event.id === eventId ? { ...event, published: !event.published } : event,
+          ),
+        );
+        handleMenuClose();
+      }
+    } catch (error: any) {
+      console.error("Error toggling publish event", error.message);
+    } finally {
+      setActionLoading(false);
+    }
+  }
+
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
       const matchesSearch = event.title
@@ -314,7 +333,7 @@ export default function EventPage() {
                       <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
+                        onClose={()=>togglePublish(event.id)}
                         elevation={1}
                       >
                         <MenuItem onClick={handlePublish}>
