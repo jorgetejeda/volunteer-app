@@ -29,6 +29,9 @@ const theme = createTheme({
     secondary: {
       main: "#1F6527",
     },
+    success: {
+      main: "#385B4A",
+    },
     grey: {
       50: "#FCFAFE",
       100: "#F6F5F2",

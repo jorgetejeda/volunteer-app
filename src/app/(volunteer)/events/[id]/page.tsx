@@ -80,7 +80,7 @@ export default function Page({ params }: { params: { id: number } }) {
     });
     setOpenDialog(false);
     if (isSucceeded) {
-      setEvent((prev) => ({ ...prev, isUserEnrolled: true }));
+      setEvent((prev) => ({ ...prev, isUserEnrolled: 1 }));
       setOpenSuccessDialog(true); 
     }
   };
@@ -95,7 +95,7 @@ export default function Page({ params }: { params: { id: number } }) {
     });
     setOpenDialog(false);
     if (isSucceeded) {
-      setEvent((prev) => ({ ...prev, isUserEnrolled: false }));
+      setEvent((prev) => ({ ...prev, isUserEnrolled: 0 }));
       setOpenSuccessDialog(true)
     }
   };

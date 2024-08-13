@@ -15,7 +15,7 @@ export interface Event  {
   published: boolean;
   category: Category;
   usersQuantity: number;
-  isUserEnrolled: boolean;
+  isUserEnrolled: number;
   images: EventImage[];
 };
 
