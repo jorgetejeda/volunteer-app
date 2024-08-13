@@ -28,7 +28,7 @@ import { Event } from "@/core/types";
 import EventService from "@/services/event/event.services";
 //@Utils
 import { cleanHtml, combineDateAndTime, lightOrDarkColor } from "@/utils";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; 
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { Carousel } from "react-responsive-carousel";
 
@@ -40,7 +40,10 @@ export default function Page({ params }: { params: { id: number } }) {
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
-  const [enrollMessage, setEnrollMessage] = useState<{title: string, message: string}>({
+  const [enrollMessage, setEnrollMessage] = useState<{
+    title: string;
+    message: string;
+  }>({
     title: "",
     message: "",
   });
@@ -70,33 +73,36 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenSuccessDialog(false);
   };
 
-  const handleEnroll = async () => {
+  const handleToggleEnrollment = async (id: number, isEnrolling: boolean) => {
     setIsEnrolling(true);
-    const { isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id);
+    const { data, isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id, isEnrolling ? 'I' : 'A' );
     setIsEnrolling(false);
-    setEnrollMessage({
-      title: isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.",
-      message: isSucceeded ? "Gracias por inscribirte en el evento." : "Por favor, intenta de nuevo.",
-    });
-    setOpenDialog(false);
-    if (isSucceeded) {
-      setEvent((prev) => ({ ...prev, isUserEnrolled: 1 }));
-      setOpenSuccessDialog(true); 
-    }
-  };
 
-  const handleUnEnroll = async () => {
-    setIsEnrolling(true);
-    const { isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id);
-    setIsEnrolling(false);
+    const successMessage = isEnrolling
+      ? "Inscripción exitosa!"
+      : "Inscripción cancelada!";
+    const errorMessage = isEnrolling
+      ? "Error al inscribirse."
+      : "Error al cancelar inscripción.";
+    const successDescription = isEnrolling
+      ? "Gracias por inscribirte en el evento."
+      : "Tu inscripción ha sido cancelada.";
+
     setEnrollMessage({
-      title: isSucceeded ? "Inscripción cancelada!" : "Error al cancelar inscripción.",
-      message: isSucceeded ? "Tu inscripción ha sido cancelada." : "Por favor, intenta de nuevo.",
+      title: isSucceeded ? successMessage : errorMessage,
+      message: isSucceeded
+        ? successDescription
+        : "Por favor, intenta de nuevo.",
     });
+
     setOpenDialog(false);
+
     if (isSucceeded) {
-      setEvent((prev) => ({ ...prev, isUserEnrolled: 0 }));
-      setOpenSuccessDialog(true)
+      setEvent((prev: Event) => ({
+        ...prev,
+        isUserEnrolled: data.status === 'A' ? 1 : 0,
+      }));
+      setOpenSuccessDialog(true);
     }
   };
 
@@ -127,7 +133,13 @@ export default function Page({ params }: { params: { id: number } }) {
         borderRadius={3}
         overflow="hidden"
       >
-        <Carousel infiniteLoop autoPlay showArrows={true} showStatus={false} showThumbs={false}>
+        <Carousel
+          infiniteLoop
+          autoPlay
+          showArrows={true}
+          showStatus={false}
+          showThumbs={false}
+        >
           {event.images.map((image, index) => (
             <div
               key={index}
@@ -259,7 +271,9 @@ export default function Page({ params }: { params: { id: number } }) {
             Cancelar
           </Button>
           <Button
-            onClick={event.isUserEnrolled ? handleUnEnroll : handleEnroll}
+            onClick={() =>
+              handleToggleEnrollment(event.id, !!event.isUserEnrolled)
+            }
             color="primary"
             variant="contained"
             disabled={isEnrolling}
@@ -276,7 +290,9 @@ export default function Page({ params }: { params: { id: number } }) {
         aria-labelledby="success-dialog-title"
         aria-describedby="success-dialog-description"
       >
-        <DialogTitle id="success-dialog-title">{enrollMessage.title}</DialogTitle>
+        <DialogTitle id="success-dialog-title">
+          {enrollMessage.title}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="success-dialog-description">
             {enrollMessage.message}

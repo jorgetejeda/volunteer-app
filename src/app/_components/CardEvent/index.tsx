@@ -72,8 +72,7 @@ export const CardEvent = ({
                     <CategoryLabel
                       label="Inscrito"
                       size="small"
-                      color="success"
-                      sx={{ color: theme.palette.success.main }}
+                      backgroundColor="#1F6527"
                     />
                   )}
                   <CategoryLabel
