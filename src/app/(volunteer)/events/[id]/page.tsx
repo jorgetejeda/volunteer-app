@@ -121,7 +121,7 @@ export default function Page({ params }: { params: { id: number } }) {
         </Button>
       </Box>
       <Box
-        height={250}
+        height={450}
         width="100%"
         position="relative"
         borderRadius={3}
@@ -131,7 +131,7 @@ export default function Page({ params }: { params: { id: number } }) {
           {event.images.map((image, index) => (
             <div
               key={index}
-              style={{ position: "relative", width: "100%", height: "250px" }}
+              style={{ position: "relative", width: "100%", height: "450px" }}
             >
               <Image
                 src={image.documentUrl}
@@ -141,7 +141,7 @@ export default function Page({ params }: { params: { id: number } }) {
               />
             </div>
           ))}
-        </Carousel>{" "}
+        </Carousel>
       </Box>
 
       <Box marginTop={3} marginBottom={2}>
