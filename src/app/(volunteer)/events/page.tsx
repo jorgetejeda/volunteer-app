@@ -132,16 +132,15 @@ export default function EventPage() {
     handleMenuClose();
   };
 
-  const togglePublish = async (eventId: number) => {
+  const togglePublish = async () => {
     try {
-      const selectedEvent = events.find((e) => e.id === eventId);
-      setCurrentEvent(selectedEvent || null);
+      if (!currentEvent) return;
       setActionLoading(true);
       const { isSucceeded } = await EventService.togglePublishEvent(currentEvent?.id || 0);
       if (isSucceeded) {
         setEvents(
           events.map((event) =>
-            event.id === eventId
+            event.id === currentEvent.id
               ? { ...event, published: !event.published }
               : event
           )
@@ -324,7 +323,7 @@ export default function EventPage() {
                         onClose={handleMenuClose}
                         elevation={1}
                       >
-                        <MenuItem onClick={() => togglePublish(event.id)}>
+                        <MenuItem onClick={() => togglePublish()}>
                           {currentEvent?.published ? "Despublicar" : "Publicar"}
                         </MenuItem>
                         <MenuItem onClick={handleEdit}>Editar</MenuItem>
