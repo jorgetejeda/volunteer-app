@@ -21,20 +21,17 @@ class EventService {
     try {
       const formData = new FormData();
 
-      // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
         maxSizeMB: 0.5,
         maxWidthOrHeight: 800,
         useWebWorker: true,
       };
 
-      // Comprimir imágenes si existen
       let compressedImages: File[] = [];
       if (data.images && data.images.length > 0) {
         compressedImages = await compressImages(data.images, options);
       }
 
-      // Agregar campos simples y las imágenes comprimidas al FormData
       Object.keys(data).forEach((key) => {
         if (key === "images" && compressedImages.length > 0) {
           for (let i = 0; i < compressedImages.length; i++) {
@@ -66,13 +63,11 @@ class EventService {
     const params = {
       limit: query?.limit || 10,
       offset: query?.offset || 0,
-      published: query?.published || false,
     };
 
     const URL = `${this.baseUrl}?${new URLSearchParams({
       limit: String(params.limit),
       offset: String(params.offset),
-      published: String(params.published),
     }).toString()}`;
 
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
@@ -93,7 +88,6 @@ class EventService {
     data: Partial<UpdateEventDto>
   ): Promise<ApiResponse<Event>> {
     try {
-      console.log(data);
       const formData = new FormData();
 
       // Opciones para la compresión de imágenes
@@ -163,6 +157,13 @@ class EventService {
     return httpImplementation.get<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/total-hours`
+    );
+  }
+
+  async togglePublishEvent(eventId: number): Promise<ApiResponse<boolean>> {
+    return httpImplementation.patch<ApiResponse<boolean>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/publish/${eventId}`,
     );
   }
 }

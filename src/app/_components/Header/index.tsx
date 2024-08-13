@@ -15,12 +15,14 @@ import theme from "@/theme";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 export const Header = () => {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
+  const { isAdmin, isAuthenticated, logout } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const router = useRouter();
   const open = Boolean(anchorEl);
-  const router = useRouter()
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -31,7 +33,7 @@ export const Header = () => {
   };
 
   const handleLogout = async () => {
-    router.push('/logout')
+    router.push("/logout");
   };
 
   return (
@@ -57,7 +59,7 @@ export const Header = () => {
               />
             </Link>
 
-            {session && session?.token && <Box display="flex">
+            {isAuthenticated && <Box display="flex">
               <Box
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
@@ -78,7 +80,7 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                {session?.isAdmin && (
+                {isAdmin && (
                   <Link
                     href="/panel/event/create"
                     passHref

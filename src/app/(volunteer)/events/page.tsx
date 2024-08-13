@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, use } from "react";
 import theme from "@/theme";
 import {
   Box,
@@ -48,8 +48,10 @@ import {
 import EventService from "@/services/event/event.services";
 //@Types
 import { Event } from "@/core/types";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 export default function EventPage() {
+  const { isAuthenticated, isAdmin } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,10 +60,9 @@ export default function EventPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
-    "all",
+    "all"
   );
   const router = useRouter();
-  const isAdmin = true;
 
   const getEvents = async () => {
     setLoading(true);
@@ -86,7 +87,7 @@ export default function EventPage() {
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    eventId: number,
+    eventId: number
   ) => {
     setAnchorEl(event.currentTarget);
     const selectedEvent = events.find((e) => e.id === eventId);
@@ -98,20 +99,19 @@ export default function EventPage() {
     setCurrentEvent(null);
   };
 
-  const handlePublish = () => {
-    if (currentEvent) {
-      setActionLoading(true);
-      setTimeout(() => {
-        setEvents(
-          events.map((event) =>
-            event.id === currentEvent.id
-              ? { ...event, published: !event.published }
-              : event,
-          ),
-        );
-        setActionLoading(false);
-        handleMenuClose();
-      }, 2000);
+  const handlePublish = async (id: number) => {
+    try {
+      setLoading(true);
+      const { isSucceeded }: { data: boolean, isSucceeded: boolean} = await EventService.togglePublishEvent(id);
+      if (!isSucceeded) {
+        throw new Error("Error al publicar el evento");
+      }
+      getEvents();
+    } catch (error: any) {
+      console.error("Error publishing event", error.message);
+    } finally {
+      setLoading(false);
+      handleMenuClose();
     }
   };
 
@@ -317,7 +317,7 @@ export default function EventPage() {
                         onClose={handleMenuClose}
                         elevation={1}
                       >
-                        <MenuItem onClick={handlePublish}>
+                        <MenuItem onClick={()=>handlePublish(event.id)}>
                           {currentEvent?.published ? "Despublicar" : "Publicar"}
                         </MenuItem>
                         <MenuItem onClick={handleEdit}>Editar</MenuItem>

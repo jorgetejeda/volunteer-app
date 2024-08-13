@@ -3,13 +3,15 @@ import { signOut } from "next-auth/react";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Box, Typography, CircularProgress } from "@mui/material";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 export default function LogOut() {
-  const router = useRouter();
+  const {logout} = useAuthContext();
 
   const handleLogout = async () => {
-    sessionStorage.removeItem('token');
-    await signOut({ redirect: true, callbackUrl: "/login" });
+    sessionStorage.clear();
+    logout();
+    // await signOut({ redirect: true, callbackUrl: "/login" });
   }
 
   useEffect(() => {

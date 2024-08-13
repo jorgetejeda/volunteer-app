@@ -21,6 +21,7 @@ import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
 import theme from "@/theme";
 import { combineDateAndTime, lightOrDarkColor } from "@/utils";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -43,12 +44,14 @@ const images = [
 ];
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
+  const { user, isAuthenticated } = useAuthContext();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [hours, setHours] = useState(0);
-  const maxSteps = images.length;
+
+  console.log("user", user);
 
   const getEvents = async () => {
     setLoading(true);
@@ -80,11 +83,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (isAuthenticated) {
       getEvents();
       getHours();
     }
-  }, [status]);
+  }, [isAuthenticated]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -111,14 +114,14 @@ export default function Home() {
 
   return (
     <>
-      {(status === "loading" || loading) && (
+      {/* {(status === "loading" || loading) && (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={loading}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
-      )}
+      )} */}
       {!loading && (
         <Grid container spacing={2} id="container">
           <Grid
@@ -131,7 +134,7 @@ export default function Home() {
           >
             <Box>
               <Typography variant="h3">
-                Bienvenido/a, {session && validateName(session.user?.name)}
+                Bienvenido/a, {user && validateName(user)}
               </Typography>
             </Box>
             <Box>

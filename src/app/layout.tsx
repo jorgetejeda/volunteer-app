@@ -6,7 +6,6 @@ import { Open_Sans } from "next/font/google";
 import theme from "@/theme";
 import AuthContextProvider from "@/store/auth/AuthContext";
 import { Box } from "@mui/material";
-import { SessionProvider } from "next-auth/react";
 
 const openSansFont = Open_Sans({
   display: "swap",
@@ -19,7 +18,6 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
       <body className={openSansFont.className}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <SessionProvider>
             <AuthContextProvider>
               <Box
                 sx={{
@@ -31,7 +29,6 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
                 {props.children}
               </Box>
             </AuthContextProvider>
-          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
