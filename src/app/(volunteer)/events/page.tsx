@@ -63,7 +63,6 @@ export default function EventPage() {
     "all"
   );
   const router = useRouter();
-  const isAdmin = true;
 
   const getEvents = async () => {
     setLoading(true);
@@ -231,7 +230,7 @@ export default function EventPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Box>
-      {isAdmin && (
+      {session?.isAdmin && (
         <Box mb={3}>
           <Stack direction="row" spacing={1}>
             <Button
