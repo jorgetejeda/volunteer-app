@@ -245,6 +245,9 @@ export default function Register() {
                         <MenuItem value="creciendoseguros.com.do">
                           creciendoseguros.com.do
                         </MenuItem>
+                        <MenuItem value="crecerlab.com">
+                        crecerlab.com
+                        </MenuItem>
                       </TextField>
                     )}
                   />
