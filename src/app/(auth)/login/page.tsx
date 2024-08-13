@@ -24,7 +24,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 //@Providers
 import { useAuthContext } from "@/store/auth/AuthContext";
-import { UserCredentials } from "@/core/types";
 import { AuthService } from "@/services";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 
@@ -67,12 +66,14 @@ export default function LogIn() {
     }
   }, [isAuthenticated, router]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent default form submission behavior
+
     try {
       setLoading(true);
       const { data: user, isSucceeded } = await AuthService.register({ email, password });
 
-      if(!isSucceeded) {
+      if (!isSucceeded) {
         throw new Error('Error al iniciar sesión');
       }
 
@@ -82,7 +83,7 @@ export default function LogIn() {
         if (role.role.title === 'Admin') {
           setIsAdmin(true);
           sessionStorage.setItem('isAdmin', 'true');
-        }else {
+        } else {
           setIsAdmin(false);
           sessionStorage.setItem('isAdmin', 'false');
         }
@@ -128,45 +129,49 @@ export default function LogIn() {
         />
         <Box marginTop={8} width="100%">
           <Stack spacing={2}>
-            {/* Campos de Usuario y Contraseña */}
-            <TextField
-              label="Correo"
-              variant="outlined"
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-             <TextField
-              id="standard-adornment-password"
-              type={showPassword ? 'text' : 'password'}
-              label="Contraseña"
-              variant="outlined"
-              fullWidth
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {/* Formulario de Inicio de Sesión */}
+            <form onSubmit={handleLogin}>
+              <Stack spacing={2}>
+                <TextField
+                  label="Correo"
+                  variant="outlined"
+                  fullWidth
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <TextField
+                  id="standard-adornment-password"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Contraseña"
+                  variant="outlined"
+                  fullWidth
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-            <CustomButton
-              onClick={handleLogin}
-              variant="contained"
-              disabled={loading}
-              fullWidth
-            >
-              {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
-            </CustomButton>
+                <CustomButton
+                  type="submit" // Cambiar el tipo a "submit"
+                  variant="contained"
+                  disabled={loading}
+                  fullWidth
+                >
+                  {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
+                </CustomButton>
+              </Stack>
+            </form>
 
             <Typography variant="body2" color={theme.palette.text.primary}>
               ¿No tienes una cuenta?{" "}

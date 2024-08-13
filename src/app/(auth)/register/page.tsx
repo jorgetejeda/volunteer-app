@@ -16,13 +16,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  CircularProgress, // Importar CircularProgress para el indicador de carga
+  CircularProgress,
+  IconButton,
+  InputAdornment, // Importar CircularProgress para el indicador de carga
 } from "@mui/material";
 import Image from "next/image";
 //@Navigation
 import { useRouter } from "next/navigation";
 import { RegisterUser } from "@/core/types";
 import { AuthService } from "@/services";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
 
 interface FormValues {
   name: string;
@@ -48,7 +51,7 @@ const CustomButton = styled(Button)({
 
 const requirementStyles = {
   notMet: {
-    color: "red",
+    color: "gray",
   },
   met: {
     color: "green",
@@ -76,6 +79,8 @@ export default function Register() {
   });
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false); // Estado de carga
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Estado para confirmar contraseña
 
   const password = watch("password", "");
   const confirmPassword = watch("confirmPassword", "");
@@ -123,7 +128,7 @@ export default function Register() {
       name,
       email: fullEmail,
       password,
-    }
+    };
 
     const { isSucceeded } = await AuthService.register(payload);
 
@@ -142,6 +147,26 @@ export default function Register() {
   };
 
   const passwordsMatch = password === confirmPassword;
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleMouseDownConfirmPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
 
   return (
     <Container maxWidth="sm">
@@ -166,7 +191,6 @@ export default function Register() {
           <Grid item xs={12}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2}>
-                {/* Campo de Nombre */}
                 <Grid item xs={12}>
                   <Controller
                     name="name"
@@ -239,10 +263,29 @@ export default function Register() {
                     render={({ field }) => (
                       <TextField
                         {...field}
+                        id="standard-adornment-password"
+                        type={showPassword ? "text" : "password"}
                         label="Contraseña"
-                        type="password"
                         variant="outlined"
                         fullWidth
+                        value={password}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                              >
+                                {showPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     )}
                   />
@@ -263,17 +306,33 @@ export default function Register() {
                       <TextField
                         {...field}
                         label="Confirmar Contraseña"
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         variant="outlined"
                         fullWidth
                         error={!!fieldState.error}
                         helperText={fieldState.error?.message}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle confirm password visibility"
+                                onClick={handleClickShowConfirmPassword}
+                                onMouseDown={handleMouseDownConfirmPassword}
+                              >
+                                {showConfirmPassword ? (
+                                  <VisibilityOff />
+                                ) : (
+                                  <Visibility />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     )}
                   />
                 </Grid>
 
-                {/* Requisitos de Contraseña */}
                 <Grid item xs={12}>
                   <Grid
                     container
@@ -340,21 +399,9 @@ export default function Register() {
                       loading // Deshabilitar el botón mientras se carga
                     }
                   >
-                    {loading ? <CircularProgress size={24} /> : "Registrarse"} {/* Mostrar indicador de carga */}
+                    {loading ? <CircularProgress size={24} /> : "Registrarse"}{" "}
+                    {/* Mostrar indicador de carga */}
                   </CustomButton>
-                </Grid>
-
-                {/* Texto para Iniciar Sesión */}
-                <Grid item xs={12}>
-                  <Typography
-                    variant="body2"
-                    color={theme.palette.text.primary}
-                  >
-                    ¿Ya tienes una cuenta?{" "}
-                    <a href="/login" style={{ color: theme.palette.primary.main }}>
-                      Inicia sesión
-                    </a>
-                  </Typography>
                 </Grid>
               </Grid>
             </form>
@@ -362,15 +409,15 @@ export default function Register() {
         </Grid>
       </Grid>
 
-      {/* Diálogo de Éxito */}
+      {/* Diálogo de éxito */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Registro Exitoso</DialogTitle>
         <DialogContent>
-          <Typography>¡Te has registrado exitosamente! Puedes iniciar sesión ahora.</Typography>
+          <Typography>¡Te has registrado exitosamente!</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
-            Aceptar
+            Ir al Inicio de Sesión
           </Button>
         </DialogActions>
       </Dialog>
