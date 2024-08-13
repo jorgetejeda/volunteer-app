@@ -66,13 +66,13 @@ class EventService {
     const params = {
       limit: query?.limit || 10,
       offset: query?.offset || 0,
-      published: query?.published || false,
+      // published: query?.published || false,
     };
 
     const URL = `${this.baseUrl}?${new URLSearchParams({
       limit: String(params.limit),
       offset: String(params.offset),
-      published: String(params.published),
+      // published: String(params.published),
     }).toString()}`;
 
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
