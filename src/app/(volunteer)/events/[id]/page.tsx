@@ -78,13 +78,13 @@ export default function Page({ params }: { params: { id: number } }) {
     const { data, isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id, isEnrolling ? 'I' : 'A' );
     setIsEnrolling(false);
 
-    const successMessage = isEnrolling
+    const successMessage = data.status === "A"
       ? "Inscripción exitosa!"
       : "Inscripción cancelada!";
-    const errorMessage = isEnrolling
+    const errorMessage = data.status === "A" 
       ? "Error al inscribirse."
       : "Error al cancelar inscripción.";
-    const successDescription = isEnrolling
+    const successDescription = data.status === "A"
       ? "Gracias por inscribirte en el evento."
       : "Tu inscripción ha sido cancelada.";
 
