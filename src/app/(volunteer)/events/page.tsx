@@ -48,8 +48,10 @@ import {
 import EventService from "@/services/event/event.services";
 //@Types
 import { Event } from "@/core/types";
+import { useSession } from "next-auth/react";
 
 export default function EventPage() {
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -58,7 +60,7 @@ export default function EventPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
-    "all",
+    "all"
   );
   const router = useRouter();
   const isAdmin = true;
@@ -86,7 +88,7 @@ export default function EventPage() {
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    eventId: number,
+    eventId: number
   ) => {
     setAnchorEl(event.currentTarget);
     const selectedEvent = events.find((e) => e.id === eventId);
@@ -106,8 +108,8 @@ export default function EventPage() {
           events.map((event) =>
             event.id === currentEvent.id
               ? { ...event, published: !event.published }
-              : event,
-          ),
+              : event
+          )
         );
         setActionLoading(false);
         handleMenuClose();
@@ -155,8 +157,10 @@ export default function EventPage() {
       if (isSucceeded) {
         setEvents(
           events.map((event) =>
-            event.id === eventId ? { ...event, published: !event.published } : event,
-          ),
+            event.id === eventId
+              ? { ...event, published: !event.published }
+              : event
+          )
         );
         handleMenuClose();
       }
@@ -165,7 +169,7 @@ export default function EventPage() {
     } finally {
       setActionLoading(false);
     }
-  }
+  };
 
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
@@ -315,7 +319,7 @@ export default function EventPage() {
                     textColor={lightOrDarkColor(event.category.color)}
                     backgroundColor={event.category.color}
                   />
-                  {isAdmin && (
+                  {session?.isAdmin && (
                     <Box>
                       <IconButton
                         aria-label="more"
@@ -333,7 +337,7 @@ export default function EventPage() {
                       <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
-                        onClose={()=>togglePublish(event.id)}
+                        onClose={() => togglePublish(event.id)}
                         elevation={1}
                       >
                         <MenuItem onClick={handlePublish}>
