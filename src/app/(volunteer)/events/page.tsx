@@ -317,7 +317,7 @@ export default function EventPage() {
                         onClose={handleMenuClose}
                         elevation={1}
                       >
-                        <MenuItem onClick={()=>handlePublish(event.id)}>
+                        <MenuItem onClick={()=>handlePublish(currentEvent!.id)}>
                           {currentEvent?.published ? "Despublicar" : "Publicar"}
                         </MenuItem>
                         <MenuItem onClick={handleEdit}>Editar</MenuItem>

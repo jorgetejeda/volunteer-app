@@ -173,7 +173,7 @@ export default function LogIn() {
               </Stack>
             </form>
 
-            <Typography variant="body2" color={theme.palette.text.primary}>
+            <Typography variant="body2" color={theme.palette.text.primary} marginTop={1}>
               ¿No tienes una cuenta?{" "}
               <Box
                 component="a"

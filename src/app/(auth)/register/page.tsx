@@ -18,7 +18,8 @@ import {
   DialogTitle,
   CircularProgress,
   IconButton,
-  InputAdornment, // Importar CircularProgress para el indicador de carga
+  InputAdornment,
+  Box, // Importar CircularProgress para el indicador de carga
 } from "@mui/material";
 import Image from "next/image";
 //@Navigation
@@ -143,6 +144,10 @@ export default function Register() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    router.push("/login");
+  };
+
+   const handleLogin = () => {
     router.push("/login");
   };
 
@@ -408,6 +413,17 @@ export default function Register() {
                 </Grid>
               </Grid>
             </form>
+            <Typography variant="body2" color={theme.palette.text.primary} marginTop={1}>
+              Si ya tienes una cuenta,{" "}
+              <Box
+                component="a"
+                href="#"
+                sx={{ color: theme.palette.primary.main, cursor: "pointer" }}
+                onClick={handleLogin}
+              >
+                Inicia Sesión
+              </Box>
+            </Typography>
           </Grid>
         </Grid>
       </Grid>
