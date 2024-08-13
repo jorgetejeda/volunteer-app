@@ -99,23 +99,6 @@ export default function EventPage() {
     setCurrentEvent(null);
   };
 
-  const handlePublish = () => {
-    if (currentEvent) {
-      setActionLoading(true);
-      setTimeout(() => {
-        setEvents(
-          events.map((event) =>
-            event.id === currentEvent.id
-              ? { ...event, published: !event.published }
-              : event
-          )
-        );
-        setActionLoading(false);
-        handleMenuClose();
-      }, 2000);
-    }
-  };
-
   const handleEdit = () => {
     if (currentEvent) {
       router.push(`panel/event/${currentEvent.id}/edit`);
@@ -151,8 +134,10 @@ export default function EventPage() {
 
   const togglePublish = async (eventId: number) => {
     try {
+      const selectedEvent = events.find((e) => e.id === eventId);
+      setCurrentEvent(selectedEvent || null);
       setActionLoading(true);
-      const { isSucceeded } = await EventService.togglePublishEvent(eventId);
+      const { isSucceeded } = await EventService.togglePublishEvent(currentEvent?.id || 0);
       if (isSucceeded) {
         setEvents(
           events.map((event) =>
