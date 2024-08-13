@@ -336,10 +336,10 @@ export default function EventPage() {
                       <Menu
                         anchorEl={anchorEl}
                         open={Boolean(anchorEl)}
-                        onClose={() => togglePublish(event.id)}
+                        onClose={handleMenuClose}
                         elevation={1}
                       >
-                        <MenuItem onClick={handlePublish}>
+                        <MenuItem onClick={() => togglePublish(event.id)}>
                           {currentEvent?.published ? "Despublicar" : "Publicar"}
                         </MenuItem>
                         <MenuItem onClick={handleEdit}>Editar</MenuItem>
