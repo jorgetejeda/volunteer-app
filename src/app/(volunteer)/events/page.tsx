@@ -255,14 +255,14 @@ export default function EventPage() {
             onClick={() => setFilter("enrolled")}
             size="small"
           >
-            Inscriptos
+            Inscritos
           </Button>
           <Button
             variant={filter === "notEnrolled" ? "contained" : "outlined"}
             onClick={() => setFilter("notEnrolled")}
             size="small"
           >
-            No Inscriptos
+            No Inscritos
           </Button>
         </Stack>
       </Box>
