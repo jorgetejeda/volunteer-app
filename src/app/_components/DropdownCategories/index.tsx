@@ -29,13 +29,15 @@ import { Category, CategoryDto } from "@/core/types";
 import { CategoryService } from "@/services";
 
 interface DropdownCategoriesProps {
-  onChange: (categoryId: number) => void; 
-  value?: number;  // Prop para el valor seleccionado
+  onChange: (categoryId: number) => void;
+  value: number; // Prop para el valor seleccionado
+  edit?: boolean;
 }
 
 export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   onChange,
-  value,  // Recibe el valor seleccionado como prop
+  value, // Recibe el valor seleccionado como prop
+  edit = true,
 }) => {
   const [showForm, setShowForm] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -45,8 +47,12 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [categoryColor, setCategoryColor] = useState<string>("#000000");
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    value || null,  // Establece el valor seleccionado inicial
-  ); 
+    value || null // Establece el valor seleccionado inicial
+  );
+
+  useEffect(() => {
+    if (edit) setSelectedCategoryId(value || null);
+  }, [edit, value]);
 
   const {
     register,
@@ -61,7 +67,7 @@ export const DropdownCategories: React.FC<DropdownCategoriesProps> = ({
   }, []);
 
   useEffect(() => {
-    setSelectedCategoryId(value || null); 
+    setSelectedCategoryId(value || null);
   }, [value]);
 
   const getCategories = async () => {

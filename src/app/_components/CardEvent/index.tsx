@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
 // Icons
 import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
 // Types
@@ -9,6 +9,7 @@ import { CardEventProps } from "./types";
 import theme from "@/theme";
 import { InformationLabel } from "../InformationLabel";
 import CategoryLabel from "../CategoryLabel";
+import { cleanHtml, elipsisText } from "@/utils";
 
 export const CardEvent = ({
   image,
@@ -18,10 +19,8 @@ export const CardEvent = ({
   location,
   redirect,
   chip,
+  userEnrolled,
 }: CardEventProps) => {
-  const elisisDescription =
-    description && description?.length > 70 ? `${description.slice(0, 100)}...` : description;
-
   const EventDate = () => (
     <InformationLabel
       icon={{
@@ -48,6 +47,8 @@ export const CardEvent = ({
       {...(image && { paddingY: 3, paddingX: 2 })}
     >
       <Grid container spacing={2}>
+        {/* Añadir etiqueta de inscripción */}
+
         {image && (
           <Grid item md={4} sm={12}>
             <Box
@@ -66,11 +67,20 @@ export const CardEvent = ({
             {chip && (
               <Box display="flex" justifyContent="space-between">
                 <EventDate />
-                <CategoryLabel
-                  label={chip.label}
-                  textColor={chip.color}
-                  backgroundColor={chip.backgroundColor}
-                />
+                <Stack direction="row" spacing={1}>
+                  {userEnrolled === 1 && (
+                    <CategoryLabel
+                      label="Inscrito"
+                      size="small"
+                      backgroundColor="#1F6527"
+                    />
+                  )}
+                  <CategoryLabel
+                    label={chip.label}
+                    textColor={chip.color}
+                    backgroundColor={chip.backgroundColor}
+                  />
+                </Stack>
               </Box>
             )}
 
@@ -94,7 +104,7 @@ export const CardEvent = ({
                     elipsis: "ellipsis",
                   }}
                 >
-                  {elisisDescription}
+                  {cleanHtml(elipsisText({ value: description }))}
                 </Typography>
               </Box>
             )}

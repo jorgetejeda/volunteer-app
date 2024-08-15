@@ -8,6 +8,7 @@ export type CardEventProps = {
   date: string;
   description?: string;
   location: string;
+  userEnrolled: number;
   chip?: {
     label: string;
     color?: string;

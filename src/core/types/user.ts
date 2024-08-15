@@ -5,11 +5,17 @@ export interface UserCredentials {
 
 export interface User {
   id: string;
-  userName: string;
+  name: string;
   email: string;
   userRoles: UserRole[];
   token: string;
   refreshToken: string;
+}
+
+export interface RegisterUser {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface UserRole {

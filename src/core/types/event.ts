@@ -1,12 +1,13 @@
 import { Category } from "./category";
 
-export type Event = {
+export interface Event  {
   id: number;
   title: string;
   mainImage: string;
   description: string;
   instructions: string;
   date: string;
+  time: string;
   quota: number;
   location: string;
   duration: string;
@@ -14,11 +15,11 @@ export type Event = {
   published: boolean;
   category: Category;
   usersQuantity: number;
-  isUserRegistered: boolean;
-  images: Image[];
+  isUserEnrolled: number;
+  images: EventImage[];
 };
 
-type Image = {
+export interface EventImage {
   id: number;
   documentName: string;
   documentUrl: string;
@@ -39,3 +40,20 @@ export interface EventDto {
   images: File[];
   category?: Category;
 }
+
+export interface UpdateEventDto {
+  title: string;
+  description: string;
+  instructions: string;
+  categoryId: number;
+  time: string;
+  date: string;
+  quota: number;
+  location: string;
+  duration: number;
+  allDay: boolean;
+  mainImage: string;
+  images: File[];
+  currentImages: EventImage[];
+};
+

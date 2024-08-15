@@ -5,5 +5,6 @@ export const cleanHtml = (html: string) => {
   const cleanHtml = DOMPurify.sanitize(html, {
     USE_PROFILES: { html: true },
   });
-  return renderHTML(cleanHtml);
+  const renderedHtml = renderHTML(cleanHtml);
+  return renderedHtml ? renderedHtml : '';
 };

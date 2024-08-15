@@ -126,7 +126,7 @@ class HttpImplementation implements IHttp {
   public patch<T, U>(
     typeApi: string,
     url: string,
-    body: U,
+    body?: U,
     responseType: "json" | "text" = "json",
     headers?: AxiosRequestHeaders
   ): Promise<T> {

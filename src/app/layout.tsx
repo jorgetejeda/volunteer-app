@@ -18,17 +18,17 @@ export default function AuthLayout(props: { children: React.ReactNode }) {
       <body className={openSansFont.className}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AuthContextProvider>
-            <Box
-              sx={{
-                minHeight: "100vh",
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              {props.children}
-            </Box>
-          </AuthContextProvider>
+            <AuthContextProvider>
+              <Box
+                sx={{
+                  minHeight: "100vh",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {props.children}
+              </Box>
+            </AuthContextProvider>
         </ThemeProvider>
       </body>
     </html>

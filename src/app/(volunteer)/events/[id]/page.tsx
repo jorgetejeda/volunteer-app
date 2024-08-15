@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
@@ -28,7 +27,10 @@ import { Event } from "@/core/types";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Utils
-import { cleanHtml, lightOrDarkColor } from "@/utils";
+import { cleanHtml, combineDateAndTime, lightOrDarkColor } from "@/utils";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+import { Carousel } from "react-responsive-carousel";
 
 export default function Page({ params }: { params: { id: number } }) {
   const id = +params.id;
@@ -37,15 +39,20 @@ export default function Page({ params }: { params: { id: number } }) {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEnrolling, setIsEnrolling] = useState<boolean>(false);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  const [isUserRegistered, setIsUserRegistered] = useState<boolean>(false);
-  const [enrollMessage, setEnrollMessage] = useState<string>("");
+  const [openSuccessDialog, setOpenSuccessDialog] = useState<boolean>(false);
+  const [enrollMessage, setEnrollMessage] = useState<{
+    title: string;
+    message: string;
+  }>({
+    title: "",
+    message: "",
+  });
 
   const getEvents = useCallback(async () => {
     const { data, isSucceeded } = await EventService.getEventById(id);
     if (!isSucceeded || !data) {
       console.log("Error");
     }
-    setIsUserRegistered(data.isUserRegistered);
     setEvent(data);
     setLoading(false);
   }, [id]);
@@ -62,12 +69,41 @@ export default function Page({ params }: { params: { id: number } }) {
     setOpenDialog(false);
   };
 
-  const handleEnroll = async () => {
+  const handleCloseSuccessDialog = () => {
+    setOpenSuccessDialog(false);
+  };
+
+  const handleToggleEnrollment = async (id: number, isEnrolling: boolean) => {
     setIsEnrolling(true);
-    const { isSucceeded } = await EventService.enrollEvent(id);
+    const { data, isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id, isEnrolling ? 'I' : 'A' );
     setIsEnrolling(false);
-    setEnrollMessage(isSucceeded ? "Inscripción exitosa!" : "Error al inscribirse.");
+
+    const successMessage = data.status === "A"
+      ? "Inscripción exitosa!"
+      : "Inscripción cancelada!";
+    const errorMessage = data.status === "A" 
+      ? "Error al inscribirse."
+      : "Error al cancelar inscripción.";
+    const successDescription = data.status === "A"
+      ? "Gracias por inscribirte en el evento."
+      : "Tu inscripción ha sido cancelada.";
+
+    setEnrollMessage({
+      title: isSucceeded ? successMessage : errorMessage,
+      message: isSucceeded
+        ? successDescription
+        : "Por favor, intenta de nuevo.",
+    });
+
     setOpenDialog(false);
+
+    if (isSucceeded) {
+      setEvent((prev: Event) => ({
+        ...prev,
+        isUserEnrolled: data.status === 'A' ? 1 : 0,
+      }));
+      setOpenSuccessDialog(true);
+    }
   };
 
   if (loading) {
@@ -91,17 +127,33 @@ export default function Page({ params }: { params: { id: number } }) {
         </Button>
       </Box>
       <Box
-        height={250}
+        height={450}
         width="100%"
         position="relative"
         borderRadius={3}
         overflow="hidden"
       >
-        <Image
-          src={`https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60`}
-          alt="test image"
-          fill
-        />
+        <Carousel
+          infiniteLoop
+          autoPlay
+          showArrows={true}
+          showStatus={false}
+          showThumbs={false}
+        >
+          {event.images.map((image, index) => (
+            <div
+              key={index}
+              style={{ position: "relative", width: "100%", height: "450px" }}
+            >
+              <Image
+                src={image.documentUrl}
+                alt={image.documentName}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
+          ))}
+        </Carousel>{" "}
       </Box>
 
       <Box marginTop={3} marginBottom={2}>
@@ -124,11 +176,12 @@ export default function Page({ params }: { params: { id: number } }) {
               </Typography>
               <Box>
                 <Button
-                  variant={isUserRegistered ? "contained" : "outlined"}
+                  variant={event.isUserEnrolled ? "outlined" : "contained"}
                   onClick={handleOpenDialog}
-                  disabled={event.isUserRegistered}
                 >
-                  {isUserRegistered ? "Quiero participar" : "No quiero participar"}
+                  {event.isUserEnrolled
+                    ? "No quiero participar"
+                    : "Quiero participar"}
                   {isEnrolling && (
                     <CircularProgress
                       size={24}
@@ -147,7 +200,7 @@ export default function Page({ params }: { params: { id: number } }) {
             </Box>
           </Paper>
         </Grid>
-        <Grid item sm={12} md={5}>
+        <Grid item sm={12} xs={12} md={5}>
           <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={3}>
               <InformationLabel
@@ -155,7 +208,10 @@ export default function Page({ params }: { params: { id: number } }) {
                   component: CalendarMonthOutlined,
                   color: theme.palette.primary.main,
                 }}
-                label={event.date}
+                label={combineDateAndTime({
+                  date: event.date,
+                  time: event.time,
+                })}
               />
 
               <InformationLabel
@@ -190,10 +246,16 @@ export default function Page({ params }: { params: { id: number } }) {
       </Grid>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Confirmar Inscripción</DialogTitle>
+        <DialogTitle>
+          {event.isUserEnrolled
+            ? "Cancelar Inscripción"
+            : "Confirmar Inscripción"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            ¿Estás seguro que deseas inscribirte en el evento "{event.title}"?
+            {event.isUserEnrolled
+              ? `¿Estás seguro que deseas cancelar tu inscripción en el evento '${event.title}'?`
+              : `¿Estás seguro que deseas inscribirte en el evento '${event.title}'?`}
             <br />
             <strong>Fecha:</strong> {event.date}
             <br />
@@ -201,33 +263,51 @@ export default function Page({ params }: { params: { id: number } }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
+          <Button
+            variant="outlined"
+            onClick={handleCloseDialog}
+            color="primary"
+          >
             Cancelar
           </Button>
           <Button
-            onClick={handleEnroll}
+            onClick={() =>
+              handleToggleEnrollment(event.id, !!event.isUserEnrolled)
+            }
             color="primary"
+            variant="contained"
             disabled={isEnrolling}
             startIcon={isEnrolling && <CircularProgress size={20} />}
           >
-            Inscribirme
+            {event.isUserEnrolled ? "Cancelar Inscripción" : "Inscribirme"}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {enrollMessage && (
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          marginTop={3}
-        >
-          <Typography variant="h6" color="success">
-            {enrollMessage}
-          </Typography>
-        </Box>
-      )}
+      <Dialog
+        open={openSuccessDialog}
+        onClose={handleCloseSuccessDialog}
+        aria-labelledby="success-dialog-title"
+        aria-describedby="success-dialog-description"
+      >
+        <DialogTitle id="success-dialog-title">
+          {enrollMessage.title}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="success-dialog-description">
+            {enrollMessage.message}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            onClick={handleCloseSuccessDialog}
+            color="primary"
+          >
+            Gracias
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }
-

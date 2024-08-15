@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, use } from "react";
 import theme from "@/theme";
 import {
   Box,
@@ -22,6 +22,7 @@ import {
   CardMedia,
   CardContent,
   CardActions,
+  Stack,
 } from "@mui/material";
 import {
   CalendarMonthOutlined,
@@ -37,25 +38,31 @@ import {
 //@Hooks
 import { useRouter } from "next/navigation";
 //@Utils
-import { cleanHtml, lightOrDarkColor } from "@utils/index";
+import {
+  cleanHtml,
+  combineDateAndTime,
+  elipsisText,
+  lightOrDarkColor,
+} from "@utils/index";
 //@Services
 import EventService from "@/services/event/event.services";
 //@Types
 import { Event } from "@/core/types";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 export default function EventPage() {
+  const { isAuthenticated, isAdmin } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [currentEvent, setCurrentEvent] = useState<number | null>(null);
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
-    "all",
-  );
+  const [filter, setFilter] = useState<
+    "all" | "published" | "unpublished" | "enrolled" | "notEnrolled"
+  >("all");
   const router = useRouter();
-  const isAdmin = true;
 
   const getEvents = async () => {
     setLoading(true);
@@ -64,8 +71,9 @@ export default function EventPage() {
         limit: 10,
         offset: 0,
       });
-
-      setEvents(data);
+      if (isSucceeded) {
+        setEvents(data);
+      }
     } catch (error: any) {
       console.error("Error getting events", error.message);
     } finally {
@@ -73,16 +81,17 @@ export default function EventPage() {
     }
   };
 
-  React.useLayoutEffect(() => {
+  useEffect(() => {
     getEvents();
   }, []);
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    index: number,
+    eventId: number
   ) => {
     setAnchorEl(event.currentTarget);
-    setCurrentEvent(index);
+    const selectedEvent = events.find((e) => e.id === eventId);
+    setCurrentEvent(selectedEvent || null);
   };
 
   const handleMenuClose = () => {
@@ -90,37 +99,49 @@ export default function EventPage() {
     setCurrentEvent(null);
   };
 
-  const handlePublish = () => {
-    setActionLoading(true);
-    setTimeout(() => {
-      setEvents(
-        events.map((event, index) =>
-          index === currentEvent
-            ? { ...event, published: !event.published }
-            : event,
-        ),
-      );
-      setActionLoading(false);
+  const handlePublish = async (id: number) => {
+    try {
+      setLoading(true);
+      const { isSucceeded }: { data: boolean; isSucceeded: boolean } =
+        await EventService.togglePublishEvent(id);
+      if (!isSucceeded) {
+        throw new Error("Error al publicar el evento");
+      }
+      getEvents();
+    } catch (error: any) {
+      console.error("Error publishing event", error.message);
+    } finally {
+      setLoading(false);
       handleMenuClose();
-    }, 2000); // Simulación de tiempo de carga
+    }
   };
 
   const handleEdit = () => {
-    router.push("/events/create");
+    if (currentEvent) {
+      router.push(`panel/event/${currentEvent.id}/edit`);
+    }
   };
 
   const handleDelete = () => {
     setDialogOpen(true);
   };
 
-  const confirmDelete = () => {
-    setActionLoading(true);
-    setTimeout(() => {
-      setEvents(events.filter((_, index) => index !== currentEvent));
-      setActionLoading(false);
-      setDialogOpen(false);
-      handleMenuClose();
-    }, 2000);
+  const confirmDelete = async () => {
+    if (currentEvent) {
+      try {
+        setLoading(true);
+        const { isSucceeded } = await EventService.deleteEvent(currentEvent.id);
+        if (isSucceeded) {
+          setEvents(events.filter((event) => event.id !== currentEvent.id));
+          setDialogOpen(false);
+          handleMenuClose();
+        }
+      } catch (error: any) {
+        console.error("Error deleting event", error.message);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const cancelDelete = () => {
@@ -133,16 +154,47 @@ export default function EventPage() {
       const matchesSearch = event.title
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "published" && event.published) ||
-        (filter === "unpublished" && !event.published);
-      return matchesSearch && matchesFilter;
+
+      if (isAdmin) {
+        // Administradores pueden ver todos los eventos
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "published" && event.published) ||
+          (filter === "unpublished" && !event.published) ||
+          (filter === "enrolled" && event.isUserEnrolled === 1) ||
+          (filter === "notEnrolled" && event.isUserEnrolled === 0);
+        return matchesSearch && matchesFilter;
+      } else {
+        // Opciones para usuarios no administradores
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "enrolled" && event.isUserEnrolled === 1) ||
+          (filter === "notEnrolled" && event.isUserEnrolled === 0);
+        return matchesSearch && matchesFilter;
+      }
     });
-  }, [events, searchTerm, filter]);
+  }, [events, searchTerm, filter, isAdmin]);
 
   return (
     <>
+      {loading && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            zIndex: 9999,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
       {actionLoading && (
         <Box
           sx={{
@@ -170,199 +222,209 @@ export default function EventPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Box>
-      {isAdmin && (
-        <Box mb={3} display="flex" gap={2}>
+      <Box mb={3}>
+        <Stack direction="row" spacing={1}>
           <Button
             variant={filter === "all" ? "contained" : "outlined"}
             onClick={() => setFilter("all")}
+            size="small"
           >
             Todos
           </Button>
+
+          {isAdmin && (
+            <>
+              <Button
+                variant={filter === "published" ? "contained" : "outlined"}
+                onClick={() => setFilter("published")}
+                size="small"
+              >
+                Publicados
+              </Button>
+              <Button
+                variant={filter === "unpublished" ? "contained" : "outlined"}
+                onClick={() => setFilter("unpublished")}
+                size="small"
+              >
+                Sin Publicar
+              </Button>
+            </>
+          )}
           <Button
-            variant={filter === "published" ? "contained" : "outlined"}
-            onClick={() => setFilter("published")}
+            variant={filter === "enrolled" ? "contained" : "outlined"}
+            onClick={() => setFilter("enrolled")}
+            size="small"
           >
-            Publicados
+            Inscritos
           </Button>
           <Button
-            variant={filter === "unpublished" ? "contained" : "outlined"}
-            onClick={() => setFilter("unpublished")}
+            variant={filter === "notEnrolled" ? "contained" : "outlined"}
+            onClick={() => setFilter("notEnrolled")}
+            size="small"
           >
-            Sin Publicar
+            No Inscritos
           </Button>
-        </Box>
+        </Stack>
+      </Box>
+
+      {!loading && filteredEvents.length === 0 && events.length !== 0 && (
+        <DataNotFound message="Lo sentimos, no pudimos encontrar el evento que estás buscando" />
       )}
-      <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3} sx={{ margin: 0 }}>
-        {loading &&
-          Array.from({ length: 6 }).map((_, index) => (
-            <Paper key={index}>
-              <Skeleton variant="rectangular" width="100%" height={150} />
-              <Box sx={{ padding: 2 }}>
-                <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
-                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-                <Skeleton variant="text" sx={{ fontSize: "1rem", mt: 1 }} />
-              </Box>
-              <Box sx={{ padding: 2 }}>
-                <Skeleton variant="rectangular" width={100} height={30} />
-              </Box>
-            </Paper>
-          ))}
-        {!loading &&
-          filteredEvents.length > 0 &&
-          filteredEvents.map((event, index) => {
-            return (
-              <Paper key={index}>
-                <Card
-                  elevation={0}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    position: "relative",
-                  }}
-                >
-                  <Box sx={{ position: "relative" }}>
-                    <CardMedia
-                      component="img"
-                      height="150"
-                      image={event.images[0].documentUrl}
-                      alt="Event"
-                      sx={{
-                        width: "100%",
-                        height: "150px",
-                        objectFit: "cover",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: "100%",
-                        background:
-                          "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))",
-                      }}
-                    />
-                  </Box>
+      {!loading && events.length === 0 && (
+        <DataNotFound message="No hay eventos disponibles" />
+      )}
+      {!loading && filteredEvents.length > 0 && (
+        <Masonry
+          columns={{ xs: 1, sm: 2, md: 3 }}
+          spacing={3}
+          sx={{ margin: 0 }}
+        >
+          {filteredEvents.map((event) => (
+            <Paper key={event.id}>
+              <Card
+                elevation={0}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  height: "100%",
+                  position: "relative",
+                }}
+              >
+                <Box sx={{ position: "relative" }}>
+                  <CardMedia
+                    component="img"
+                    height="150"
+                    image={event.images[0].documentUrl}
+                    alt="Event"
+                    sx={{
+                      width: "100%",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
                   <Box
                     sx={{
                       position: "absolute",
+                      top: 0,
+                      left: 0,
                       right: 0,
-                      padding: 1,
-                      display: "flex",
-                      alignItems: "center",
+                      height: "100%",
+                      background:
+                        "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0))",
                     }}
-                  >
-                    <CategoryLabel
-                      label={event.category.title}
-                      textColor={lightOrDarkColor(event.category.color)}
-                      backgroundColor={event.category.color}
-                    />
-                    {isAdmin && (
-                      <Box>
-                        <IconButton
-                          aria-label="more"
-                          aria-controls="long-menu"
-                          aria-haspopup="true"
-                          onClick={(e) => handleMenuOpen(e, index)}
-                          sx={{
-                            color: "white",
-                            backgroundColor: "rgba(255, 255, 255, 0.3)",
-                            marginLeft: 1,
-                          }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    right: 0,
+                    padding: 1,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <CategoryLabel
+                    label={event.category.title}
+                    textColor={lightOrDarkColor(event.category.color)}
+                    backgroundColor={event.category.color}
+                  />
+                  {isAdmin && (
+                    <Box>
+                      <IconButton
+                        aria-label="more"
+                        aria-controls="long-menu"
+                        aria-haspopup="true"
+                        onClick={(e) => handleMenuOpen(e, event.id)}
+                        sx={{
+                          color: "white",
+                          backgroundColor: "rgba(255, 255, 255, 0.3)",
+                          marginLeft: 1,
+                        }}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                        elevation={1}
+                      >
+                        <MenuItem
+                          onClick={() => handlePublish(currentEvent!.id)}
                         >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={anchorEl}
-                          open={Boolean(anchorEl) && currentEvent === index}
-                          onClose={handleMenuClose}
-                        >
-                          <MenuItem onClick={handlePublish}>
-                            {event.published ? "Despublicar" : "Publicar"}
-                          </MenuItem>
-                          <Divider />
-                          <MenuItem onClick={handleEdit}>Editar</MenuItem>
-                          <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
-                        </Menu>
-                      </Box>
-                    )}
-                  </Box>
-
-                  <CardContent
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      flexGrow: 1,
-                      gap: 1,
-                    }}
-                  >
+                          {currentEvent?.published ? "Despublicar" : "Publicar"}
+                        </MenuItem>
+                        <MenuItem onClick={handleEdit}>Editar</MenuItem>
+                        <Divider />
+                        <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
+                      </Menu>
+                    </Box>
+                  )}
+                </Box>
+                <CardContent>
+                  <Stack direction="column" spacing={1}>
                     <InformationLabel
-                      icon={{
-                        component: CalendarMonthOutlined,
-                      }}
-                      label={event.date.toString()}
+                      icon={{ component: CalendarMonthOutlined }}
+                      label={combineDateAndTime({
+                        date: event.date,
+                        time: event.time,
+                      })}
                       color={theme.palette.grey[200]}
                     />
-
-                    <Typography variant="h4">{event.title}</Typography>
-
+                    <Typography variant="h6">{event.title}</Typography>
                     <Typography
-                      variant="body1"
+                      variant="body2"
                       color={theme.palette.text.secondary}
                       sx={{ mt: 1 }}
                     >
-                      {cleanHtml(event.description)}
+                      {cleanHtml(elipsisText({ value: event.description }))}
                     </Typography>
-
                     <InformationLabel
-                      icon={{
-                        component: LocationOnOutlined,
-                      }}
+                      icon={{ component: LocationOnOutlined }}
                       label={event.location}
                       color={theme.palette.grey[200]}
                     />
-                  </CardContent>
-                  <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
-                    <Button
-                      component="a"
-                      variant="contained"
-                      href={`/events/${index + 1}`}
-                    >
-                      Ver Detalle
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Paper>
-            );
-          })}
-      </Masonry>
-
-      {!loading && filteredEvents.length === 0 && (
-        <DataNotFound message="Lo sentimos, no pudimos encontrar el evento que estás buscando" />
+                  </Stack>
+                </CardContent>
+                <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
+                  <Button
+                    component="a"
+                    variant="contained"
+                    href={`/events/${event.id}`}
+                  >
+                    Ver Detalle
+                  </Button>
+                </CardActions>
+              </Card>
+            </Paper>
+          ))}
+        </Masonry>
       )}
-
-      {!loading && events.length === 0 && (
-        <Typography variant="h6" sx={{ textAlign: "center", mt: 3 }}>
-          No hay eventos disponibles
-        </Typography>
-      )}
-
-      <Dialog open={dialogOpen} onClose={cancelDelete}>
-        <DialogTitle>Eliminar Evento</DialogTitle>
+      <Dialog
+        open={dialogOpen}
+        onClose={cancelDelete}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"¿Estás seguro de que deseas eliminar este evento?"}
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro que deseas eliminar el evento{" "}
-            {currentEvent !== null && events[currentEvent].title}?
+          <DialogContentText id="alert-dialog-description">
+            Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
-          <Button onClick={confirmDelete} color="primary" autoFocus>
-            Eliminar
+          <Button
+            onClick={confirmDelete}
+            color="secondary"
+            autoFocus
+            disabled={actionLoading}
+          >
+            {actionLoading ? <CircularProgress size={24} /> : "Eliminar"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import {
   Container,
@@ -13,13 +13,16 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import theme from "@/theme";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 export const Header = () => {
+  // const { data: session, status } = useSession();
+  const { isAdmin, isAuthenticated, logout } = useAuthContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const router = useRouter();
+  const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -30,9 +33,7 @@ export const Header = () => {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false, callbackUrl: "/" });
-    router.push("/authentication");
-    setAnchorEl(null);
+    router.push("/logout");
   };
 
   return (
@@ -57,7 +58,8 @@ export const Header = () => {
                 priority
               />
             </Link>
-            <Box display="flex">
+
+            {isAuthenticated && <Box display="flex">
               <Box
                 id="fade-button"
                 aria-controls={open ? "fade-menu" : undefined}
@@ -78,13 +80,16 @@ export const Header = () => {
                 onClose={handleClose}
                 TransitionComponent={Fade}
               >
-                <Link
-                  href="/panel/create"
-                  passHref
-                  style={{ textDecoration: "none" }}
-                >
-                  <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
-                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/panel/event/create"
+                    passHref
+                    style={{ textDecoration: "none" }}
+                  >
+                    <MenuItem onClick={handleClose}>Crear eventos</MenuItem>
+                  </Link>
+                )}
+
                 <Link
                   href="/events"
                   passHref
@@ -97,10 +102,11 @@ export const Header = () => {
                   <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
                 </Box>
               </Menu>
-              <NotificationsNoneIcon
+              {/* <NotificationsNoneIcon
                 sx={{ color: theme.palette.primary.main }}
-              />
-            </Box>
+              /> */}
+            </Box>}
+
           </Box>
         </Paper>
       </Box>

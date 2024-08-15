@@ -10,6 +10,7 @@ export const DataNotFound: React.FC<DataNotFoundProps> = ({ message }) => (
     flexDirection="column"
     alignItems="center"
     justifyContent="center"
+    flex="auto"
     sx={{ color: "gray", textAlign: "center" }}
   >
     <ErrorOutlineIcon sx={{ fontSize: 40, marginBottom: 1 }} />
