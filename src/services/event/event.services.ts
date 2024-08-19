@@ -21,20 +21,17 @@ class EventService {
     try {
       const formData = new FormData();
 
-      // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
         maxSizeMB: 0.5,
         maxWidthOrHeight: 800,
         useWebWorker: true,
       };
 
-      // Comprimir imágenes si existen
       let compressedImages: File[] = [];
       if (data.images && data.images.length > 0) {
         compressedImages = await compressImages(data.images, options);
       }
 
-      // Agregar campos simples y las imágenes comprimidas al FormData
       Object.keys(data).forEach((key) => {
         if (key === "images" && compressedImages.length > 0) {
           for (let i = 0; i < compressedImages.length; i++) {
@@ -93,7 +90,6 @@ class EventService {
     data: Partial<UpdateEventDto>
   ): Promise<ApiResponse<Event>> {
     try {
-      console.log(data);
       const formData = new FormData();
 
       // Opciones para la compresión de imágenes
@@ -152,10 +148,11 @@ class EventService {
     );
   }
 
-  async toggleEnrollUnenrollEvent(eventId: number): Promise<ApiResponse<void>> {
-    return httpImplementation.patch<ApiResponse<void>, { eventId: number }>(
+  async toggleEnrollUnenrollEvent(eventId: number, value: string): Promise<ApiResponse<{status: string}>> {
+    return httpImplementation.patch<ApiResponse<{status: string}>, {status: string}>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/enroll/${eventId}`
+      `${this.baseUrl}/enroll/${eventId}`,
+      { status: value }
     );
   }
 

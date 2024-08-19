@@ -1,5 +1,5 @@
-"use client";
-import React, { useState, useEffect, useLayoutEffect } from "react";
+"use client"
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Grid,
   Paper,
@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
   Stack,
+  Chip,
   Backdrop,
   CircularProgress,
 } from "@mui/material";
@@ -21,34 +22,20 @@ import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
 import theme from "@/theme";
 import { combineDateAndTime, lightOrDarkColor } from "@/utils";
+import { useAuthContext } from "@/store/auth/AuthContext";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const images = [
-  {
-    label: "San Francisco – Oakland Bay Bridge, United States",
-    imgPath:
-      "https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60",
-  },
-  {
-    label: "Bird",
-    imgPath:
-      "https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60",
-  },
-  {
-    label: "Goč, Serbia",
-    imgPath:
-      "https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60",
-  },
+  // Your images here
 ];
 
 export default function Home() {
-  const { data: session, status } = useSession();
+  const { user, isAuthenticated } = useAuthContext();
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [hours, setHours] = useState(0);
-  const maxSteps = images.length;
 
   const getEvents = async () => {
     setLoading(true);
@@ -57,7 +44,6 @@ export default function Home() {
         limit: 10,
         offset: 0,
       });
-
       setEvents(data);
     } catch (error: any) {
       console.error("Error getting events", error.message);
@@ -70,7 +56,6 @@ export default function Home() {
     setLoading(true);
     try {
       const { data, isSucceeded } = await EventService.userTotalHours();
-
       setHours(+data);
     } catch (error: any) {
       console.error("Error getting hours", error.message);
@@ -80,11 +65,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (status === "authenticated") {
+    if (isAuthenticated) {
       getEvents();
       getHours();
     }
-  }, [status]);
+  }, [isAuthenticated]);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -100,25 +85,15 @@ export default function Home() {
 
   const validateName = (name: string | undefined | null): string | null => {
     if (!name) return "";
-
     const split = name.split(",");
     if (split.length >= 2) {
       return `${split[1]} ${split[0]}`;
     }
-
     return name;
   };
 
   return (
     <>
-      {(status === "loading" || loading) && (
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      )}
       {!loading && (
         <Grid container spacing={2} id="container">
           <Grid
@@ -131,7 +106,7 @@ export default function Home() {
           >
             <Box>
               <Typography variant="h3">
-                Bienvenido/a, {session && validateName(session.user?.name)}
+                Bienvenido/a, {user && validateName(user)}
               </Typography>
             </Box>
             <Box>
@@ -176,6 +151,7 @@ export default function Home() {
                       events.map((event) => (
                         <Box key={event.id}>
                           <CardEvent
+                            userEnrolled={event.isUserEnrolled}
                             name={event.title}
                             date={combineDateAndTime({
                               date: event.date,
@@ -202,71 +178,6 @@ export default function Home() {
                   </Box>
                 </Paper>
               </Grid>
-              {/* <Grid item md={5} sm={12}>
-                <Stack spacing={2}>
-                  <Paper sx={{ padding: 2 }}>
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      marginBottom={4}
-                    >
-                      <Typography variant="h3">Galería</Typography>
-                      <Button component="a" href="/events" variant="text">
-                        Ver todas las imágenes
-                      </Button>
-                    </Box>
-                    <AutoPlaySwipeableViews
-                      axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-                      index={activeStep}
-                      onChangeIndex={handleStepChange}
-                      enableMouseEvents
-                    >
-                      {images.map((step, index) => (
-                        <div key={step.label}>
-                          {Math.abs(activeStep - index) <= 2 ? (
-                            <Box
-                              component="img"
-                              sx={{
-                                height: 232,
-                                display: "block",
-                                maxWidth: 400,
-                                overflow: "hidden",
-                                width: "100%",
-                                borderRadius: "8px",
-                              }}
-                              src={step.imgPath}
-                              alt={step.label}
-                            />
-                          ) : null}
-                        </div>
-                      ))}
-                    </AutoPlaySwipeableViews>
-                    <MobileStepper
-                      steps={maxSteps}
-                      position="static"
-                      activeStep={activeStep}
-                      sx={{ background: "transparent", marginTop: 1 }}
-                      nextButton={
-                        <Button
-                          size="small"
-                          onClick={handleNext}
-                          disabled={activeStep === maxSteps - 1}
-                        >
-                        </Button>
-                      }
-                      backButton={
-                        <Button
-                          size="small"
-                          onClick={handleBack}
-                          disabled={activeStep === 0}
-                        >
-                        </Button>
-                      }
-                    />
-                  </Paper>
-                </Stack>
-              </Grid> */}
             </Grid>
           </Grid>
           <Grid item md={3} sm={12} xs={12}>

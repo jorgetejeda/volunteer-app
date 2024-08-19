@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid, Stack, Typography } from "@mui/material";
 // Icons
 import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
 // Types
@@ -19,6 +19,7 @@ export const CardEvent = ({
   location,
   redirect,
   chip,
+  userEnrolled,
 }: CardEventProps) => {
   const EventDate = () => (
     <InformationLabel
@@ -46,6 +47,8 @@ export const CardEvent = ({
       {...(image && { paddingY: 3, paddingX: 2 })}
     >
       <Grid container spacing={2}>
+        {/* Añadir etiqueta de inscripción */}
+
         {image && (
           <Grid item md={4} sm={12}>
             <Box
@@ -64,11 +67,20 @@ export const CardEvent = ({
             {chip && (
               <Box display="flex" justifyContent="space-between">
                 <EventDate />
-                <CategoryLabel
-                  label={chip.label}
-                  textColor={chip.color}
-                  backgroundColor={chip.backgroundColor}
-                />
+                <Stack direction="row" spacing={1}>
+                  {userEnrolled === 1 && (
+                    <CategoryLabel
+                      label="Inscrito"
+                      size="small"
+                      backgroundColor="#1F6527"
+                    />
+                  )}
+                  <CategoryLabel
+                    label={chip.label}
+                    textColor={chip.color}
+                    backgroundColor={chip.backgroundColor}
+                  />
+                </Stack>
               </Box>
             )}
 

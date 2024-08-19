@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, use } from "react";
 import theme from "@/theme";
 import {
   Box,
@@ -59,9 +59,9 @@ export default function EventPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState<"all" | "published" | "unpublished">(
-    "all"
-  );
+  const [filter, setFilter] = useState<
+    "all" | "published" | "unpublished" | "enrolled" | "notEnrolled"
+  >("all");
   const router = useRouter();
 
   const getEvents = async () => {
@@ -97,6 +97,23 @@ export default function EventPage() {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setCurrentEvent(null);
+  };
+
+  const handlePublish = async (id: number) => {
+    try {
+      setLoading(true);
+      const { isSucceeded }: { data: boolean; isSucceeded: boolean } =
+        await EventService.togglePublishEvent(id);
+      if (!isSucceeded) {
+        throw new Error("Error al publicar el evento");
+      }
+      getEvents();
+    } catch (error: any) {
+      console.error("Error publishing event", error.message);
+    } finally {
+      setLoading(false);
+      handleMenuClose();
+    }
   };
 
   const handleEdit = () => {
@@ -159,13 +176,26 @@ export default function EventPage() {
       const matchesSearch = event.title
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      const matchesFilter =
-        filter === "all" ||
-        (filter === "published" && event.published) ||
-        (filter === "unpublished" && !event.published);
-      return matchesSearch && matchesFilter;
+
+      if (session?.isAdmin) {
+        // Administradores pueden ver todos los eventos
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "published" && event.published) ||
+          (filter === "unpublished" && !event.published) ||
+          (filter === "enrolled" && event.isUserEnrolled === 1) ||
+          (filter === "notEnrolled" && event.isUserEnrolled === 0);
+        return matchesSearch && matchesFilter;
+      } else {
+        // Opciones para usuarios no administradores
+        const matchesFilter =
+          filter === "all" ||
+          (filter === "enrolled" && event.isUserEnrolled === 1) ||
+          (filter === "notEnrolled" && event.isUserEnrolled === 0);
+        return matchesSearch && matchesFilter;
+      }
     });
-  }, [events, searchTerm, filter]);
+  }, [events, searchTerm, filter, ]);
 
   return (
     <>
@@ -214,33 +244,51 @@ export default function EventPage() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </Box>
-      {session?.isAdmin && (
-        <Box mb={3}>
-          <Stack direction="row" spacing={1}>
-            <Button
-              variant={filter === "all" ? "contained" : "outlined"}
-              onClick={() => setFilter("all")}
-              size="small"
-            >
-              Todos
-            </Button>
-            <Button
-              variant={filter === "published" ? "contained" : "outlined"}
-              onClick={() => setFilter("published")}
-              size="small"
-            >
-              Publicados
-            </Button>
-            <Button
-              variant={filter === "unpublished" ? "contained" : "outlined"}
-              onClick={() => setFilter("unpublished")}
-              size="small"
-            >
-              Sin Publicar
-            </Button>
-          </Stack>
-        </Box>
-      )}
+      <Box mb={3}>
+        <Stack direction="row" spacing={1}>
+          <Button
+            variant={filter === "all" ? "contained" : "outlined"}
+            onClick={() => setFilter("all")}
+            size="small"
+          >
+            Todos
+          </Button>
+
+          {session?.isAdmin && (
+            <>
+              <Button
+                variant={filter === "published" ? "contained" : "outlined"}
+                onClick={() => setFilter("published")}
+                size="small"
+              >
+                Publicados
+              </Button>
+              <Button
+                variant={filter === "unpublished" ? "contained" : "outlined"}
+                onClick={() => setFilter("unpublished")}
+                size="small"
+              >
+                Sin Publicar
+              </Button>
+            </>
+          )}
+          <Button
+            variant={filter === "enrolled" ? "contained" : "outlined"}
+            onClick={() => setFilter("enrolled")}
+            size="small"
+          >
+            Inscriptos
+          </Button>
+          <Button
+            variant={filter === "notEnrolled" ? "contained" : "outlined"}
+            onClick={() => setFilter("notEnrolled")}
+            size="small"
+          >
+            No Inscriptos
+          </Button>
+        </Stack>
+      </Box>
+
       {!loading && filteredEvents.length === 0 && events.length !== 0 && (
         <DataNotFound message="Lo sentimos, no pudimos encontrar el evento que estás buscando" />
       )}
@@ -323,7 +371,9 @@ export default function EventPage() {
                         onClose={handleMenuClose}
                         elevation={1}
                       >
-                        <MenuItem onClick={() => togglePublish()}>
+                        <MenuItem
+                          onClick={() => handlePublish(currentEvent!.id)}
+                        >
                           {currentEvent?.published ? "Despublicar" : "Publicar"}
                         </MenuItem>
                         <MenuItem onClick={handleEdit}>Editar</MenuItem>
