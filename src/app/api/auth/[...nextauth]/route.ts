@@ -111,7 +111,6 @@ const authOptions: NextAuthOptions = {
       session.token = token.user?.token;
       session.role = token.user?.role;
       session.isAdmin = token.user?.role === "Admin";
-      console.log("Session:", session);
       return session;
     },
     async redirect({ url, baseUrl }) {

@@ -9,10 +9,9 @@ export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
-    const token = await getToken({ req: request });
+    const token = await getToken({ req: request, secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET});
 
     if (!token) {
-      console.error('Redirecting to /login');
       const url = new URL("/login", request.url);
       return NextResponse.redirect(url);
     }
