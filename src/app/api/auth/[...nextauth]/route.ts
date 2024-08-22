@@ -66,13 +66,24 @@ const authOptions: NextAuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
       authorization: {
         params: {
+          prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },
     }),
   ],
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax", 
+        secure: process.env.NODE_ENV === "production", 
+      },
+    },
+  },
   debug: process.env.NODE_ENV === "development",
-  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string, // Usa el secreto correcto
+  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string, 
   logger: {
     error(code, ...message) {
       console.error("ERROR - Next", code, message);
