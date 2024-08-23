@@ -123,11 +123,11 @@ const authOptions: NextAuthOptions = {
       session.isAdmin = token.user?.role === "Admin";
       return session;
     },
-    async redirect({ url, baseUrl }) {
+     async redirect({ url, baseUrl }) {
       if (url.includes("error=OAuthCallback")) {
         return `${baseUrl}/auth-error`;
       }
-      return baseUrl;
+      return url.startsWith(baseUrl) ? url : baseUrl;
     },
   },
 };
