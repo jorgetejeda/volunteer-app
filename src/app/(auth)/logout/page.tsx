@@ -1,15 +1,16 @@
 "use client";
 import { signOut } from "next-auth/react";
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Box, Typography, CircularProgress } from "@mui/material";
 
 export default function LogOut() {
-  const router = useRouter();
-
   const handleLogout = async () => {
+    try{
     sessionStorage.removeItem('token');
     await signOut({ redirect: true, callbackUrl: "/login" });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   useEffect(() => {

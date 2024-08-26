@@ -66,7 +66,7 @@ const authOptions: NextAuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
       authorization: {
         params: {
-          prompt: "login", // Force re-authentication
+          //prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },
@@ -74,16 +74,18 @@ const authOptions: NextAuthOptions = {
   ],
   cookies: {
     sessionToken: {
-      name: `next-auth.session-token`,
+      name: `__Secure-next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: "none", 
-        secure: process.env.NODE_ENV === "production", 
+        sameSite: "lax", // Puede ser 'lax' o 'strict' según tus necesidades
+        path: "/",
+        domain: "voluntariado.afpcrecer.com.do", // Especifica tu dominio
+        secure: process.env.NODE_ENV === "production",
       },
     },
   },
   debug: process.env.NODE_ENV === "development",
-  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string, 
+  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string,
   logger: {
     error(code, ...message) {
       console.error("ERROR - Next", code, message);
@@ -105,6 +107,7 @@ const authOptions: NextAuthOptions = {
       if (account) {
         try {
           const data = await handleBackEnd(token);
+          console.log("Data from handleBackEnd:", data);
           token.user = {
             token: data.userToken,
             role: data.userRole,
@@ -123,7 +126,7 @@ const authOptions: NextAuthOptions = {
       session.isAdmin = token.user?.role === "Admin";
       return session;
     },
-     async redirect({ url, baseUrl }) {
+    async redirect({ url, baseUrl }) {
       if (url.includes("error=OAuthCallback")) {
         return `${baseUrl}/auth-error`;
       }
