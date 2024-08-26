@@ -66,7 +66,7 @@ const authOptions: NextAuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
       authorization: {
         params: {
-          //prompt: "login", // Force re-authentication
+          prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },
@@ -74,12 +74,10 @@ const authOptions: NextAuthOptions = {
   ],
   cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: `next-auth.session-token`,
       options: {
         httpOnly: true,
-        sameSite: "lax", // Puede ser 'lax' o 'strict' según tus necesidades
-        path: "/",
-        domain: "voluntariado.afpcrecer.com.do", // Especifica tu dominio
+        sameSite: "none", // Asegúrate de que esto esté configurado de acuerdo a tus necesidades
         secure: process.env.NODE_ENV === "production",
       },
     },
