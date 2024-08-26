@@ -7,6 +7,7 @@ const agent = proxy ? new HttpsProxyAgent(proxy) : undefined;
 
 // Create an Axios instance with the proxy agent
 const axiosInstance = axios.create({
+  timeout: 10000,
   httpAgent: agent,
   httpsAgent: agent,
 });
