@@ -125,10 +125,15 @@ const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.includes("error=OAuthCallback")) {
+      console.log("Original URL:", url);
+      const decodedUrl = decodeURIComponent(url);
+      console.log("Decoded URL:", decodedUrl);
+    
+      if (decodedUrl.includes("error=OAuthCallback")) {
         return `${baseUrl}/auth-error`;
       }
-      return url.startsWith(baseUrl) ? url : baseUrl;
+    
+      return decodedUrl.startsWith(baseUrl) ? decodedUrl : baseUrl;
     },
   },
 };
