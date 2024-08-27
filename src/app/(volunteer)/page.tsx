@@ -19,7 +19,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import { CardEvent, DataNotFound } from "@components/index";
 import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
-import theme from "@/theme";
+import theme from "@theme/theme";
 import { combineDateAndTime, lightOrDarkColor } from "@/utils";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);

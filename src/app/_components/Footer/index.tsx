@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import { Grid, Box, Typography, Container } from "@mui/material";
-import theme from "@/theme";
+import theme from "@theme/theme";
 // Icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";

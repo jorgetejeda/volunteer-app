@@ -9,7 +9,7 @@ export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (protectedRoutes.some((path) => pathname.startsWith(path))) {
-    const token = await getToken({ req: request, secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET});
+    const token = await getToken({ req: request});
 
     if (!token) {
       const url = new URL("/login", request.url);

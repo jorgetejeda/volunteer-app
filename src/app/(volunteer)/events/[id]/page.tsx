@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import theme from "@/theme";
+import theme from "@theme/theme";
 import {
   Box,
   Button,

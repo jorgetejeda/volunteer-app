@@ -17,7 +17,7 @@ import {
   BtnStyles,
 } from "react-simple-wysiwyg";
 import DOMPurify from "dompurify";
-import theme from "@/theme";
+import theme from "@theme/theme";
 import { Box } from "@mui/material";
 
 type EditorViewProps = {

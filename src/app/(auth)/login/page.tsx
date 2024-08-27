@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 //@Styles
-import theme from "@/theme";
+import theme from "@theme/theme";
 import styled from "@emotion/styled";
 //Components
 import { Container, Box, Button, Typography, Stack, CircularProgress } from "@mui/material";
@@ -49,7 +49,9 @@ export default function LogIn() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      await signIn("azure-ad");
+      await signIn("azure-ad", {
+        callbackUrl: `${window.location.href}/`,
+      });
     } catch (error) {
       console.log(error);
     } 

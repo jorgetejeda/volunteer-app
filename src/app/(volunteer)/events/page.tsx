@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useMemo, useEffect, use } from "react";
-import theme from "@/theme";
+import React, { useState, useMemo, useEffect } from "react";
+import theme from "@theme/theme";
 import {
   Box,
   Paper,

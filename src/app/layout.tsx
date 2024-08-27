@@ -3,7 +3,7 @@ import * as React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Open_Sans } from "next/font/google";
-import theme from "@/theme";
+import theme from "@theme/theme";
 import AuthContextProvider from "@/store/auth/AuthContext";
 import { Box } from "@mui/material";
 import { SessionProvider } from "next-auth/react";

@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Box, Typography, Button, Paper } from "@mui/material";
-import theme from "@/theme";
+import theme from "@theme/theme";
 
 export default function AuthErrorPage() {
   const router = useRouter();
