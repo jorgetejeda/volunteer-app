@@ -64,6 +64,9 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID as string,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET as string,
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
+      httpOptions: {
+        timeout: 10000,
+      },
       authorization: {
         params: {
           prompt: "login", // Force re-authentication
