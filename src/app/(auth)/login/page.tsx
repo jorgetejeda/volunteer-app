@@ -49,9 +49,7 @@ export default function LogIn() {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      await signIn("azure-ad", {
-        callbackUrl: `${window.location.href}/`,
-      });
+      await signIn("azure-ad");
     } catch (error) {
       console.log(error);
     } 

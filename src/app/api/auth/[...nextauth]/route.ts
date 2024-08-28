@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import axiosInstance from "@/core-libraries/http/axiosWithProxy";
+import { cookies } from "next/headers";
 
 declare module "next-auth" {
   interface Session {
@@ -75,16 +76,16 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  cookies: {
-    sessionToken: {
-      name: `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: "none", // Asegúrate de que esto esté configurado de acuerdo a tus necesidades
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
-  },
+  // cookies: {
+  //   sessionToken: {
+  //     name: `next-auth.session-token`,
+  //     options: {
+  //       httpOnly: process.env.NODE_ENV === "production",
+  //       sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  //       secure: process.env.NODE_ENV === "production",
+  //     },
+  //   },
+  // },
   debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string,
   logger: {
@@ -117,9 +118,11 @@ const authOptions: NextAuthOptions = {
           console.error("ERROR trying to login:", error);
         }
       }
-      return token;
+      console.log("Generated JWT token:", token);
+  return token;
     },
     async session({ session, token }) {
+      console.log("Session from session callback:", session);
       session.email = token.email as string;
       session.name = token.name as string;
       session.token = token.user?.token;
@@ -128,15 +131,11 @@ const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      console.log("Original URL:", url);
-      const decodedUrl = decodeURIComponent(url);
-      console.log("Decoded URL:", decodedUrl);
-    
-      if (decodedUrl.includes("error=OAuthCallback")) {
+      console.log("Redirecting to:", url);
+      if (url.includes('error=OAuthCallback')) {
         return `${baseUrl}/auth-error`;
       }
-    
-      return decodedUrl.startsWith(baseUrl) ? decodedUrl : baseUrl;
+      return baseUrl;
     },
   },
 };
