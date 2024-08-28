@@ -9,10 +9,17 @@ export default async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const secret = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
 
-
-  if (protectedRoutes.some((path) => pathname.startsWith(path))) {
+  // Prevent redirect loop by checking if the user is already on the /login page
+  if (pathname === "/login") {
     const token = await getToken({ req: request, secret: secret });
 
+    if (token) {
+      console.log('User is already logged in. Redirecting to /');
+      const url = new URL("/", request.url);
+      return NextResponse.redirect(url);
+    }
+  } else if (protectedRoutes.some((path) => pathname.startsWith(path))) {
+    const token = await getToken({ req: request, secret: secret });
 
     if (!token) {
       console.log('No token found, redirecting to /login.');
@@ -51,5 +58,5 @@ export default async function middleware(request: NextRequest) {
 
 // Especificar las rutas que el middleware debe aplicar
 export const config = {
-  matcher: ["/", "/events", "/panel/:path*"],
+  matcher: ["/", "/events", "/panel/:path*", "/login"],
 };
