@@ -30,19 +30,23 @@ declare module "next-auth/jwt" {
 
 const handleBackEnd = async (token: any) => {
   try {
-    const authToken = process.env.NEXT_PUBLIC_NEXTAUTH_SECRET; // Asegúrate de usar la variable correcta
+    const authToken =
+      process.env.NODE_ENV === "production"
+        ? process.env.NEXTAUTH_SECRET
+        : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
+
     const { data } = await axiosInstance.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/${authToken}/login`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
         name: token.name,
-        authToken,
+        authToken: authToken,
       },
       {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
 
     if (!data.isSucceeded) {
@@ -76,18 +80,11 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  // cookies: {
-  //   sessionToken: {
-  //     name: `next-auth.session-token`,
-  //     options: {
-  //       httpOnly: process.env.NODE_ENV === "production",
-  //       sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
-  //       secure: process.env.NODE_ENV === "production",
-  //     },
-  //   },
-  // },
   debug: process.env.NODE_ENV === "development",
-  secret: process.env.NEXT_PUBLIC_NEXTAUTH_SECRET as string,
+  secret:
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXTAUTH_SECRET
+      : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
   logger: {
     error(code, ...message) {
       console.error("ERROR - Next", code, message);
@@ -119,7 +116,7 @@ const authOptions: NextAuthOptions = {
         }
       }
       console.log("Generated JWT token:", token);
-  return token;
+      return token;
     },
     async session({ session, token }) {
       console.log("Session from session callback:", session);
@@ -132,7 +129,7 @@ const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       console.log("Redirecting to:", url);
-      if (url.includes('error=OAuthCallback')) {
+      if (url.includes("error=OAuthCallback")) {
         return `${baseUrl}/auth-error`;
       }
       return baseUrl;
