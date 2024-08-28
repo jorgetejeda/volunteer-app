@@ -1,7 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import axiosInstance from "@/core-libraries/http/axiosWithProxy";
-import { cookies } from "next/headers";
 
 declare module "next-auth" {
   interface Session {
@@ -74,7 +73,6 @@ const authOptions: NextAuthOptions = {
       },
       authorization: {
         params: {
-          prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },

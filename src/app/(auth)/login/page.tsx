@@ -1,10 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 //@Styles
 import theme from "@theme/theme";
 import styled from "@emotion/styled";
 //Components
-import { Container, Box, Button, Typography, Stack, CircularProgress } from "@mui/material";
+import {
+  Container,
+  Box,
+  Button,
+  Typography,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import Image from "next/image";
 //@Navigation
 import { useRouter } from "next/navigation";
@@ -37,7 +44,7 @@ const MicrosoftButton = styled(Button)({
 
 export default function LogIn() {
   const router = useRouter();
-  const {isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -46,14 +53,14 @@ export default function LogIn() {
     }
   }, [isAuthenticated, router]);
 
-  const handleLogin = async () => {
+  const handleLogin = useCallback(async () => {
     try {
       setLoading(true);
-      await signIn("azure-ad");
+      await signIn("azure-ad", { callbackUrl: "/" });
     } catch (error) {
       console.log(error);
-    } 
-  };
+    }
+  }, []);
 
   return (
     <Container maxWidth="sm">
@@ -67,7 +74,11 @@ export default function LogIn() {
         />
         <Box marginTop={8}>
           <Stack spacing={2}>
-            <MicrosoftButton onClick={handleLogin} variant="contained" disabled={loading}>
+            <MicrosoftButton
+              onClick={() => handleLogin()}
+              variant="contained"
+              disabled={loading}
+            >
               {loading ? <CircularProgress size={24} /> : "Iniciar Sesión"}
             </MicrosoftButton>
 
