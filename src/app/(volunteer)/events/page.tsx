@@ -5,7 +5,6 @@ import {
   Box,
   Paper,
   Typography,
-  Skeleton,
   IconButton,
   Menu,
   MenuItem,
@@ -23,12 +22,20 @@ import {
   CardContent,
   CardActions,
   Stack,
+  Fade,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import {
   CalendarMonthOutlined,
   LocationOnOutlined,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
+import PublishIcon from "@mui/icons-material/Publish";
+import UnpublishIcon from "@mui/icons-material/Unpublished";
+import PeopleIcon from "@mui/icons-material/People";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Masonry } from "@mui/lab";
 import {
   CategoryLabel,
@@ -87,7 +94,7 @@ export default function EventPage() {
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    eventId: number
+    eventId: number,
   ) => {
     setAnchorEl(event.currentTarget);
     const selectedEvent = events.find((e) => e.id === eventId);
@@ -121,6 +128,9 @@ export default function EventPage() {
       router.push(`panel/event/${currentEvent.id}/edit`);
     }
   };
+  const handleAttended = () => {
+    currentEvent && router.push(`panel/event/${currentEvent.id}/attendance`);
+  };
 
   const handleDelete = () => {
     setDialogOpen(true);
@@ -153,14 +163,16 @@ export default function EventPage() {
     try {
       if (!currentEvent) return;
       setActionLoading(true);
-      const { isSucceeded } = await EventService.togglePublishEvent(currentEvent?.id || 0);
+      const { isSucceeded } = await EventService.togglePublishEvent(
+        currentEvent?.id || 0,
+      );
       if (isSucceeded) {
         setEvents(
           events.map((event) =>
             event.id === currentEvent.id
               ? { ...event, published: !event.published }
-              : event
-          )
+              : event,
+          ),
         );
         handleMenuClose();
       }
@@ -195,7 +207,7 @@ export default function EventPage() {
         return matchesSearch && matchesFilter;
       }
     });
-  }, [events, searchTerm, filter, ]);
+  }, [events, searchTerm, filter]);
 
   return (
     <>
@@ -370,15 +382,59 @@ export default function EventPage() {
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
                         elevation={1}
+                        TransitionComponent={Fade}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
                       >
+                        {/* Publicar/Despublicar Item */}
                         <MenuItem
                           onClick={() => handlePublish(currentEvent!.id)}
                         >
-                          {currentEvent?.published ? "Despublicar" : "Publicar"}
+                          <ListItemIcon>
+                            {currentEvent?.published ? (
+                              <UnpublishIcon />
+                            ) : (
+                              <PublishIcon />
+                            )}
+                          </ListItemIcon>
+                          <ListItemText>
+                            {currentEvent?.published
+                              ? "Despublicar"
+                              : "Publicar"}
+                          </ListItemText>
                         </MenuItem>
-                        <MenuItem onClick={handleEdit}>Editar</MenuItem>
+
+                        {/* Asistencia Item */}
+                        <MenuItem onClick={handleAttended}>
+                          <ListItemIcon>
+                            <PeopleIcon />
+                          </ListItemIcon>
+                          <ListItemText>Asistencia</ListItemText>
+                        </MenuItem>
+
+                        {/* Editar Item */}
+                        <MenuItem onClick={handleEdit}>
+                          <ListItemIcon>
+                            <EditIcon />
+                          </ListItemIcon>
+                          <ListItemText>Editar</ListItemText>
+                        </MenuItem>
+
                         <Divider />
-                        <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
+
+                        {/* Eliminar Item */}
+                        <MenuItem onClick={handleDelete}>
+                          <ListItemIcon>
+                            <DeleteIcon color="error" />
+                          </ListItemIcon>
+                          <ListItemText>Eliminar</ListItemText>
+                        </MenuItem>
                       </Menu>
                     </Box>
                   )}
