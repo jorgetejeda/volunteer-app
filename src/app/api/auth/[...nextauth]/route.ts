@@ -12,6 +12,7 @@ declare module "next-auth" {
     token?: string;
     role: string;
     isAdmin: boolean;
+    agreedTerms: boolean;
   }
 }
 
@@ -23,6 +24,7 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       role: string;
+      agreedTerms: boolean;
     };
   }
 }
@@ -55,6 +57,7 @@ const handleBackEnd = async (token: any) => {
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
+      userAgreedTerms: data.data.agreedTerms,
     };
   } catch (error) {
     console.log("Error in handleBackEnd:", error);
@@ -69,7 +72,7 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET as string,
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
       httpOptions: {
-        timeout: 10000,
+        timeout: 30000,
       },
       authorization: {
         params: {
@@ -106,6 +109,7 @@ const authOptions: NextAuthOptions = {
           const data = await handleBackEnd(token);
           console.log("Data from handleBackEnd:", data);
           token.user = {
+            agreedTerms: data.userAgreedTerms,
             token: data.userToken,
             role: data.userRole,
           };
@@ -122,6 +126,7 @@ const authOptions: NextAuthOptions = {
       session.name = token.name as string;
       session.token = token.user?.token;
       session.role = token.user?.role;
+      session.agreedTerms = token.user.agreedTerms || false;
       session.isAdmin = token.user?.role === "Admin";
       return session;
     },
