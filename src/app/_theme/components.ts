@@ -1,6 +1,6 @@
 import { typography } from "./typography";
 import { palette } from "./palette";
-import { AlertProps } from '@mui/material/Alert';
+import { AlertProps } from "@mui/material/Alert";
 
 export const components = {
   MuiAlert: {
