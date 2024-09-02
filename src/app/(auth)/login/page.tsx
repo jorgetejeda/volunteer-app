@@ -29,7 +29,7 @@ const CenteredBox = styled(Box)({
 });
 
 const MicrosoftButton = styled(Button)({
-  backgroundColor: "#fff",
+  backgroundColor: theme.palette.common.white,
   border: "2px solid #e2e8f0",
   padding: "1rem",
   borderRadius: "2rem",
