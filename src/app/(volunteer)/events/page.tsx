@@ -129,7 +129,7 @@ export default function EventPage() {
     }
   };
   const handleAttended = () => {
-    currentEvent && router.push(`panel/event/${currentEvent.id}/attendance`);
+    currentEvent && router.push(`panel/event/attendance/${currentEvent.id}`);
   };
 
   const handleDelete = () => {
@@ -493,12 +493,13 @@ export default function EventPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">
+          <Button variant="outlined" onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
           <Button
+            variant="contained"
             onClick={confirmDelete}
-            color="secondary"
+            color="primary"
             autoFocus
             disabled={actionLoading}
           >
