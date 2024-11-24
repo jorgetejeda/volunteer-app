@@ -20,9 +20,10 @@ import {
   Button,
 } from "@mui/material";
 import { DropZone, DropdownCategories, EditorView } from "@components/index";
-import { UpdateEventDto, EventImage  } from "@/core/types";
+import { UpdateEventDto } from "@/core/types";
 import { useRouter, useParams } from "next/navigation";
 import EventService from "@/services/event/event.services";
+import { Image } from "@/core/types/commons/image";
 
 const INITIAL_STATE: UpdateEventDto = {
   title: "",
@@ -47,7 +48,7 @@ const EditEventForm = () => {
   const [loading, setLoading] = useState(false);
   const [isAllDay, setIsAllDay] = useState(false);
   const [eventData, setEventData] = useState<UpdateEventDto>();
-  const [previewImages, setPreviewImages] = useState<EventImage[]>([]);
+  const [previewImages, setPreviewImages] = useState<Image[]>([]);
   const router = useRouter();
   const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
   const {

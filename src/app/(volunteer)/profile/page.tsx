@@ -20,49 +20,33 @@ import {
 import CircleIcon from "@mui/icons-material/Circle";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-
-// Función para simular la carga de datos del usuario desde el backend
-const fetchUserProfile = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        profileImage: "https://randomuser.me/api/portraits/men/1.jpg", // Imagen aleatoria de un servicio externo
-        description:
-          "Soy un desarrollador apasionado por la tecnología y la creación de soluciones innovadoras. Me encanta aprender nuevos lenguajes de programación y colaborar en proyectos interesantes.",
-        hobbies: [
-          "Leer libros de ciencia ficción",
-          "Ciclismo de montaña",
-          "Cocinar platos internacionales",
-          "Jugar videojuegos",
-        ],
-        interests: [
-          "Inteligencia Artificial",
-          "Desarrollo Web",
-          "Blockchain",
-          "Ciberseguridad",
-        ],
-      });
-    }, 2000); // Simulamos un retraso de 2 segundos
-  });
-};
+import profileService from "@/services/profile/profile.services";
+import { Profile } from "@/core/types/profile";
 
 const ProfileViewPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
   const [tabValue, setTabValue] = useState(0);
-  const [userProfile, setUserProfile] = useState<{
-    profileImage: string;
-    description: string;
-    hobbies: string[];
-    interests: string[];
-  } | null>(null);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchUserProfile().then((data: any) => {
-      setUserProfile(data);
+  const fetchUserProfile = async () => {
+    setLoading(true);
+    try {
+
+      const { data, isSucceeded } = await profileService.getUserProfile();
+      if (isSucceeded) {
+        setUserProfile(data as Profile);
+      }
+    } catch (error) {
+      console.error("Error al obtener el perfil:", error);
+    } finally {
       setLoading(false);
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
   }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -70,7 +54,7 @@ const ProfileViewPage = () => {
   };
 
   const redirectToEditPage = () => {
-    router.push(`/profile/1/edit`); // Redirige a la página de edición con el ID correspondiente
+    router.push(`/profile/edit`); 
   };
 
   if (loading) {
@@ -95,7 +79,8 @@ const ProfileViewPage = () => {
   return (
     <Box>
       <Paper sx={{ p: 3, mb: 4 }}>
-        <Grid container spacing={4}>
+        {loading && <CircularProgress />}
+        {!loading && <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
             <Stack
               direction="column"
@@ -188,11 +173,11 @@ const ProfileViewPage = () => {
               </Box>
             </Box>
           </Grid>
-        </Grid>
+        </Grid>}
       </Paper>
 
       <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
-        <Button variant="contained" color="primary" onClick={redirectToEditPage}>
+        <Button variant="contained" color="primary" disabled={loading} onClick={redirectToEditPage}>
           Editar Perfil
         </Button>
       </Box>

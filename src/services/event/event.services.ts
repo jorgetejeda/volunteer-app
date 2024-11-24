@@ -30,6 +30,7 @@ class EventService {
       let compressedImages: File[] = [];
       if (data.images && data.images.length > 0) {
         compressedImages = await compressImages(data.images, options);
+        console.log( 'Compressed avatar:', compressedImages );
       }
 
       Object.keys(data).forEach((key) => {

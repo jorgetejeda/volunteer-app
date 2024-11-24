@@ -104,7 +104,7 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account }) {
-      if (account) {
+      if (token) {
         try {
           const data = await handleBackEnd(token);
           console.log("Data from handleBackEnd:", data);

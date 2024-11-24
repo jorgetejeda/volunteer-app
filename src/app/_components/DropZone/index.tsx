@@ -10,8 +10,8 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import { Accept, useDropzone } from "react-dropzone";
 import Image from "next/image";
+import { Image as EventImage } from "@/core/types/commons/image";
 import { FieldError } from "react-hook-form";
-import { EventImage } from "@/core/types";
 
 interface DropZoneProps {
   accept: Accept;
