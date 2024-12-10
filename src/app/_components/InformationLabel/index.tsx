@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { InformationLabelProps } from "./types";
-import theme from "@/theme";
+import theme from "@theme/theme";
 
 export const InformationLabel = ({
   icon,

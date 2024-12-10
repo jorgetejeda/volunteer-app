@@ -1,90 +1,63 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { ReactNode, createContext, useContext, useState } from 'react';
+//@Type
+import { User, UserCredentials } from '@/core/types';
+//@Services
+import { AuthService } from '@/services';
 
 interface AuthContextType {
-  user: string;
+  user: User | null;
   isAuthenticated: boolean;
   isAdmin: boolean;
   loading: boolean;
+  login: (data: UserCredentials) => void;
   logout: () => void;
-  setUser: (user: string) => void;
-  setIsAuthenticated: (value: boolean) => void;
-  setIsAdmin: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const checkAuthStatus = async () => {
+  const login = async (data: UserCredentials) => {
     try {
-      const token = localStorage.getItem("token") || sessionStorage.getItem("token");
-      const name = localStorage.getItem("name") || sessionStorage.getItem("name");
-      const adminStatus = localStorage.getItem("isAdmin") === 'true' || sessionStorage.getItem("isAdmin") === 'true';
+      setLoading(true);
+      const { data: user } = await AuthService.login(data);
+
+      setUser(user);
+      setIsAuthenticated(true);
+      user.userRoles.forEach((role) => {
+        if (role.role.title === 'Admin') {
+          setIsAdmin(true);
+        }
+      });
+
+      sessionStorage.setItem('token', user.token);
       
-      if (token) {
-        setIsAuthenticated(true);
-        setIsAdmin(adminStatus);
-        setUser(name || '');
-      } else {
-        setIsAuthenticated(false);
-        setIsAdmin(false);
-        setUser('');
-      }
     } catch (error: any) {
-      console.error("Error al verificar el estado de autenticación", error.message);
-      setIsAuthenticated(false);
-      setIsAdmin(false);
-      setUser('');
+      console.error('Error al iniciar sesión', error.message);
     } finally {
-      setLoading(false); // Ensure loading state is updated
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    checkAuthStatus();
-  }, [router]);
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/login");
-    }
-  }, [isAuthenticated, loading, router]);
 
   const logout = () => {
     try {
       setLoading(true);
-      setUser('');
+      setUser(null);
       setIsAuthenticated(false);
-      setIsAdmin(false);
-      sessionStorage.clear();
-      localStorage.clear();
-      router.push("/login");
     } catch (error: any) {
-      console.error("Error al cerrar sesión", error.message);
+      console.error('Error al cerrar sesión', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAdmin,
-        isAuthenticated,
-        loading,
-        logout,
-        setIsAuthenticated,
-        setIsAdmin,
-        setUser,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isAdmin, isAuthenticated, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -93,7 +66,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuthContext must be used within an AuthContextProvider");
+    throw new Error('useAuthContext must be used within a AuthContextProvider');
   }
   return context;
 };

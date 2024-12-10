@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import theme from "@/theme";
+import theme from "@theme/theme";
 import {
   Box,
   Button,
@@ -153,7 +153,7 @@ export default function Page({ params }: { params: { id: number } }) {
               />
             </div>
           ))}
-        </Carousel>{" "}
+        </Carousel>
       </Box>
 
       <Box marginTop={3} marginBottom={2}>

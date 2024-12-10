@@ -12,6 +12,7 @@ declare module "next-auth" {
     token?: string;
     role: string;
     isAdmin: boolean;
+    agreedTerms: boolean;
   }
 }
 
@@ -23,19 +24,24 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       role: string;
-    }
+      agreedTerms: boolean;
+    };
   }
 }
 
 const handleBackEnd = async (token: any) => {
   try {
-    const authToken = process.env.NEXTAUTH_SECRET;
+    const authToken =
+      process.env.NODE_ENV === "production"
+        ? process.env.NEXTAUTH_SECRET
+        : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
+
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
         name: token.name,
-        authToken,
+        authToken: authToken,
       },
       {
         headers: {
@@ -51,9 +57,11 @@ const handleBackEnd = async (token: any) => {
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
+      userAgreedTerms: data.data.agreedTerms,
     };
   } catch (error) {
-    throw error; // Re-throw to handle in callback
+    console.log("Error in handleBackEnd:", error);
+    throw error;
   }
 };
 
@@ -63,26 +71,31 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID as string,
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET as string,
       tenantId: process.env.AZURE_AD_TENANT_ID as string,
+      httpOptions: {
+        timeout: 30000,
+      },
       authorization: {
         params: {
-          prompt: "login", // Force re-authentication
           scope: "openid profile user.Read email",
         },
       },
     }),
   ],
   debug: process.env.NODE_ENV === "development",
-  secret: process.env.NEXTAUTH_SECRET as string,
+  secret:
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXTAUTH_SECRET
+      : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
   logger: {
     error(code, ...message) {
-      console.error('ERROR - Next', code, message);
+      console.error("ERROR - Next", code, message);
     },
     warn(code, ...message) {
-      console.warn('WARN - Next', code, message);
+      console.warn("WARN - Next", code, message);
     },
     debug(code, ...message) {
-      console.debug('DEBUG Next', code, message);
-    }
+      console.debug("DEBUG Next", code, message);
+    },
   },
   pages: {
     signIn: "/login",
@@ -91,38 +104,37 @@ const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, account }) {
-      if (account) {
-        //token.idToken = account.id_token as string;
-        //token.accessToken = account.access_token as string;
+      if (token) {
         try {
           const data = await handleBackEnd(token);
+          console.log("Data from handleBackEnd:", data);
           token.user = {
+            agreedTerms: data.userAgreedTerms,
             token: data.userToken,
             role: data.userRole,
           };
         } catch (error) {
-          // redirect to logout page
-          console.error("Error in JWT callback:", error);
+          console.error("ERROR trying to login:", error);
         }
       }
+      console.log("Generated JWT token:", token);
       return token;
     },
-    async session({ session, token }): Promise<any> {
-      //session.accessToken = token.accessToken as string;
-      //session.idToken = token.idToken as string;
+    async session({ session, token }) {
+      console.log("Session from session callback:", session);
       session.email = token.email as string;
       session.name = token.name as string;
       session.token = token.user?.token;
       session.role = token.user?.role;
+      session.agreedTerms = token.user.agreedTerms || false;
       session.isAdmin = token.user?.role === "Admin";
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // If there is an error in the OAuth callback, redirect to the error page
-      if (url.includes('error=OAuthCallback')) {
+      console.log("Redirecting to:", url);
+      if (url.includes("error=OAuthCallback")) {
         return `${baseUrl}/auth-error`;
       }
-      // Redirect to the homepage after successful login
       return baseUrl;
     },
   },

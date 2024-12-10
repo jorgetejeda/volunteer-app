@@ -1,4 +1,5 @@
 import { Category } from "./category";
+import { Image } from "./commons/image";
 
 export interface Event  {
   id: number;
@@ -16,13 +17,7 @@ export interface Event  {
   category: Category;
   usersQuantity: number;
   isUserEnrolled: number;
-  images: EventImage[];
-};
-
-export interface EventImage {
-  id: number;
-  documentName: string;
-  documentUrl: string;
+  images: Image[];
 };
 
 export interface EventDto {
@@ -54,6 +49,5 @@ export interface UpdateEventDto {
   allDay: boolean;
   mainImage: string;
   images: File[];
-  currentImages: EventImage[];
+  currentImages: Image[];
 };
-

@@ -1,11 +1,10 @@
 "use client";
-import React, { useState, useMemo, useEffect, use } from "react";
-import theme from "@/theme";
+import React, { useState, useMemo, useEffect } from "react";
+import theme from "@theme/theme";
 import {
   Box,
   Paper,
   Typography,
-  Skeleton,
   IconButton,
   Menu,
   MenuItem,
@@ -23,12 +22,20 @@ import {
   CardContent,
   CardActions,
   Stack,
+  Fade,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import {
   CalendarMonthOutlined,
   LocationOnOutlined,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
+import PublishIcon from "@mui/icons-material/Publish";
+import UnpublishIcon from "@mui/icons-material/Unpublished";
+import PeopleIcon from "@mui/icons-material/People";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Masonry } from "@mui/lab";
 import {
   CategoryLabel,
@@ -48,10 +55,10 @@ import {
 import EventService from "@/services/event/event.services";
 //@Types
 import { Event } from "@/core/types";
-import { useAuthContext } from "@/store/auth/AuthContext";
+import { useSession } from "next-auth/react";
 
 export default function EventPage() {
-  const { isAuthenticated, isAdmin } = useAuthContext();
+  const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<Event[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -87,7 +94,7 @@ export default function EventPage() {
 
   const handleMenuOpen = (
     event: React.MouseEvent<HTMLElement>,
-    eventId: number
+    eventId: number,
   ) => {
     setAnchorEl(event.currentTarget);
     const selectedEvent = events.find((e) => e.id === eventId);
@@ -121,6 +128,9 @@ export default function EventPage() {
       router.push(`panel/event/${currentEvent.id}/edit`);
     }
   };
+  const handleAttended = () => {
+    currentEvent && router.push(`panel/event/attendance/${currentEvent.id}`);
+  };
 
   const handleDelete = () => {
     setDialogOpen(true);
@@ -149,13 +159,37 @@ export default function EventPage() {
     handleMenuClose();
   };
 
+  const togglePublish = async () => {
+    try {
+      if (!currentEvent) return;
+      setActionLoading(true);
+      const { isSucceeded } = await EventService.togglePublishEvent(
+        currentEvent?.id || 0,
+      );
+      if (isSucceeded) {
+        setEvents(
+          events.map((event) =>
+            event.id === currentEvent.id
+              ? { ...event, published: !event.published }
+              : event,
+          ),
+        );
+        handleMenuClose();
+      }
+    } catch (error: any) {
+      console.error("Error toggling publish event", error.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
       const matchesSearch = event.title
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
-      if (isAdmin) {
+      if (session?.isAdmin) {
         // Administradores pueden ver todos los eventos
         const matchesFilter =
           filter === "all" ||
@@ -173,7 +207,7 @@ export default function EventPage() {
         return matchesSearch && matchesFilter;
       }
     });
-  }, [events, searchTerm, filter, isAdmin]);
+  }, [events, searchTerm, filter]);
 
   return (
     <>
@@ -232,7 +266,7 @@ export default function EventPage() {
             Todos
           </Button>
 
-          {isAdmin && (
+          {session?.isAdmin && (
             <>
               <Button
                 variant={filter === "published" ? "contained" : "outlined"}
@@ -328,7 +362,7 @@ export default function EventPage() {
                     textColor={lightOrDarkColor(event.category.color)}
                     backgroundColor={event.category.color}
                   />
-                  {isAdmin && (
+                  {session?.isAdmin && (
                     <Box>
                       <IconButton
                         aria-label="more"
@@ -348,15 +382,59 @@ export default function EventPage() {
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
                         elevation={1}
+                        TransitionComponent={Fade}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "right",
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
                       >
+                        {/* Publicar/Despublicar Item */}
                         <MenuItem
                           onClick={() => handlePublish(currentEvent!.id)}
                         >
-                          {currentEvent?.published ? "Despublicar" : "Publicar"}
+                          <ListItemIcon>
+                            {currentEvent?.published ? (
+                              <UnpublishIcon />
+                            ) : (
+                              <PublishIcon />
+                            )}
+                          </ListItemIcon>
+                          <ListItemText>
+                            {currentEvent?.published
+                              ? "Despublicar"
+                              : "Publicar"}
+                          </ListItemText>
                         </MenuItem>
-                        <MenuItem onClick={handleEdit}>Editar</MenuItem>
+
+                        {/* Asistencia Item */}
+                        <MenuItem onClick={handleAttended}>
+                          <ListItemIcon>
+                            <PeopleIcon />
+                          </ListItemIcon>
+                          <ListItemText>Asistencia</ListItemText>
+                        </MenuItem>
+
+                        {/* Editar Item */}
+                        <MenuItem onClick={handleEdit}>
+                          <ListItemIcon>
+                            <EditIcon />
+                          </ListItemIcon>
+                          <ListItemText>Editar</ListItemText>
+                        </MenuItem>
+
                         <Divider />
-                        <MenuItem onClick={handleDelete}>Eliminar</MenuItem>
+
+                        {/* Eliminar Item */}
+                        <MenuItem onClick={handleDelete}>
+                          <ListItemIcon>
+                            <DeleteIcon color="error" />
+                          </ListItemIcon>
+                          <ListItemText>Eliminar</ListItemText>
+                        </MenuItem>
                       </Menu>
                     </Box>
                   )}
@@ -415,12 +493,13 @@ export default function EventPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={cancelDelete} color="primary">
+          <Button variant="outlined" onClick={cancelDelete} color="primary">
             Cancelar
           </Button>
           <Button
+            variant="contained"
             onClick={confirmDelete}
-            color="secondary"
+            color="primary"
             autoFocus
             disabled={actionLoading}
           >

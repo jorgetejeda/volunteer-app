@@ -6,7 +6,7 @@ import { LocationOnOutlined, CalendarMonthOutlined } from "@mui/icons-material";
 // Types
 import { CardEventProps } from "./types";
 // Styles
-import theme from "@/theme";
+import theme from "@theme/theme";
 import { InformationLabel } from "../InformationLabel";
 import CategoryLabel from "../CategoryLabel";
 import { cleanHtml, elipsisText } from "@/utils";
