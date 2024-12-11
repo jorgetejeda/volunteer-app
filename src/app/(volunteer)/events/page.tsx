@@ -159,30 +159,6 @@ export default function EventPage() {
     handleMenuClose();
   };
 
-  const togglePublish = async () => {
-    try {
-      if (!currentEvent) return;
-      setActionLoading(true);
-      const { isSucceeded } = await EventService.togglePublishEvent(
-        currentEvent?.id || 0,
-      );
-      if (isSucceeded) {
-        setEvents(
-          events.map((event) =>
-            event.id === currentEvent.id
-              ? { ...event, published: !event.published }
-              : event,
-          ),
-        );
-        handleMenuClose();
-      }
-    } catch (error: any) {
-      console.error("Error toggling publish event", error.message);
-    } finally {
-      setActionLoading(false);
-    }
-  };
-
   const filteredEvents = useMemo(() => {
     return events.filter((event) => {
       const matchesSearch = event.title

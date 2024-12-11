@@ -6,7 +6,10 @@ interface LoadingBackdropProps {
 export const LoadingBackdrop: React.FC<LoadingBackdropProps> = ({ open }) => {
   return (
     <Backdrop
-      sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      sx={{
+        color: (theme) => theme.palette.common.white,
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
       open={open}
     >
       <CircularProgress color="inherit" />

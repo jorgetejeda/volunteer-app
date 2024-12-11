@@ -21,7 +21,7 @@ import {
   Menu,
   TimerOutlined,
 } from "@mui/icons-material";
-import { InformationLabel, CategoryLabel } from "@components/index";
+import { InformationLabel, CategoryLabel, BackButton, LoadingBackdrop } from "@components/index";
 //@Types
 import { Event } from "@/core/types";
 //@Services
@@ -106,25 +106,12 @@ export default function Page({ params }: { params: { id: number } }) {
     }
   };
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+  if (loading) return <LoadingBackdrop open={loading} />; 
 
   return (
     <>
       <Box marginTop={3} marginBottom={2}>
-        <Button component="a" href="/events" variant="text">
-          Volver a eventos
-        </Button>
+        <BackButton linkUrl="/events" buttonLabel="Volver a eventos" />
       </Box>
       <Box
         height={450}

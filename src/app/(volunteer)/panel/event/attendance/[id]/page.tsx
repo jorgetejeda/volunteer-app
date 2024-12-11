@@ -21,15 +21,16 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CircularProgress,
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { EventService } from "@/services";
-import { useParams, useRouter } from "next/navigation";
-import {  Users } from "@/core/types";
+import { useParams } from "next/navigation";
+import { Users } from "@/core/types";
+import { BackButton, LoadingBackdrop } from "@/app/_components";
 
 const AttendancePage = () => {
-
   const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
   const [users, setUsers] = useState<Users[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -39,26 +40,38 @@ const AttendancePage = () => {
   const [userToRemove, setUserToRemove] = useState<Users | null>(null);
   const [eventName, setEventName] = useState<string>("Evento de Prueba");
 
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchUsers()
+    fetchUsers();
   }, []);
 
   const fetchUsers = async (): Promise<void> => {
-    const {data, isSucceeded} = await EventService.getAllUserEnrolledEvents(+eventId);
-    if(!isSucceeded || !data) {
-      console.log("Error al obtener los usuarios");
+    setLoading(true);
+    try {
+      const { data, isSucceeded } =
+        await EventService.getAllUserEnrolledEvents(+eventId);
+      if (!isSucceeded || !data) {
+        console.log("Error al obtener los usuarios");
+      }
+      setEventName(data.event);
+      const users = data.users.map((user) => ({ ...user, submitted: false }));
+      setUsers(users);
+    } catch (error) {
+      console.error("Error al obtener los usuarios", error);
+    } finally {
+      setLoading(false);
     }
-    setEventName(data.event);
-    const users = data.users.map((user) => ({ ...user, submitted: false }));
-    setUsers(users);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
     setCurrentPage(page);
   };
 
@@ -79,8 +92,8 @@ const AttendancePage = () => {
       prevUsers.map((user) =>
         selectedUsers.has(user.id)
           ? { ...user, attended: true, submitted: true }
-          : user
-      )
+          : user,
+      ),
     );
     setSelectedUsers(new Set());
   };
@@ -89,8 +102,10 @@ const AttendancePage = () => {
     await EventService.markAttendance(+eventId, { userId, attended: true });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === userId ? { ...user, attended: true, submitted: true } : user
-      )
+        user.id === userId
+          ? { ...user, attended: true, submitted: true }
+          : user,
+      ),
     );
   };
 
@@ -98,8 +113,10 @@ const AttendancePage = () => {
     await EventService.markAttendance(+eventId, { userId, attended: false });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === userId ? { ...user, attended: false, submitted: false } : user
-      )
+        user.id === userId
+          ? { ...user, attended: false, submitted: false }
+          : user,
+      ),
     );
     setDialogOpen(false);
   };
@@ -119,12 +136,16 @@ const AttendancePage = () => {
   };
 
   const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  if (loading) return <LoadingBackdrop open={loading} />;
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <BackButton />
+
+      <Typography variant="h1" component="h1" gutterBottom marginTop={2}>
         {eventName}
       </Typography>
 
@@ -171,7 +192,9 @@ const AttendancePage = () => {
                 </TableCell> */}
                 <TableCell>{user.name}</TableCell>
                 <TableCell>
-                  {user.submitted || user.attended ? "Asistencia marcada" : "No marcada"}
+                  {user.submitted || user.attended
+                    ? "Asistencia marcada"
+                    : "No marcada"}
                 </TableCell>
                 <TableCell>
                   {user.submitted || user.attended ? (
@@ -236,7 +259,11 @@ const AttendancePage = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" onClick={handleDialogClose} color="primary">
+          <Button
+            variant="outlined"
+            onClick={handleDialogClose}
+            color="primary"
+          >
             Cancelar
           </Button>
           <Button
