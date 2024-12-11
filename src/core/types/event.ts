@@ -51,3 +51,21 @@ export interface UpdateEventDto {
   images: File[];
   currentImages: Image[];
 };
+
+
+export interface Users {
+  id: string;
+  name: string;
+  attended: boolean;
+  submitted: boolean;
+};
+
+export interface UsersEvent {
+  event: string;
+  users: Users[];
+};
+
+export interface EventAttendance {
+  userId: string,
+  attended: boolean
+}

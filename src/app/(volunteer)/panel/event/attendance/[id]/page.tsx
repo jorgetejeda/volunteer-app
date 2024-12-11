@@ -4,7 +4,6 @@ import {
   Box,
   Typography,
   Button,
-  Container,
   TextField,
   Table,
   TableBody,
@@ -25,40 +24,34 @@ import {
 } from "@mui/material";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-
-type User = {
-  id: string;
-  name: string;
-  photo: string;
-  attended: boolean;
-  submitted: boolean;
-};
+import { EventService } from "@/services";
+import { useParams, useRouter } from "next/navigation";
+import {  Users } from "@/core/types";
 
 const AttendancePage = () => {
-  const [users, setUsers] = useState<User[]>([]);
+
+  const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
+  const [users, setUsers] = useState<Users[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [userToRemove, setUserToRemove] = useState<User | null>(null);
+  const [userToRemove, setUserToRemove] = useState<Users | null>(null);
+  const [eventName, setEventName] = useState<string>("Evento de Prueba");
 
-  const eventName = "Evento de Prueba";
 
   useEffect(() => {
-    fetchUsers().then((data) => setUsers(data));
+    fetchUsers()
   }, []);
 
-  const fetchUsers = async (): Promise<User[]> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          { id: "1", name: "Juan Pérez", photo: "https://randomuser.me/api/portraits/men/1.jpg", attended: false, submitted: false },
-          { id: "2", name: "Ana Gómez", photo: "https://randomuser.me/api/portraits/women/2.jpg", attended: false, submitted: false },
-          { id: "3", name: "Carlos Ruiz", photo: "https://randomuser.me/api/portraits/men/3.jpg", attended: false, submitted: false },
-          { id: "4", name: "María López", photo: "https://randomuser.me/api/portraits/women/4.jpg", attended: false, submitted: false },
-        ]);
-      }, 1000);
-    });
+  const fetchUsers = async (): Promise<void> => {
+    const {data, isSucceeded} = await EventService.getAllUserEnrolledEvents(+eventId);
+    if(!isSucceeded || !data) {
+      console.log("Error al obtener los usuarios");
+    }
+    setEventName(data.event);
+    const users = data.users.map((user) => ({ ...user, submitted: false }));
+    setUsers(users);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +85,8 @@ const AttendancePage = () => {
     setSelectedUsers(new Set());
   };
 
-  const handleMarkAttendance = (userId: string) => {
+  const handleMarkAttendance = async (userId: string) => {
+    await EventService.markAttendance(+eventId, { userId, attended: true });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId ? { ...user, attended: true, submitted: true } : user
@@ -100,7 +94,8 @@ const AttendancePage = () => {
     );
   };
 
-  const handleRemoveAttendance = (userId: string) => {
+  const handleRemoveAttendance = async (userId: string) => {
+    await EventService.markAttendance(+eventId, { userId, attended: false });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         user.id === userId ? { ...user, attended: false, submitted: false } : user
@@ -113,7 +108,7 @@ const AttendancePage = () => {
     handleUserClick(userId);
   };
 
-  const confirmRemoveAttendance = (user: User) => {
+  const confirmRemoveAttendance = (user: Users) => {
     setUserToRemove(user);
     setDialogOpen(true);
   };
@@ -129,7 +124,6 @@ const AttendancePage = () => {
 
   return (
     <Box>
-      {/* Título del Evento */}
       <Typography variant="h4" gutterBottom>
         {eventName}
       </Typography>
@@ -152,7 +146,7 @@ const AttendancePage = () => {
           <TableHead>
             <TableRow>
               <TableCell>Seleccionar</TableCell>
-              <TableCell>Foto</TableCell>
+              {/* <TableCell>Foto</TableCell> */}
               <TableCell>Nombre</TableCell>
               <TableCell>Asistencia</TableCell>
               <TableCell>Acción</TableCell>
@@ -165,22 +159,22 @@ const AttendancePage = () => {
                   <Checkbox
                     checked={selectedUsers.has(user.id)}
                     onChange={() => handleCheckboxChange(user.id)}
-                    disabled={user.submitted}
+                    disabled={user.submitted || user.attended}
                   />
                 </TableCell>
-                <TableCell>
-                  <img
-                    src={user.photo}
+                {/* <TableCell>
+                  <Image
+                    src={user.image || "/default-image.png"}
                     alt={user.name}
                     style={{ width: "50px", borderRadius: "50%" }}
                   />
-                </TableCell>
+                </TableCell> */}
                 <TableCell>{user.name}</TableCell>
                 <TableCell>
-                  {user.submitted ? "Asistencia marcada" : "No marcada"}
+                  {user.submitted || user.attended ? "Asistencia marcada" : "No marcada"}
                 </TableCell>
                 <TableCell>
-                  {user.submitted ? (
+                  {user.submitted || user.attended ? (
                     <Tooltip title="Quitar asistencia">
                       <IconButton
                         onClick={() => confirmRemoveAttendance(user)}

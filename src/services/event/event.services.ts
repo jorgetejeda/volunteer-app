@@ -1,6 +1,6 @@
 import httpImplementation from "@/core-libraries/http/http.implementation";
 import { ApiResponse } from "@/core-libraries/http/types/api-response";
-import { Event, EventDto, UpdateEventDto } from "@/core/types/event";
+import { Event, EventAttendance, EventDto, UpdateEventDto, UsersEvent } from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
 import { QueryParams } from "@/core-libraries/http/types/query-params";
@@ -167,6 +167,21 @@ class EventService {
     return httpImplementation.patch<ApiResponse<boolean>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/publish/${eventId}`,
+    );
+  }
+
+  async getAllUserEnrolledEvents(eventId: number): Promise<ApiResponse<UsersEvent>> {
+    return httpImplementation.get<ApiResponse<UsersEvent>, unknown>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/${eventId}/users`
+    );
+  }
+
+  async markAttendance(eventId: number, data: EventAttendance): Promise<ApiResponse<void>> {
+    return httpImplementation.patch<ApiResponse<void>, EventAttendance>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/${eventId}/user/attended`,
+      { userId: data.userId, attended: data.attended }
     );
   }
 }
