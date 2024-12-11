@@ -52,7 +52,6 @@ export interface UpdateEventDto {
   currentImages: Image[];
 };
 
-
 export interface Users {
   id: string;
   name: string;
@@ -69,3 +68,10 @@ export interface EventAttendance {
   userId: string,
   attended: boolean
 }
+
+
+export interface BulkEventAttendance {
+  userId: string[]; 
+  attended: boolean;
+}
+

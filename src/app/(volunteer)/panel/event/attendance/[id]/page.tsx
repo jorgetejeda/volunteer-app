@@ -27,7 +27,7 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { EventService } from "@/services";
 import { useParams } from "next/navigation";
-import { Users } from "@/core/types";
+import { BulkEventAttendance, Users } from "@/core/types";
 import { BackButton, LoadingBackdrop } from "@/app/_components";
 
 const AttendancePage = () => {
@@ -87,7 +87,22 @@ const AttendancePage = () => {
     });
   };
 
-  const handleSendAttendance = () => {
+  const handleSendAttendance = async () => {
+    if (selectedUsers.size === 0) {
+      console.log("No users selected.");
+      return;
+    }
+
+    const userIds = Array.from(selectedUsers);
+
+    const payload = {
+      userId: userIds,
+      attended: true,
+    };
+
+    try {
+     await EventService.markBulkAttendance(+eventId, payload);
+
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
         selectedUsers.has(user.id)
@@ -95,7 +110,13 @@ const AttendancePage = () => {
           : user,
       ),
     );
+
     setSelectedUsers(new Set());
+
+    console.log("Attendance marked successfully.");
+  } catch (error) {
+    console.error("Error marking attendance:", error);
+  }
   };
 
   const handleMarkAttendance = async (userId: string) => {

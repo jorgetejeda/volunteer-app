@@ -1,6 +1,13 @@
 import httpImplementation from "@/core-libraries/http/http.implementation";
 import { ApiResponse } from "@/core-libraries/http/types/api-response";
-import { Event, EventAttendance, EventDto, UpdateEventDto, UsersEvent } from "@/core/types/event";
+import {
+    BulkEventAttendance,
+  Event,
+  EventAttendance,
+  EventDto,
+  UpdateEventDto,
+  UsersEvent,
+} from "@/core/types/event";
 import { ServicesInstanceEnum } from "@/core/enums/services-instance.enum";
 import { AxiosHeaders } from "axios";
 import { QueryParams } from "@/core-libraries/http/types/query-params";
@@ -38,7 +45,7 @@ class EventService {
             formData.append(
               "images",
               compressedImages[i],
-              compressedImages[i].name
+              compressedImages[i].name,
             );
           }
         } else {
@@ -51,7 +58,7 @@ class EventService {
         this.baseUrl,
         formData,
         "json",
-        this.defaultHeaders
+        this.defaultHeaders,
       );
     } catch (error) {
       console.error("Error al guardar el evento:", error);
@@ -74,20 +81,20 @@ class EventService {
 
     return httpImplementation.get<ApiResponse<Event[]>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      URL
+      URL,
     );
   }
 
   async getEventById(id: number): Promise<ApiResponse<Event>> {
     return httpImplementation.get<ApiResponse<Event>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${id}`
+      `${this.baseUrl}/${id}`,
     );
   }
 
   async updateEvent(
     id: number,
-    data: Partial<UpdateEventDto>
+    data: Partial<UpdateEventDto>,
   ): Promise<ApiResponse<Event>> {
     try {
       const formData = new FormData();
@@ -115,13 +122,13 @@ class EventService {
               if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
                 formData.append(
                   `currentImages`,
-                  JSON.stringify(data[key as keyof Partial<UpdateEventDto>])
+                  JSON.stringify(data[key as keyof Partial<UpdateEventDto>]),
                 );
               }
             } else {
               formData.append(
                 key,
-                String(data[key as keyof Partial<UpdateEventDto>])
+                String(data[key as keyof Partial<UpdateEventDto>]),
               );
             }
           }
@@ -133,7 +140,7 @@ class EventService {
         `${this.baseUrl}/${id}`,
         formData,
         "json",
-        this.defaultHeaders
+        this.defaultHeaders,
       );
     } catch (error) {
       console.error("Error al actualizar el evento:", error);
@@ -144,22 +151,26 @@ class EventService {
   async deleteEvent(id: number): Promise<ApiResponse<void>> {
     return httpImplementation.delete<ApiResponse<void>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${id}`
+      `${this.baseUrl}/${id}`,
     );
   }
 
-  async toggleEnrollUnenrollEvent(eventId: number, value: string): Promise<ApiResponse<{status: string}>> {
-    return httpImplementation.patch<ApiResponse<{status: string}>, {status: string}>(
-      ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/enroll/${eventId}`,
-      { status: value }
-    );
+  async toggleEnrollUnenrollEvent(
+    eventId: number,
+    value: string,
+  ): Promise<ApiResponse<{ status: string }>> {
+    return httpImplementation.patch<
+      ApiResponse<{ status: string }>,
+      { status: string }
+    >(ServicesInstanceEnum.API_INSTANCE, `${this.baseUrl}/enroll/${eventId}`, {
+      status: value,
+    });
   }
 
   async userTotalHours(): Promise<ApiResponse<void>> {
     return httpImplementation.get<ApiResponse<void>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/total-hours`
+      `${this.baseUrl}/total-hours`,
     );
   }
 
@@ -170,18 +181,37 @@ class EventService {
     );
   }
 
-  async getAllUserEnrolledEvents(eventId: number): Promise<ApiResponse<UsersEvent>> {
+  async getAllUserEnrolledEvents(
+    eventId: number,
+  ): Promise<ApiResponse<UsersEvent>> {
     return httpImplementation.get<ApiResponse<UsersEvent>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${eventId}/users`
+      `${this.baseUrl}/${eventId}/users`,
     );
   }
 
-  async markAttendance(eventId: number, data: EventAttendance): Promise<ApiResponse<void>> {
+  async markAttendance(
+    eventId: number,
+    data: EventAttendance,
+  ): Promise<ApiResponse<void>> {
     return httpImplementation.patch<ApiResponse<void>, EventAttendance>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/${eventId}/user/attended`,
-      { userId: data.userId, attended: data.attended }
+      { userId: data.userId, attended: data.attended },
+    );
+  }
+
+  async markBulkAttendance(
+    eventId: number,
+    data: BulkEventAttendance,
+  ): Promise<ApiResponse<void>> {
+    return httpImplementation.patch<ApiResponse<void>, BulkEventAttendance>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/${eventId}/users/attended`, 
+      {
+        userId: data.userId, 
+        attended: data.attended, 
+      },
     );
   }
 }
