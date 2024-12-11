@@ -27,13 +27,18 @@ export const components = {
         border: "none",
         "& .MuiOutlinedInput-root": {
           backgroundColor: palette.common.white,
-          borderRadius: "5em",
           "&:hover fieldset": {
             borderColor: palette.primary.main,
           },
           "&.Mui-focused fieldset": {
             borderColor: palette.primary.main,
           },
+        },
+        "& .MuiOutlinedInput-root:not(.MuiInputBase-multiline)": {
+          borderRadius: "5em",
+        },
+        "& .MuiOutlinedInput-root:is(.MuiInputBase-multiline)": {
+          borderRadius: "3em",
         },
       },
     },
