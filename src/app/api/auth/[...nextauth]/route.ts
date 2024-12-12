@@ -58,7 +58,7 @@ const handleBackEnd = async (token: any) => {
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
-      userAgreedTerms: false, 
+      userAgreedTerms: true, 
     };
   } catch (error) {
     console.log("Error in handleBackEnd:", error);
