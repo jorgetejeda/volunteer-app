@@ -36,6 +36,7 @@ const handleBackEnd = async (token: any) => {
         ? process.env.NEXTAUTH_SECRET
         : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
 
+    console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`)
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
@@ -57,7 +58,7 @@ const handleBackEnd = async (token: any) => {
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
-      userAgreedTerms: data.data.agreedTerms,
+      userAgreedTerms: false, 
     };
   } catch (error) {
     console.log("Error in handleBackEnd:", error);
