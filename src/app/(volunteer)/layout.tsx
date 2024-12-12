@@ -105,7 +105,7 @@ export default function EventLayout(props: { children: React.ReactNode }) {
 
       {/* Dialogo para Términos y Condiciones */}
       <Dialog
-        open={open}
+        open={false}
         onClose={() => {}}
         disableEscapeKeyDown
         maxWidth="md"
