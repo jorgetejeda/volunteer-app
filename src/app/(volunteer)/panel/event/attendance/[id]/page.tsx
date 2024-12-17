@@ -21,13 +21,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CircularProgress,
 } from "@mui/material";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { EventService } from "@/services";
 import { useParams } from "next/navigation";
-import { BulkEventAttendance, Users } from "@/core/types";
+import { Users } from "@/core/types";
 import { BackButton, LoadingBackdrop } from "@/app/_components";
 
 const AttendancePage = () => {
@@ -222,16 +220,15 @@ const AttendancePage = () => {
                     <Tooltip title="Quitar asistencia">
                       <IconButton
                         onClick={() => confirmRemoveAttendance(user)}
-                        color="error"
+                        color="primary"
                       >
-                        <RemoveCircleOutlineIcon />
+                        <CheckCircleOutlineIcon />
                       </IconButton>
                     </Tooltip>
                   ) : (
                     <Tooltip title="Marcar asistencia">
                       <IconButton
                         onClick={() => handleMarkAttendance(user.id)}
-                        color="primary"
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>

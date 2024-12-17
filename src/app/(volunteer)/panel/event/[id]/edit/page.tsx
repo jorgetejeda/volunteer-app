@@ -70,9 +70,8 @@ const EditEventForm = () => {
       const fetchEventData = async () => {
         setLoading(true);
         try {
-          const { data: event, isSucceeded } = await EventService.getEventById(
-            +eventId
-          );
+          const { data: event, isSucceeded } =
+            await EventService.getEventById(+eventId);
 
           console.log("categoria", event.category.id);
           if (!isSucceeded) {
@@ -92,7 +91,6 @@ const EditEventForm = () => {
           setValue("currentImages", event.images);
           setIsAllDay(event.allDay);
           setPreviewImages(event.images);
-
         } catch (error) {
           console.error("Error al cargar los datos del evento:", error);
         } finally {
@@ -303,7 +301,7 @@ const EditEventForm = () => {
                   onKeyDown={(event) => {
                     if (
                       ["Backspace", "ArrowLeft", "ArrowRight", "Tab"].includes(
-                        event.key
+                        event.key,
                       )
                     )
                       return;
@@ -312,6 +310,18 @@ const EditEventForm = () => {
                       event.preventDefault();
                     }
                   }}
+                />
+              </Paper>
+
+              <Paper sx={{ padding: 2 }}>
+                <TextField
+                  label="Ubicación"
+                  fullWidth
+                  {...register("location", {
+                    required: "La ubicación es obligatoria",
+                  })}
+                  error={!!errors.location}
+                  helperText={errors.location?.message}
                 />
               </Paper>
 
