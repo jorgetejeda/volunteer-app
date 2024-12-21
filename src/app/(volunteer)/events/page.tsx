@@ -57,6 +57,8 @@ import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
 import { useSession } from "next-auth/react";
 
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_FILES_API}/events`;
+
 export default function EventPage() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(true);
@@ -304,7 +306,7 @@ export default function EventPage() {
                   <CardMedia
                     component="img"
                     height="150"
-                    image={event.images[0].documentUrl}
+                    image={`${BASE_URL}/${event.images[0].documentName}`}
                     alt="Event"
                     sx={{
                       width: "100%",

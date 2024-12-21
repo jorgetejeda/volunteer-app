@@ -50,6 +50,7 @@ export interface UpdateEventDto {
   mainImage: string;
   images: File[];
   currentImages: Image[];
+  deletedImages?: string[];
 };
 
 export interface Users {

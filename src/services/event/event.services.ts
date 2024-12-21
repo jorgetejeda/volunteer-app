@@ -99,6 +99,8 @@ class EventService {
     try {
       const formData = new FormData();
 
+      console.log("Data", data.deletedImages);
+
       // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
         maxSizeMB: 0.5,
@@ -114,26 +116,25 @@ class EventService {
         });
       }
 
-      // Agregar otros campos al FormData
-      Object.keys(data).forEach((key) => {
-        if (key !== "images") {
-          if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
-            if (key === "currentImages") {
-              if (data[key as keyof Partial<UpdateEventDto>] !== undefined) {
-                formData.append(
-                  `currentImages`,
-                  JSON.stringify(data[key as keyof Partial<UpdateEventDto>]),
-                );
-              }
-            } else {
-              formData.append(
-                key,
-                String(data[key as keyof Partial<UpdateEventDto>]),
-              );
-            }
-          }
+    for (const key in data) {
+      const value = data[key as keyof Partial<UpdateEventDto>];
+      if (key === 'images' || value === undefined) continue;
+
+      if (key === 'deletedImages') {
+        // Agregar cada imagen eliminada como un campo separado
+        if (Array.isArray(value)) {
+          value.forEach((fileName) => {
+            formData.append('deletedImages[]', String(fileName));
+          });
         }
-      });
+      } else if (key === 'currentImages' && Array.isArray(value)) {
+        // Serializar 'currentImages' si es un arreglo
+        formData.append('currentImages', JSON.stringify(value));
+      } else {
+        // Agregar el resto de los campos
+        formData.append(key, String(value));
+      }
+    }
 
       return await httpImplementation.patch<ApiResponse<Event>, FormData>(
         ServicesInstanceEnum.API_INSTANCE,

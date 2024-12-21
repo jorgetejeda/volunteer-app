@@ -32,6 +32,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { Carousel } from "react-responsive-carousel";
 
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_FILES_API}/events`;
+
 export default function Page({ params }: { params: { id: number } }) {
   const id = +params.id;
 
@@ -133,7 +135,7 @@ export default function Page({ params }: { params: { id: number } }) {
               style={{ position: "relative", width: "100%", height: "450px" }}
             >
               <Image
-                src={image.documentUrl}
+                src={`${BASE_URL}/${image.documentName}`}
                 alt={image.documentName}
                 layout="fill"
                 objectFit="cover"

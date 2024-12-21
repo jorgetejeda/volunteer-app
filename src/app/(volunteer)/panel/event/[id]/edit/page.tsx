@@ -49,6 +49,7 @@ const EditEventForm = () => {
   const [isAllDay, setIsAllDay] = useState(false);
   const [eventData, setEventData] = useState<UpdateEventDto>();
   const [previewImages, setPreviewImages] = useState<Image[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const router = useRouter();
   const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
   const {
@@ -110,8 +111,12 @@ const EditEventForm = () => {
       setLoading(false);
       return;
     }
+    const payload = {
+      ...data,
+      deletedImages,
+    }
     try {
-      const response = await EventService.updateEvent(+eventId, data);
+      const response = await EventService.updateEvent(+eventId, payload);
       if (!response.isSucceeded) {
         throw new Error("Error al actualizar el evento");
       }
@@ -188,6 +193,7 @@ const EditEventForm = () => {
                   clearErrors={() => clearErrors()}
                   defaultValues={previewImages}
                   main={getValues("mainImage")}
+                  deletedImages={setDeletedImages}
                 />
               </Paper>
             </Stack>

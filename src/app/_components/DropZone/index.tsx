@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, SetStateAction, Dispatch } from "react";
 import {
   Box,
   Typography,
@@ -23,8 +23,10 @@ interface DropZoneProps {
   clearErrors: (name?: string) => void;
   defaultValues?: EventImage[] | null;
   main?: string | null;
+  deletedImages?: Dispatch<SetStateAction<string[]>>; 
 }
 
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_FILES_API}/events`;
 export const DropZone: React.FC<DropZoneProps> = ({
   accept,
   label = "Drop image here",
@@ -35,6 +37,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
   clearErrors,
   defaultValues,
   main,
+  deletedImages,
 }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<EventImage[]>([]);
@@ -95,6 +98,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   const removePreviewImage = useCallback(
     (fileName: string) => {
+      if(deletedImages) deletedImages((prev) => [...prev, fileName]);
       setPreviewImages((prevImages) => {
         const updatedImages: EventImage[] = prevImages.filter(
           (image) => image.documentName !== fileName
@@ -108,7 +112,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
         return updatedImages;
       });
     },
-    [files, mainImage, setValue]
+    [files, mainImage, setValue, deletedImages]
   );
 
   const handleMainImageChange = useCallback(
@@ -186,7 +190,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
                   width={100}
                   height={100}
                   layout="responsive"
-                  src={file.documentUrl}
+                  src={`${BASE_URL}/${file.documentName}`}
                   alt="preview"
                 />
               </Box>
