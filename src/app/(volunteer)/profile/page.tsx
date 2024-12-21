@@ -23,6 +23,8 @@ import { useSession } from "next-auth/react";
 import profileService from "@/services/profile/profile.services";
 import { Profile } from "@/core/types/profile";
 
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_FILES_API}/profile`;
+
 const ProfileViewPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -90,7 +92,7 @@ const ProfileViewPage = () => {
             >
               <Avatar
                 alt="Profile Image"
-                src={userProfile?.profileImage || "/default-avatar.png"}
+                src={`${BASE_URL}/${userProfile?.profileImage}` || "/default-avatar.png"}
                 sx={{ width: 150, height: 150 }}
               />
               {session && (
