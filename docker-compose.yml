@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  nextjs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: volunteer-portal
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_AUTH_API: ${NEXT_PUBLIC_AUTH_API}
+      NEXT_PUBLIC_SWAGGER_API_URL: ${NEXT_PUBLIC_SWAGGER_API_URL}
+      NEXT_PUBLIC_FILES_API: ${NEXT_PUBLIC_FILES_API}
+      AZURE_AD_CLIENT_ID: ${AZURE_AD_CLIENT_ID}
+      AZURE_AD_CLIENT_SECRET: ${AZURE_AD_CLIENT_SECRET}
+      AZURE_AD_TENANT_ID: ${AZURE_AD_TENANT_ID}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      NEXTAUTH_URL_INTERNAL: ${NEXTAUTH_URL_INTERNAL}
+    stdin_open: true
+    tty: true

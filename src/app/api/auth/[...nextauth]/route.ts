@@ -36,7 +36,6 @@ const handleBackEnd = async (token: any) => {
         ? process.env.NEXTAUTH_SECRET
         : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
 
-    console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`)
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
@@ -83,10 +82,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   debug: process.env.NODE_ENV === "development",
-  secret:
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXTAUTH_SECRET
-      : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   logger: {
     error(code, ...message) {
       console.error("ERROR - Next", code, message);
