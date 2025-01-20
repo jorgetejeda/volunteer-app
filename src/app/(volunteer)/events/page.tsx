@@ -304,6 +304,7 @@ export default function EventPage() {
               >
                 <Box sx={{ position: "relative" }}>
                   <CardMedia
+                    
                     component="img"
                     height="150"
                     image={`${BASE_URL}/${event.images[0].documentName}`}
