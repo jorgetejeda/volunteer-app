@@ -54,6 +54,7 @@ const handleBackEnd = async (token: any) => {
       throw new Error("Error logging in");
     }
 
+    console.log("Data from handleBackEnd:", data);
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,

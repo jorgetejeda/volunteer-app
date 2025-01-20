@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useMemo, useCallback, SetStateAction, Dispatch } from "react";
 import {
   Box,

@@ -1,14 +1,14 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { Grid, Box, Typography, Container } from "@mui/material";
-import theme from "@theme/theme";
+import { Grid, Box, Typography, Container, useTheme } from "@mui/material";
 // Icons
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 
 export const Footer = () => {
+  const theme = useTheme();
   return (
     <Box component="footer" sx={{ mt: "auto" }}>
       <Box

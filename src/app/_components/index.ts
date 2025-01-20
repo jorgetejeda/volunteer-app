@@ -10,3 +10,4 @@ export { TransitionLink } from "./TransitionLink";
 export { DataNotFound } from "./DataNotFound";
 export { LoadingBackdrop } from "./LoadingBackdrop";
 export { BackButton } from "./BackButton";
+export { Template } from "./Template";
