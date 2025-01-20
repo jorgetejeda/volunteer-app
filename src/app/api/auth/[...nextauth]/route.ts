@@ -13,6 +13,7 @@ declare module "next-auth" {
     role: string;
     isAdmin: boolean;
     agreedTerms: boolean;
+    profileImage: string;
   }
 }
 
@@ -55,9 +56,11 @@ const handleBackEnd = async (token: any) => {
     }
 
     console.log("Data from handleBackEnd:", data);
+
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
+      profileImage: data.data.profileImage,
       userAgreedTerms: true, 
     };
   } catch (error) {
@@ -110,6 +113,7 @@ const authOptions: NextAuthOptions = {
             agreedTerms: data.userAgreedTerms,
             token: data.userToken,
             role: data.userRole,
+            profileImage: data.profileImage,
           };
         } catch (error) {
           console.error("ERROR trying to login:", error);
@@ -126,6 +130,7 @@ const authOptions: NextAuthOptions = {
       session.role = token.user?.role;
       session.agreedTerms = token.user.agreedTerms || false;
       session.isAdmin = token.user?.role === "Admin";
+      session.profileImage = token.user?.profileImage;
       return session;
     },
     async redirect({ url, baseUrl }) {
