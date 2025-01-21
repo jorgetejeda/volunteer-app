@@ -9,6 +9,7 @@ export interface Event  {
   instructions: string;
   date: string;
   time: string;
+  completed: boolean;
   quota: number;
   location: string;
   duration: string;
@@ -31,6 +32,7 @@ export interface EventDto {
   location: string;
   duration: number;
   allDay: boolean;
+  completed: boolean;
   mainImage: string;
   images: File[];
   category?: Category;
@@ -62,6 +64,7 @@ export interface Users {
 
 export interface UsersEvent {
   event: string;
+  eventCompleted: boolean;
   users: Users[];
 };
 

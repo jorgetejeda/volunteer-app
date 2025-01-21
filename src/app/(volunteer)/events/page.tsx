@@ -443,13 +443,24 @@ export default function EventPage() {
                   </Stack>
                 </CardContent>
                 <CardActions sx={{ paddingX: 2, paddingBottom: 2 }}>
-                  <Button
-                    component="a"
-                    variant="contained"
-                    href={`/events/${event.id}`}
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
                   >
-                    Ver Detalle
-                  </Button>
+                    <Button
+                      component="a"
+                      variant="contained"
+                      href={`/events/${event.id}`}
+                    >
+                      Ver Detalle
+                    </Button>
+                    {event.completed && (
+                      <Typography variant="body2" color={theme.palette.grey[200]}>
+                        Evento completado!
+                      </Typography>
+                    )}
+                  </Stack>
                 </CardActions>
               </Card>
             </Paper>

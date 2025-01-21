@@ -49,7 +49,6 @@ export default function Page({ params }: { params: { id: number } }) {
     title: "",
     message: "",
   });
-
   const getEvents = useCallback(async () => {
     const { data, isSucceeded } = await EventService.getEventById(id);
     if (!isSucceeded || !data) {
@@ -62,6 +61,14 @@ export default function Page({ params }: { params: { id: number } }) {
   useEffect(() => {
     getEvents();
   }, [getEvents]);
+
+  const enrollButtonLabel = React.useMemo(() => {
+    if (event.completed) {
+      return "Evento pasado";
+    }
+    return event.isUserEnrolled ? "Cancelar Inscripción" : "Quiero participar";
+  }, [event]);
+
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -167,10 +174,9 @@ export default function Page({ params }: { params: { id: number } }) {
                 <Button
                   variant={event.isUserEnrolled ? "outlined" : "contained"}
                   onClick={handleOpenDialog}
+                  disabled={event.completed}
                 >
-                  {event.isUserEnrolled
-                    ? "No quiero participar"
-                    : "Quiero participar"}
+                  {enrollButtonLabel}
                   {isEnrolling && (
                     <CircularProgress
                       size={24}

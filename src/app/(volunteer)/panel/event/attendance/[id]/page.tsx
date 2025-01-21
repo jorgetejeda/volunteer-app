@@ -37,6 +37,8 @@ const AttendancePage = () => {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userToRemove, setUserToRemove] = useState<Users | null>(null);
   const [eventName, setEventName] = useState<string>("Evento de Prueba");
+  const [isEventOpen, setIsEventOpen] = useState<boolean>(true);
+  const [toggleEventDialog, setToggleEventDialog] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -49,14 +51,19 @@ const AttendancePage = () => {
     try {
       const { data, isSucceeded } =
         await EventService.getAllUserEnrolledEvents(+eventId);
+
       if (!isSucceeded || !data) {
-        console.log("Error al obtener los usuarios");
+        throw new Error("Error al obtener los usuarios");
       }
+
+      console.log("Usuarios del evento:", data);
+
       setEventName(data.event);
+      setIsEventOpen(data.eventCompleted);
       const users = data.users.map((user) => ({ ...user, submitted: false }));
       setUsers(users);
     } catch (error) {
-      console.error("Error al obtener los usuarios", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -158,11 +165,42 @@ const AttendancePage = () => {
     user.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
+  const handleToggleEventDialog = () => {
+    setToggleEventDialog((prev) => !prev);
+  };
+
+  const handleToggleEventStatus = async () => {
+    try {
+      setLoading(true);
+      const { data, isSucceeded } =
+        await EventService.completedEvent(+eventId);
+      if (!isSucceeded || !data) {
+        throw new Error("Error al obtener los usuarios");
+      }
+      console.log("Evento actualizado:", data);
+      setIsEventOpen((prev) => !prev);
+      setToggleEventDialog(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <LoadingBackdrop open={loading} />;
 
   return (
     <Box>
-      <BackButton />
+      <Box justifyContent="space-between" alignItems="center" display="flex">
+        <BackButton />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleToggleEventDialog}
+        >
+          {isEventOpen ? "Reabrir evento" : "Culminar evento"}
+        </Button>
+      </Box>
 
       <Typography variant="h1" component="h1" gutterBottom marginTop={2}>
         {eventName}
@@ -221,6 +259,7 @@ const AttendancePage = () => {
                       <IconButton
                         onClick={() => confirmRemoveAttendance(user)}
                         color="primary"
+                        disabled={isEventOpen}
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
@@ -229,6 +268,7 @@ const AttendancePage = () => {
                     <Tooltip title="Marcar asistencia">
                       <IconButton
                         onClick={() => handleMarkAttendance(user.id)}
+                        disabled={isEventOpen}
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
@@ -262,6 +302,37 @@ const AttendancePage = () => {
         />
       </Box>
 
+      <Dialog open={toggleEventDialog} onClose={handleToggleEventDialog}>
+        <DialogTitle>
+          {isEventOpen
+            ? "Confirmar reapertura del evento"
+            : "Confirmar culminación del evento"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {isEventOpen
+              ? `¿Estás seguro de que deseas reabrir el evento "${eventName}"?`
+              : `¿Estás seguro de que deseas culminar el evento "${eventName}"?`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleToggleEventDialog}
+            variant="outlined"
+            color="primary"
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleToggleEventStatus}
+            variant="contained"
+            color="primary"
+            autoFocus
+          >
+            {isEventOpen ? "Reabrir evento" : "Culminar evento"}
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* Diálogo de Confirmación */}
       <Dialog
         open={dialogOpen}

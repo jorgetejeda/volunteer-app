@@ -215,6 +215,13 @@ class EventService {
       },
     );
   }
+
+  async completedEvent(eventId: number): Promise<ApiResponse<Event>> {
+    return httpImplementation.patch<ApiResponse<Event>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/${eventId}/completed`,
+    );
+  }
 }
 
 const eventService = new EventService();
