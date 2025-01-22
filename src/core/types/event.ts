@@ -32,7 +32,7 @@ export interface EventDto {
   location: string;
   duration: number;
   allDay: boolean;
-  completed: boolean;
+  completed?: boolean;
   mainImage: string;
   images: File[];
   category?: Category;

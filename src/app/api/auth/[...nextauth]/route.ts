@@ -26,6 +26,7 @@ declare module "next-auth/jwt" {
       token: string;
       role: string;
       agreedTerms: boolean;
+      profileImage: string;
     };
   }
 }
