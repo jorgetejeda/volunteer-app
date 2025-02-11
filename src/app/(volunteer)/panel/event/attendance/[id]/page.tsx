@@ -27,6 +27,7 @@ import { EventService } from "@/services";
 import { useParams } from "next/navigation";
 import { Users } from "@/core/types";
 import { BackButton, LoadingBackdrop } from "@/app/_components";
+import { QueryParams } from "@/core-libraries/http/types/query-params";
 
 const AttendancePage = () => {
   const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
@@ -36,30 +37,42 @@ const AttendancePage = () => {
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userToRemove, setUserToRemove] = useState<Users | null>(null);
-  const [eventName, setEventName] = useState<string>("Evento de Prueba");
-  const [isEventOpen, setIsEventOpen] = useState<boolean>(true);
+
+  const [event, setEvent] = useState<{
+    isCompleted: boolean;
+    title: string;
+    totalAttended: number;
+  }>({
+    isCompleted: false,
+    title: "",
+    totalAttended: 0,
+  });
   const [toggleEventDialog, setToggleEventDialog] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers({ limit: 10, offset: 0 });
   }, []);
 
-  const fetchUsers = async (): Promise<void> => {
+  const fetchUsers = async ({limit = 10, offset = 0}: QueryParams): Promise<void> => {
     setLoading(true);
     try {
-      const { data, isSucceeded } =
-        await EventService.getAllUserEnrolledEvents(+eventId);
+      const { data, isSucceeded } = await EventService.getAllUserEnrolledEvents(
+        +eventId,
+        { limit, offset } 
+      );
 
       if (!isSucceeded || !data) {
         throw new Error("Error al obtener los usuarios");
       }
 
-      console.log("Usuarios del evento:", data);
+      setEvent({
+        isCompleted: data.eventCompleted,
+        title: data.event,
+        totalAttended: data.total,
+      });
 
-      setEventName(data.event);
-      setIsEventOpen(data.eventCompleted);
       const users = data.users.map((user) => ({ ...user, submitted: false }));
       setUsers(users);
     } catch (error) {
@@ -75,8 +88,9 @@ const AttendancePage = () => {
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
-    page: number,
+    page: number
   ) => {
+    fetchUsers({ limit: 10, offset: (page - 1) * 10 });
     setCurrentPage(page);
   };
 
@@ -106,32 +120,30 @@ const AttendancePage = () => {
     };
 
     try {
-     await EventService.markBulkAttendance(+eventId, payload);
+      await EventService.markBulkAttendance(+eventId, payload);
 
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        selectedUsers.has(user.id)
-          ? { ...user, attended: true, submitted: true }
-          : user,
-      ),
-    );
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          selectedUsers.has(user.id)
+            ? { ...user, attended: true, submitted: true }
+            : user
+        )
+      );
 
-    setSelectedUsers(new Set());
+      setSelectedUsers(new Set());
 
-    console.log("Attendance marked successfully.");
-  } catch (error) {
-    console.error("Error marking attendance:", error);
-  }
+      console.log("Attendance marked successfully.");
+    } catch (error) {
+      console.error("Error marking attendance:", error);
+    }
   };
 
   const handleMarkAttendance = async (userId: string) => {
     await EventService.markAttendance(+eventId, { userId, attended: true });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === userId
-          ? { ...user, attended: true, submitted: true }
-          : user,
-      ),
+        user.id === userId ? { ...user, attended: true, submitted: true } : user
+      )
     );
   };
 
@@ -141,8 +153,8 @@ const AttendancePage = () => {
       prevUsers.map((user) =>
         user.id === userId
           ? { ...user, attended: false, submitted: false }
-          : user,
-      ),
+          : user
+      )
     );
     setDialogOpen(false);
   };
@@ -172,13 +184,15 @@ const AttendancePage = () => {
   const handleToggleEventStatus = async () => {
     try {
       setLoading(true);
-      const { data, isSucceeded } =
-        await EventService.completedEvent(+eventId);
+      const { data, isSucceeded } = await EventService.completedEvent(+eventId);
       if (!isSucceeded || !data) {
         throw new Error("Error al obtener los usuarios");
       }
-      console.log("Evento actualizado:", data);
-      setIsEventOpen((prev) => !prev);
+
+      setEvent((prev) => ({
+        ...prev,
+        isCompleted: !prev.isCompleted,
+      }));
       setToggleEventDialog(false);
     } catch (error) {
       console.error(error);
@@ -198,12 +212,12 @@ const AttendancePage = () => {
           color="primary"
           onClick={handleToggleEventDialog}
         >
-          {isEventOpen ? "Reabrir evento" : "Culminar evento"}
+          {event.isCompleted ? "Reabrir evento" : "Culminar evento"}
         </Button>
       </Box>
 
       <Typography variant="h1" component="h1" gutterBottom marginTop={2}>
-        {eventName}
+        {event.title}
       </Typography>
 
       {/* Componente de Búsqueda */}
@@ -259,7 +273,7 @@ const AttendancePage = () => {
                       <IconButton
                         onClick={() => confirmRemoveAttendance(user)}
                         color="primary"
-                        disabled={isEventOpen}
+                        disabled={event.isCompleted}
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
@@ -268,7 +282,7 @@ const AttendancePage = () => {
                     <Tooltip title="Marcar asistencia">
                       <IconButton
                         onClick={() => handleMarkAttendance(user.id)}
-                        disabled={isEventOpen}
+                        disabled={event.isCompleted}
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
@@ -296,7 +310,7 @@ const AttendancePage = () => {
       {/* Paginación */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <Pagination
-          count={Math.ceil(filteredUsers.length / 10)}
+          count={Math.ceil(event.totalAttended / 10)}
           page={currentPage}
           onChange={handlePageChange}
         />
@@ -304,15 +318,15 @@ const AttendancePage = () => {
 
       <Dialog open={toggleEventDialog} onClose={handleToggleEventDialog}>
         <DialogTitle>
-          {isEventOpen
+          {event.isCompleted
             ? "Confirmar reapertura del evento"
             : "Confirmar culminación del evento"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {isEventOpen
-              ? `¿Estás seguro de que deseas reabrir el evento "${eventName}"?`
-              : `¿Estás seguro de que deseas culminar el evento "${eventName}"?`}
+            {event.isCompleted
+              ? `¿Estás seguro de que deseas reabrir el evento "${event.title}"?`
+              : `¿Estás seguro de que deseas culminar el evento "${event.title}"?`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -329,10 +343,11 @@ const AttendancePage = () => {
             color="primary"
             autoFocus
           >
-            {isEventOpen ? "Reabrir evento" : "Culminar evento"}
+            {event.isCompleted ? "Reabrir evento" : "Culminar evento"}
           </Button>
         </DialogActions>
       </Dialog>
+
       {/* Diálogo de Confirmación */}
       <Dialog
         open={dialogOpen}

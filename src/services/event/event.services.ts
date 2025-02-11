@@ -103,7 +103,7 @@ class EventService {
 
       // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
-        maxSizeMB: 0.5,
+        maxSizeMB: 1,
         maxWidthOrHeight: 800,
         useWebWorker: true,
       };
@@ -184,10 +184,23 @@ class EventService {
 
   async getAllUserEnrolledEvents(
     eventId: number,
+    query: QueryParams,
   ): Promise<ApiResponse<UsersEvent>> {
+    const params = {
+      limit: query?.limit || 10,
+      offset: query?.offset || 0,
+    };
+
+    const URL = `${this.baseUrl}/${eventId}/users?${new URLSearchParams({
+      limit: String(params.limit),
+      offset: String(params.offset),
+    }).toString()}`;
+
+    console.log("URL", URL);
+
     return httpImplementation.get<ApiResponse<UsersEvent>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
-      `${this.baseUrl}/${eventId}/users`,
+      URL,
     );
   }
 

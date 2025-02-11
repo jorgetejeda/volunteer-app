@@ -66,6 +66,7 @@ export interface UsersEvent {
   event: string;
   eventCompleted: boolean;
   users: Users[];
+  total: number;
 };
 
 export interface EventAttendance {
