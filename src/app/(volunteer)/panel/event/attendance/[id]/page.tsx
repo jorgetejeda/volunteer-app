@@ -200,6 +200,56 @@ const AttendancePage = () => {
       setLoading(false);
     }
   };
+  const attendanceReport = async () => {
+    try {
+      const { data, isSucceeded } = await EventService.getAttendanceReport(+eventId);
+      
+      if (!isSucceeded || !data) {
+        throw new Error("Error al obtener los usuarios");
+      }
+  
+      const { title, date, location, duration, allDay, users } = data;
+  
+      const headers = [
+        "Fecha",
+        "Ubicación",
+        "Duración",
+        "Todo el día",
+        "Nombre del Usuario",
+        "Asistencia"
+      ];
+  
+      // Convertir datos a formato CSV
+      const rows = users.map(user => [
+        date,
+        location,
+        duration,
+        allDay ? "Sí" : "No",
+        user.name,
+        user.attended ? "Asistió" : "No asistió"
+      ]);
+  
+      // Unir encabezados y filas
+      const csvContent = [
+        headers.join(","), 
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+  
+      // Crear Blob y descargar archivo
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", title);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error al generar el reporte:", error);
+    }
+  };
+  
+  
+
 
   if (loading) return <LoadingBackdrop open={loading} />;
 
@@ -207,6 +257,14 @@ const AttendancePage = () => {
     <Box>
       <Box justifyContent="space-between" alignItems="center" display="flex">
         <BackButton />
+        <Box display="flex" gap={2}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={attendanceReport}
+        >
+          Descargar Reporte de Asistencia
+        </Button>
         <Button
           variant="contained"
           color="primary"
@@ -214,6 +272,7 @@ const AttendancePage = () => {
         >
           {event.isCompleted ? "Reabrir evento" : "Culminar evento"}
         </Button>
+        </Box>
       </Box>
 
       <Typography variant="h1" component="h1" gutterBottom marginTop={2}>

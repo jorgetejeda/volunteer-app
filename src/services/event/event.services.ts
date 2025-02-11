@@ -5,6 +5,7 @@ import {
   Event,
   EventAttendance,
   EventDto,
+  ReportAttendanceEventDto,
   UpdateEventDto,
   UsersEvent,
 } from "@/core/types/event";
@@ -98,8 +99,6 @@ class EventService {
   ): Promise<ApiResponse<Event>> {
     try {
       const formData = new FormData();
-
-      console.log("Data", data.deletedImages);
 
       // Opciones para la compresión de imágenes
       const options: Record<string, number | boolean> = {
@@ -196,8 +195,6 @@ class EventService {
       offset: String(params.offset),
     }).toString()}`;
 
-    console.log("URL", URL);
-
     return httpImplementation.get<ApiResponse<UsersEvent>, unknown>(
       ServicesInstanceEnum.API_INSTANCE,
       URL,
@@ -233,6 +230,13 @@ class EventService {
     return httpImplementation.patch<ApiResponse<Event>, { eventId: number }>(
       ServicesInstanceEnum.API_INSTANCE,
       `${this.baseUrl}/${eventId}/completed`,
+    );
+  }
+
+  async getAttendanceReport(eventId: number): Promise<ApiResponse<ReportAttendanceEventDto>> {
+    return httpImplementation.get<ApiResponse<ReportAttendanceEventDto>, { eventId: number }>(
+      ServicesInstanceEnum.API_INSTANCE,
+      `${this.baseUrl}/${eventId}/attendance-report`,
     );
   }
 }
