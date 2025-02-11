@@ -164,7 +164,7 @@ export default function Page({ params }: { params: { id: number } }) {
       </Box>
 
       <Grid container spacing={2}>
-        <Grid item sm={12} md={7}>
+        <Grid item sm={12} xs={12} md={7}>
           <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={2}>
               <Typography variant="body1">

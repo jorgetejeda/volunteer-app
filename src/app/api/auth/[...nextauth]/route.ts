@@ -25,7 +25,6 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       role: string;
-      agreedTerms: boolean;
       profileImage: string;
     };
   }
@@ -111,7 +110,6 @@ const authOptions: NextAuthOptions = {
           const data = await handleBackEnd(token);
           console.log("Data from handleBackEnd:", data);
           token.user = {
-            agreedTerms: data.userAgreedTerms,
             token: data.userToken,
             role: data.userRole,
             profileImage: data.profileImage,
@@ -129,7 +127,7 @@ const authOptions: NextAuthOptions = {
       session.name = token.name as string;
       session.token = token.user?.token;
       session.role = token.user?.role;
-      session.agreedTerms = token.user.agreedTerms || false;
+      session.agreedTerms = false;
       session.isAdmin = token.user?.role === "Admin";
       session.profileImage = token.user?.profileImage;
       return session;
