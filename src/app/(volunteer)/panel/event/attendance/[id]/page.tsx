@@ -37,6 +37,7 @@ const AttendancePage = () => {
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userToRemove, setUserToRemove] = useState<Users | null>(null);
+  const [reportLoading, setReportLoading] = useState<boolean>(false);
 
   const [event, setEvent] = useState<{
     isCompleted: boolean;
@@ -202,6 +203,7 @@ const AttendancePage = () => {
   };
   const attendanceReport = async () => {
     try {
+      setReportLoading(true);
       const { data, isSucceeded } = await EventService.getAttendanceReport(+eventId);
       
       if (!isSucceeded || !data) {
@@ -245,6 +247,8 @@ const AttendancePage = () => {
       link.click();
     } catch (error) {
       console.error("Error al generar el reporte:", error);
+    } finally {
+      setReportLoading(false);
     }
   };
   
@@ -262,8 +266,9 @@ const AttendancePage = () => {
           variant="outlined"
           color="primary"
           onClick={attendanceReport}
+          disabled={reportLoading}
         >
-          Descargar Reporte de Asistencia
+          {reportLoading ? "Generando reporte..." : "Descargar reporte"}
         </Button>
         <Button
           variant="contained"
