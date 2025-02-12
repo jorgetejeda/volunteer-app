@@ -11,3 +11,4 @@ export { DataNotFound } from "./DataNotFound";
 export { LoadingBackdrop } from "./LoadingBackdrop";
 export { BackButton } from "./BackButton";
 export { Template } from "./Template";
+export { Calendar } from "./Calendar";
