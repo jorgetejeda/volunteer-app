@@ -1,7 +1,7 @@
 import { Category } from "./category";
 import { Image } from "./commons/image";
 
-export interface Event  {
+export interface Event {
   id: number;
   title: string;
   mainImage: string;
@@ -9,6 +9,7 @@ export interface Event  {
   instructions: string;
   date: string;
   time: string;
+  completed: boolean;
   quota: number;
   location: string;
   duration: string;
@@ -18,7 +19,7 @@ export interface Event  {
   usersQuantity: number;
   isUserEnrolled: number;
   images: Image[];
-};
+}
 
 export interface EventDto {
   title: string;
@@ -31,6 +32,7 @@ export interface EventDto {
   location: string;
   duration: number;
   allDay: boolean;
+  completed?: boolean;
   mainImage: string;
   images: File[];
   category?: Category;
@@ -51,28 +53,48 @@ export interface UpdateEventDto {
   images: File[];
   currentImages: Image[];
   deletedImages?: string[];
-};
+}
 
 export interface Users {
   id: string;
   name: string;
   attended: boolean;
   submitted: boolean;
-};
+}
 
 export interface UsersEvent {
   event: string;
+  eventCompleted: boolean;
   users: Users[];
-};
-
-export interface EventAttendance {
-  userId: string,
-  attended: boolean
+  total: number;
 }
 
-
-export interface BulkEventAttendance {
-  userId: string[]; 
+export interface EventAttendance {
+  userId: string;
   attended: boolean;
 }
 
+export interface BulkEventAttendance {
+  userId: string[];
+  attended: boolean;
+}
+
+export interface UserAttended {
+  id: string;
+  name: string;
+  attended: boolean;
+  status: string;
+}
+
+export interface ReportAttendanceEventDto {
+  title: string;
+  eventCompleted: boolean;
+  allDay: boolean;
+  date: string;
+  time: string;
+  location: string;
+  duration: string;
+  published: boolean;
+  users: UserAttended[];
+  total: number;
+}

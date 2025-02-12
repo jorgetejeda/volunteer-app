@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=dev next dev",
-    "local": "cross-env NODE_ENV=local next dev",
+    "dev": "next dev",
     "start": "next start",
     "build": "npm install --legacy-peer-deps && cross-env NODE_ENV=production next build",
-    "deploy:production": "yarn build && pm2 start pm2.config.js --env prod",
+    "docker-up": "docker compose up -d",
+    "docker-down": "docker compose down",
+    "docker-restart": "docker compose restart",
+    "docker-build": "docker compose up -d --build",
+    "docker-logs": "docker logs -f",
     "lint": "next lint"
   },
   "dependencies": {

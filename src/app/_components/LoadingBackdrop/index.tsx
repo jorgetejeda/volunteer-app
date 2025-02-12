@@ -1,3 +1,4 @@
+'use client'
 import { Backdrop, CircularProgress } from "@mui/material";
 interface LoadingBackdropProps {
   open: boolean;

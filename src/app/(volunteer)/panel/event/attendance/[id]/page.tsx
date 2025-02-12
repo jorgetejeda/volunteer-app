@@ -27,6 +27,7 @@ import { EventService } from "@/services";
 import { useParams } from "next/navigation";
 import { Users } from "@/core/types";
 import { BackButton, LoadingBackdrop } from "@/app/_components";
+import { QueryParams } from "@/core-libraries/http/types/query-params";
 
 const AttendancePage = () => {
   const { id: eventId } = useParams(); // Obtener el ID del evento desde la URL
@@ -36,28 +37,47 @@ const AttendancePage = () => {
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [userToRemove, setUserToRemove] = useState<Users | null>(null);
-  const [eventName, setEventName] = useState<string>("Evento de Prueba");
+  const [reportLoading, setReportLoading] = useState<boolean>(false);
+
+  const [event, setEvent] = useState<{
+    isCompleted: boolean;
+    title: string;
+    totalAttended: number;
+  }>({
+    isCompleted: false,
+    title: "",
+    totalAttended: 0,
+  });
   const [toggleEventDialog, setToggleEventDialog] = useState<boolean>(false);
-  const [isEventOpen, setIsEventOpen] = useState(true);
+
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers({ limit: 10, offset: 0 });
   }, []);
 
-  const fetchUsers = async (): Promise<void> => {
+  const fetchUsers = async ({limit = 10, offset = 0}: QueryParams): Promise<void> => {
     setLoading(true);
     try {
-      const { data, isSucceeded } =
-        await EventService.getAllUserEnrolledEvents(+eventId);
+      const { data, isSucceeded } = await EventService.getAllUserEnrolledEvents(
+        +eventId,
+        { limit, offset } 
+      );
+
       if (!isSucceeded || !data) {
-        console.log("Error al obtener los usuarios");
+        throw new Error("Error al obtener los usuarios");
       }
-      setEventName(data.event);
+
+      setEvent({
+        isCompleted: data.eventCompleted,
+        title: data.event,
+        totalAttended: data.total,
+      });
+
       const users = data.users.map((user) => ({ ...user, submitted: false }));
       setUsers(users);
     } catch (error) {
-      console.error("Error al obtener los usuarios", error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -69,8 +89,9 @@ const AttendancePage = () => {
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
-    page: number,
+    page: number
   ) => {
+    fetchUsers({ limit: 10, offset: (page - 1) * 10 });
     setCurrentPage(page);
   };
 
@@ -106,8 +127,8 @@ const AttendancePage = () => {
         prevUsers.map((user) =>
           selectedUsers.has(user.id)
             ? { ...user, attended: true, submitted: true }
-            : user,
-        ),
+            : user
+        )
       );
 
       setSelectedUsers(new Set());
@@ -122,10 +143,8 @@ const AttendancePage = () => {
     await EventService.markAttendance(+eventId, { userId, attended: true });
     setUsers((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === userId
-          ? { ...user, attended: true, submitted: true }
-          : user,
-      ),
+        user.id === userId ? { ...user, attended: true, submitted: true } : user
+      )
     );
   };
 
@@ -135,8 +154,8 @@ const AttendancePage = () => {
       prevUsers.map((user) =>
         user.id === userId
           ? { ...user, attended: false, submitted: false }
-          : user,
-      ),
+          : user
+      )
     );
     setDialogOpen(false);
   };
@@ -165,14 +184,76 @@ const AttendancePage = () => {
 
   const handleToggleEventStatus = async () => {
     try {
-      // await EventService.endEvent(+eventId);
-      console.log("Evento culminado con éxito.");
-      setIsEventOpen((prev) => !prev); // Cambia el estado del evento
-      setToggleEventDialog(false); // Cierra el diálogo
+      setLoading(true);
+      const { data, isSucceeded } = await EventService.completedEvent(+eventId);
+      if (!isSucceeded || !data) {
+        throw new Error("Error al obtener los usuarios");
+      }
+
+      setEvent((prev) => ({
+        ...prev,
+        isCompleted: !prev.isCompleted,
+      }));
+      setToggleEventDialog(false);
     } catch (error) {
-      console.error("Error al culminar el evento:", error);
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
+  const attendanceReport = async () => {
+    try {
+      setReportLoading(true);
+      const { data, isSucceeded } = await EventService.getAttendanceReport(+eventId);
+      
+      if (!isSucceeded || !data) {
+        throw new Error("Error al obtener los usuarios");
+      }
+  
+      const { title, date, location, duration, allDay, users } = data;
+  
+      const headers = [
+        "Fecha",
+        "Ubicación",
+        "Duración",
+        "Todo el día",
+        "Nombre del Usuario",
+        "Asistencia"
+      ];
+  
+      // Convertir datos a formato CSV
+      const rows = users.map(user => [
+        date,
+        location,
+        duration,
+        allDay ? "Sí" : "No",
+        user.name,
+        user.attended ? "Asistió" : "No asistió"
+      ]);
+  
+      // Unir encabezados y filas
+      const csvContent = [
+        headers.join(","), 
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+  
+      // Crear Blob y descargar archivo
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", title);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error al generar el reporte:", error);
+    } finally {
+      setReportLoading(false);
+    }
+  };
+  
+  
+
 
   if (loading) return <LoadingBackdrop open={loading} />;
 
@@ -180,17 +261,27 @@ const AttendancePage = () => {
     <Box>
       <Box justifyContent="space-between" alignItems="center" display="flex">
         <BackButton />
+        <Box display="flex" gap={2}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={attendanceReport}
+          disabled={reportLoading}
+        >
+          {reportLoading ? "Generando reporte..." : "Descargar reporte"}
+        </Button>
         <Button
           variant="contained"
           color="primary"
           onClick={handleToggleEventDialog}
         >
-          {isEventOpen ? "Culminar evento" : "Reabrir evento"}
+          {event.isCompleted ? "Reabrir evento" : "Culminar evento"}
         </Button>
+        </Box>
       </Box>
 
       <Typography variant="h1" component="h1" gutterBottom marginTop={2}>
-        {eventName}
+        {event.title}
       </Typography>
 
       {/* Componente de Búsqueda */}
@@ -246,13 +337,17 @@ const AttendancePage = () => {
                       <IconButton
                         onClick={() => confirmRemoveAttendance(user)}
                         color="primary"
+                        disabled={event.isCompleted}
                       >
                         <CheckCircleOutlineIcon />
                       </IconButton>
                     </Tooltip>
                   ) : (
                     <Tooltip title="Marcar asistencia">
-                      <IconButton onClick={() => handleMarkAttendance(user.id)}>
+                      <IconButton
+                        onClick={() => handleMarkAttendance(user.id)}
+                        disabled={event.isCompleted}
+                      >
                         <CheckCircleOutlineIcon />
                       </IconButton>
                     </Tooltip>
@@ -279,7 +374,7 @@ const AttendancePage = () => {
       {/* Paginación */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
         <Pagination
-          count={Math.ceil(filteredUsers.length / 10)}
+          count={Math.ceil(event.totalAttended / 10)}
           page={currentPage}
           onChange={handlePageChange}
         />
@@ -287,15 +382,15 @@ const AttendancePage = () => {
 
       <Dialog open={toggleEventDialog} onClose={handleToggleEventDialog}>
         <DialogTitle>
-          {isEventOpen
-            ? "Confirmar culminación del evento"
-            : "Confirmar reapertura del evento"}
+          {event.isCompleted
+            ? "Confirmar reapertura del evento"
+            : "Confirmar culminación del evento"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {isEventOpen
-              ? `¿Estás seguro de que deseas culminar el evento "${eventName}"?`
-              : `¿Estás seguro de que deseas reabrir el evento "${eventName}"?`}
+            {event.isCompleted
+              ? `¿Estás seguro de que deseas reabrir el evento "${event.title}"?`
+              : `¿Estás seguro de que deseas culminar el evento "${event.title}"?`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -312,10 +407,11 @@ const AttendancePage = () => {
             color="primary"
             autoFocus
           >
-            {isEventOpen ? "Culminar evento" : "Reabrir evento"}
+            {event.isCompleted ? "Reabrir evento" : "Culminar evento"}
           </Button>
         </DialogActions>
       </Dialog>
+
       {/* Diálogo de Confirmación */}
       <Dialog
         open={dialogOpen}

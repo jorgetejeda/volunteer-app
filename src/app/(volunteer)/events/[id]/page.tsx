@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import theme from "@theme/theme";
 import {
@@ -21,12 +21,7 @@ import {
   Menu,
   TimerOutlined,
 } from "@mui/icons-material";
-import {
-  InformationLabel,
-  CategoryLabel,
-  BackButton,
-  LoadingBackdrop,
-} from "@components/index";
+import { InformationLabel, CategoryLabel, BackButton, LoadingBackdrop } from "@components/index";
 //@Types
 import { Event } from "@/core/types";
 //@Services
@@ -54,17 +49,6 @@ export default function Page({ params }: { params: { id: number } }) {
     title: "",
     message: "",
   });
-
-  const outDated = new Date() > new Date(`${event.date}T${event.time}`);
-  console.log("current date", new Date());
-  console.log("event date", new Date(`${event.date}T${event.time}`));
-  const enrollButtonLabel = useMemo(() => {
-    if (outDated) {
-      return "Evento pasado";
-    }
-    return event.isUserEnrolled ? "Cancelar Inscripción" : "Quiero participar";
-  }, [outDated, event.isUserEnrolled]);
-
   const getEvents = useCallback(async () => {
     const { data, isSucceeded } = await EventService.getEventById(id);
     if (!isSucceeded || !data) {
@@ -77,6 +61,14 @@ export default function Page({ params }: { params: { id: number } }) {
   useEffect(() => {
     getEvents();
   }, [getEvents]);
+
+  const enrollButtonLabel = React.useMemo(() => {
+    if (event.completed) {
+      return "Evento pasado";
+    }
+    return event.isUserEnrolled ? "Cancelar Inscripción" : "Quiero participar";
+  }, [event]);
+
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -92,22 +84,18 @@ export default function Page({ params }: { params: { id: number } }) {
 
   const handleToggleEnrollment = async (id: number, isEnrolling: boolean) => {
     setIsEnrolling(true);
-    const { data, isSucceeded } = await EventService.toggleEnrollUnenrollEvent(
-      id,
-      isEnrolling ? "I" : "A",
-    );
+    const { data, isSucceeded } = await EventService.toggleEnrollUnenrollEvent(id, isEnrolling ? 'I' : 'A' );
     setIsEnrolling(false);
 
-    const successMessage =
-      data.status === "A" ? "Inscripción exitosa!" : "Inscripción cancelada!";
-    const errorMessage =
-      data.status === "A"
-        ? "Error al inscribirse."
-        : "Error al cancelar inscripción.";
-    const successDescription =
-      data.status === "A"
-        ? "Gracias por inscribirte en el evento."
-        : "Tu inscripción ha sido cancelada.";
+    const successMessage = data.status === "A"
+      ? "Inscripción exitosa!"
+      : "Inscripción cancelada!";
+    const errorMessage = data.status === "A" 
+      ? "Error al inscribirse."
+      : "Error al cancelar inscripción.";
+    const successDescription = data.status === "A"
+      ? "Gracias por inscribirte en el evento."
+      : "Tu inscripción ha sido cancelada.";
 
     setEnrollMessage({
       title: isSucceeded ? successMessage : errorMessage,
@@ -121,14 +109,13 @@ export default function Page({ params }: { params: { id: number } }) {
     if (isSucceeded) {
       setEvent((prev: Event) => ({
         ...prev,
-        isUserEnrolled: data.status === "A" ? 1 : 0,
+        isUserEnrolled: data.status === 'A' ? 1 : 0,
       }));
       setOpenSuccessDialog(true);
     }
   };
 
-  if (loading) return <LoadingBackdrop open={loading} />;
-
+  if (loading) return <LoadingBackdrop open={loading} />; 
 
   return (
     <>
@@ -177,7 +164,7 @@ export default function Page({ params }: { params: { id: number } }) {
       </Box>
 
       <Grid container spacing={2}>
-        <Grid item sm={12} md={7}>
+        <Grid item sm={12} xs={12} md={7}>
           <Paper sx={{ padding: 2 }}>
             <Box display="flex" flexDirection="column" gap={2}>
               <Typography variant="body1">
@@ -187,7 +174,7 @@ export default function Page({ params }: { params: { id: number } }) {
                 <Button
                   variant={event.isUserEnrolled ? "outlined" : "contained"}
                   onClick={handleOpenDialog}
-                  disabled={outDated}
+                  disabled={event.completed}
                 >
                   {enrollButtonLabel}
                   {isEnrolling && (
