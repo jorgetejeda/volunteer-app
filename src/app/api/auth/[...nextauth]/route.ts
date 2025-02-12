@@ -32,17 +32,12 @@ declare module "next-auth/jwt" {
 
 const handleBackEnd = async (token: any) => {
   try {
-    const authToken =
-      process.env.NODE_ENV === "production"
-        ? process.env.NEXTAUTH_SECRET
-        : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
-
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
         name: token.name,
-        authToken: authToken,
+        authToken: process.env.NEXTAUTH_SECRET,
       },
       {
         headers: {

@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Configuración y Ejecución del Proyecto
 
-## Getting Started
+## 1\. Configuración de Variables de Entorno
 
-First, run the development server:
+Para ejecutar el proyecto en Docker o localmente después del build, es necesario que las variables de entorno en el archivo `.env` tengan valores reales. Es decir, debes reemplazar los valores con `#{VARIABLE}` por sus correspondientes valores.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 2\. Ejecutar sin Docker
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Si deseas ejecutar el proyecto localmente sin Docker, crea un archivo `.env.development.local` en la raíz del proyecto y agrega las variables de entorno necesarias con sus valores reales.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 3\. Comandos para Ejecutar el Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+El proyecto cuenta con los siguientes comandos definidos en el `package.json`:
 
-## Learn More
+## 4\. Comandos para Docker
 
-To learn more about Next.js, take a look at the following resources:
+- Levantar los contenedores en segundo plano
+    ```
+    npm run docker-up
+    ```
+    
+    Ejecuta `docker compose up -d` para levantar los contenedores.
+    
+- Apagar los contenedores
+    
+    ```
+    npm run docker-down
+    ```
+    
+    Detiene y elimina los contenedores en ejecución.
+    
+- Reiniciar los contenedores
+    
+    ```
+    npm run docker-restart
+    ```
+    
+    Reinicia los contenedores sin eliminarlos.
+    
+- Reconstruir la imagen de Docker
+    
+    ```
+    npm run docker-build
+    ```
+    
+    Ejecuta `docker compose up -d --build` para construir y ejecutar los contenedores desde cero.
+    
+- Ver logs en tiempo real
+    
+    ```
+    npm run docker-logs
+    ```
+    
+    Muestra los logs del contenedor en ejecución.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Con estos pasos, deberías poder ejecutar el proyecto sin problemas tanto en local como en Docker. 🚀
