@@ -11,13 +11,14 @@ import {
   Grid,
   Divider,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRouter } from "next/navigation";
 import profileService from "@/services/profile/profile.services";
-import { Profile, ProfileDto } from "@/core/types/profile";
+import { ProfileDto } from "@/core/types/profile";
 
 interface FormProfileDto {
   avatar?: File;
@@ -33,15 +34,19 @@ const INITIAL_STATE: FormProfileDto = {
   interests: [{ value: "" }],
 };
 
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_FILES_API}/profile`;
+
 const ProfileEditPage = () => {
   const router = useRouter();
   const [imagePreview, setImagePreview] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
-  const { control, handleSubmit, register, setValue } = useForm<FormProfileDto>({
-    defaultValues: INITIAL_STATE,
-  });
+  const { control, handleSubmit, register, setValue } = useForm<FormProfileDto>(
+    {
+      defaultValues: INITIAL_STATE,
+    },
+  );
 
   const {
     fields: hobbyFields,
@@ -73,10 +78,16 @@ const ProfileEditPage = () => {
         }
 
         setValue("description", profileData.description);
-        setValue("hobbies", profileData.hobbies.map((hobby) => ({ value: hobby })));
-        setValue("interests", profileData.interests.map((interest) => ({ value: interest })));
+        setValue(
+          "hobbies",
+          profileData.hobbies.map((hobby) => ({ value: hobby })),
+        );
+        setValue(
+          "interests",
+          profileData.interests.map((interest) => ({ value: interest })),
+        );
         if (profileData.profileImage) {
-          setImagePreview(profileData.profileImage); // Imagen actual del perfil
+          setImagePreview(`${BASE_URL}/${profileData.profileImage}`);
         }
       } catch (error) {
         console.error("Error fetching profile data:", error);
@@ -119,11 +130,11 @@ const ProfileEditPage = () => {
               sx={{ height: "100%", justifyContent: "center" }}
             >
               <Typography variant="subtitle1">Foto de Perfil</Typography>
-              <Avatar
-                alt="Profile Image"
-                src={imagePreview || "/default-avatar.png"} // Usar vista previa si existe
-                sx={{ width: 150, height: 150 }}
-              />
+                <Avatar
+                  alt="Profile Image"
+                  src={imagePreview} // Usamos la ruta completa de la imagen o la de la vista previa
+                  sx={{ width: 150, height: 150 }}
+                />
               <Button variant="outlined" component="label">
                 Cargar Imagen
                 <input
@@ -140,8 +151,14 @@ const ProfileEditPage = () => {
                   }}
                 />
               </Button>
-              <Typography variant="caption" textAlign="center" color="textSecondary" sx={{ mt: 1 }}>
-                Por favor, cargue una imagen válida. Solo se aceptan archivos JPEG.
+              <Typography
+                variant="caption"
+                textAlign="center"
+                color="textSecondary"
+                sx={{ mt: 1 }}
+              >
+                Por favor, cargue una imagen válida. Solo se aceptan archivos
+                JPEG.
               </Typography>
             </Stack>
           </Grid>
@@ -173,7 +190,10 @@ const ProfileEditPage = () => {
             <Box sx={{ mb: 4 }}>
               <Typography variant="h6">Hobbies</Typography>
               {hobbyFields.map((field, index) => (
-                <Box key={field.id} sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box
+                  key={field.id}
+                  sx={{ display: "flex", alignItems: "center", mb: 2 }}
+                >
                   <Controller
                     name={`hobbies.${index}.value`}
                     control={control}
@@ -208,7 +228,10 @@ const ProfileEditPage = () => {
             <Box sx={{ mb: 4 }}>
               <Typography variant="h6">Intereses</Typography>
               {interestFields.map((field, index) => (
-                <Box key={field.id} sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Box
+                  key={field.id}
+                  sx={{ display: "flex", alignItems: "center", mb: 2 }}
+                >
                   <Controller
                     name={`interests.${index}.value`}
                     control={control}
@@ -222,7 +245,10 @@ const ProfileEditPage = () => {
                       />
                     )}
                   />
-                  <IconButton color="error" onClick={() => removeInterest(index)}>
+                  <IconButton
+                    color="error"
+                    onClick={() => removeInterest(index)}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </Box>
@@ -242,7 +268,11 @@ const ProfileEditPage = () => {
 
       {/* Botón para enviar */}
       <Box sx={{ textAlign: "center" }}>
-        <Button variant="contained" color="primary" onClick={handleSubmit(onSubmit)}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit(onSubmit)}
+        >
           Guardar Cambios
         </Button>
       </Box>

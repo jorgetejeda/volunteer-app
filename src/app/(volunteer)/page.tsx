@@ -1,28 +1,20 @@
 "use client";
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Paper,
   Box,
   Typography,
   Button,
-  Stack,
   Backdrop,
   CircularProgress,
 } from "@mui/material";
-import { LocalizationProvider, DateCalendar } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useSession } from "next-auth/react";
-import SwipeableViews from "react-swipeable-views";
-import { autoPlay } from "react-swipeable-views-utils";
-import MobileStepper from "@mui/material/MobileStepper";
-import { CardEvent, DataNotFound } from "@components/index";
+import { Calendar, CardEvent, DataNotFound } from "@components/index";
 import EventService from "@/services/event/event.services";
 import { Event } from "@/core/types";
 import theme from "@theme/theme";
 import { combineDateAndTime, lightOrDarkColor } from "@/utils";
-
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const images = [
   {
@@ -70,6 +62,10 @@ export default function Home() {
     setLoading(true);
     try {
       const { data, isSucceeded } = await EventService.userTotalHours();
+
+      if (!isSucceeded) {
+        throw new Error("Error getting hours");
+      }
 
       setHours(+data);
     } catch (error: any) {
@@ -273,32 +269,7 @@ export default function Home() {
           <Grid item md={3} sm={12} xs={12}>
             <Paper sx={{ padding: 2 }}>
               <Typography variant="h3">Calendario</Typography>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateCalendar
-                  sx={{
-                    width: "auto",
-                    maxWidth: "100%",
-                    fontSize: "0.75rem",
-                    "& .MuiPickersCalendarHeader-root": {
-                      paddingLeft: "0",
-                      paddingRight: "0",
-                    },
-                    "& .MuiPickersDay-today": {
-                      color: theme.palette.common.white,
-                      background: theme.palette.primary.main,
-                      border: "none",
-                      outline: "none",
-                    },
-                    "& .MuiPickersDay-dayWithMargin": {
-                      width: "30px",
-                      height: "30px",
-                    },
-                    "& .MuiDayCalendar-weekDayLabel": {
-                      width: "30px",
-                    },
-                  }}
-                />
-              </LocalizationProvider>
+              <Calendar />
             </Paper>
           </Grid>
         </Grid>

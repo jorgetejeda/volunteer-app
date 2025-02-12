@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { Chip, ChipProps, Theme } from "@mui/material";
 import { styled } from "@mui/system";

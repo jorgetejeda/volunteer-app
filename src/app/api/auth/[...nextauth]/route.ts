@@ -13,6 +13,7 @@ declare module "next-auth" {
     role: string;
     isAdmin: boolean;
     agreedTerms: boolean;
+    profileImage: string;
   }
 }
 
@@ -24,25 +25,19 @@ declare module "next-auth/jwt" {
     user: {
       token: string;
       role: string;
-      agreedTerms: boolean;
+      profileImage: string;
     };
   }
 }
 
 const handleBackEnd = async (token: any) => {
   try {
-    const authToken =
-      process.env.NODE_ENV === "production"
-        ? process.env.NEXTAUTH_SECRET
-        : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET;
-
-    console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`)
     const { data } = await axiosInstance.post(
       `${process.env.NEXT_PUBLIC_BASE_URL}/${process.env.NEXT_PUBLIC_AUTH_API}/login`,
       {
         email: token.email,
         name: token.name,
-        authToken: authToken,
+        authToken: process.env.NEXTAUTH_SECRET,
       },
       {
         headers: {
@@ -55,9 +50,12 @@ const handleBackEnd = async (token: any) => {
       throw new Error("Error logging in");
     }
 
+    console.log("Data from handleBackEnd:", data);
+
     return {
       userToken: data.data.token,
       userRole: data.data.userRoles[0].role.title,
+      profileImage: data.data.profileImage,
       userAgreedTerms: true, 
     };
   } catch (error) {
@@ -83,10 +81,7 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   debug: process.env.NODE_ENV === "development",
-  secret:
-    process.env.NODE_ENV === "production"
-      ? process.env.NEXTAUTH_SECRET
-      : process.env.NEXT_PUBLIC_NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   logger: {
     error(code, ...message) {
       console.error("ERROR - Next", code, message);
@@ -110,9 +105,9 @@ const authOptions: NextAuthOptions = {
           const data = await handleBackEnd(token);
           console.log("Data from handleBackEnd:", data);
           token.user = {
-            agreedTerms: data.userAgreedTerms,
             token: data.userToken,
             role: data.userRole,
+            profileImage: data.profileImage,
           };
         } catch (error) {
           console.error("ERROR trying to login:", error);
@@ -127,8 +122,9 @@ const authOptions: NextAuthOptions = {
       session.name = token.name as string;
       session.token = token.user?.token;
       session.role = token.user?.role;
-      session.agreedTerms = token.user.agreedTerms || false;
+      session.agreedTerms = false;
       session.isAdmin = token.user?.role === "Admin";
+      session.profileImage = token.user?.profileImage;
       return session;
     },
     async redirect({ url, baseUrl }) {
