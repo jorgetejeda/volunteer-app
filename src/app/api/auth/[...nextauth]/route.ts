@@ -76,6 +76,7 @@ const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: "openid profile user.Read email",
+          redirect_uri: process.env.NEXT_PUBLIC_CALLBACK_URL as string,
         },
       },
     }),
