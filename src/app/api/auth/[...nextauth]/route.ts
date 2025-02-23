@@ -37,11 +37,11 @@ const handleBackEnd = async (token: any) => {
       {
         email: token.email,
         name: token.name,
-        authToken: process.env.NEXTAUTH_SECRET,
       },
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXTAUTH_SECRET}`,
         },
       }
     );
@@ -76,7 +76,6 @@ const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           scope: "openid profile user.Read email",
-          redirect_uri: process.env.NEXT_PUBLIC_CALLBACK_URL as string,
         },
       },
     }),
