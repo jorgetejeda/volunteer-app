@@ -13,9 +13,9 @@ const nextConfig = {
         hostname: "localhost"
       }
     ],
-    domains: [
+   domains: [
       "images.unsplash.com",
-      process.env.NEXT_PUBLIC_BASE_URL, 
+      process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, ''),
     ].filter(Boolean),
   },
 };
